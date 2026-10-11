@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, BookOpen, ArrowLeft, ArrowUp, Copy, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowLeft, ArrowUp, Copy, Sparkles } from 'lucide-react';
 import { fetchJuzWithTranslation, AVAILABLE_TRANSLATIONS } from '../api/quranApi';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';

@@ -141,7 +141,6 @@ export default function ListenPage() {
     if (audioRef.current) audioRef.current.loop = newVal;
   };
 
-  const selectedReciter = KNOWN_RECITERS.find(r => r.identifier === settings.reciterIdentifier) ?? KNOWN_RECITERS[0];
   const selectedSurahMeta = surahs.find(s => s.number === selectedSurah);
 
   const filteredSurahs = surahs.filter((s) => {

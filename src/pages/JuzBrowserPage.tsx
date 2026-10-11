@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { JUZ_META } from '../types/quran';
-import { ChevronRight, Sparkles, BookOpen, Search, ArrowRight } from 'lucide-react';
+import { Sparkles, BookOpen, Search, ArrowRight } from 'lucide-react';
 
 const CARD_THEMES = [
   { bg: 'linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%)', badgeBg: 'linear-gradient(135deg, #d4af37 0%, #f3c642 100%)', badgeColor: '#143526', border: 'rgba(212, 175, 55, 0.4)', shadow: 'rgba(27, 67, 50, 0.25)', accent: '#fef08a' },
