@@ -222,7 +222,6 @@ const RECITERS = [
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [surahs, setSurahs] = useState<SurahMeta[]>([]);
   const [lastRead, setLastRead] = useState<ReadingHistory | null>(null);
   const [heroSearch, setHeroSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'surah' | 'juz'>('surah');
@@ -255,10 +254,7 @@ export default function HomePage() {
 
   useEffect(() => {
     document.title = 'Noor Quran — A calm space to reconnect with the Quran';
-    Promise.all([
-      fetchSurahList().then(setSurahs),
-      getLastRead().then(setLastRead),
-    ]);
+    getLastRead().then(setLastRead);
   }, []);
 
   // Sync audio reciter source

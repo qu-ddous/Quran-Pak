@@ -1035,3 +1035,95 @@ body {
     opacity: 0.45;
   }
 }
+
+/* ─── Quran Browser Page Hero Banner ──────────────────────────────────────── */
+.quran-hero-banner {
+  position: relative;
+  width: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  padding: 44px 32px;
+  margin-bottom: 36px;
+  border: 2px solid var(--color-border-gold);
+  background-image: url('/hero-bg-clean.jpg');
+  background-size: cover;
+  background-position: right 30% center;
+  box-shadow: 0 16px 40px rgba(27, 67, 50, 0.15), 0 0 20px rgba(212, 175, 55, 0.2);
+}
+
+.quran-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, 
+    rgba(254, 252, 248, 0.96) 0%, 
+    rgba(254, 252, 248, 0.92) 42%, 
+    rgba(254, 252, 248, 0.72) 65%, 
+    rgba(254, 252, 248, 0.2) 90%, 
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.dark .quran-hero-overlay {
+  background: linear-gradient(90deg, 
+    rgba(10, 18, 14, 0.97) 0%, 
+    rgba(10, 18, 14, 0.93) 42%, 
+    rgba(10, 18, 14, 0.75) 65%, 
+    rgba(10, 18, 14, 0.25) 90%, 
+    transparent 100%
+  );
+}
+
+/* ─── Surah Reader Luxury Cartouche Header ────────────────────────────────── */
+.surah-cartouche-luxury {
+  position: relative;
+  border-radius: 24px;
+  padding: 36px 28px;
+  margin-bottom: 28px;
+  text-align: center;
+  overflow: hidden;
+  border: 2px solid var(--color-border-gold);
+  background: linear-gradient(135deg, #092c21 0%, #175440 60%, #0d382b 100%);
+  color: #ffffff;
+  box-shadow: 0 16px 40px rgba(10, 35, 26, 0.4), 0 0 25px rgba(212, 175, 55, 0.35);
+}
+
+.surah-cartouche-texture {
+  position: absolute;
+  inset: 0;
+  background-image: url('/journey-read.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.12;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* ─── Floating Reader Bottom Bar ─────────────────────────────────────────── */
+.reader-floating-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 90;
+  max-width: 90%;
+  width: auto;
+  min-width: 320px;
+  background: rgba(21, 32, 26, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid var(--color-border-gold);
+  border-radius: 9999px;
+  padding: 8px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 16px rgba(212, 175, 55, 0.25);
+  color: #ffffff;
+  transition: all 0.25s ease;
+}
+
+.reader-floating-bar:hover {
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5), 0 0 24px rgba(212, 175, 55, 0.4);
+}
