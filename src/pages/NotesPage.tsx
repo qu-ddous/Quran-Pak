@@ -64,7 +64,8 @@ export default function NotesPage() {
   if (loading) return <LoadingSpinner text="Loading notes…" />;
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '40px 24px 64px' }}>
+    <div className="quran-page-container" style={{ paddingTop: 40, paddingBottom: 64 }}>
+      <div style={{ maxWidth: 860, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
         <PageHeader
           title="My Notes"
@@ -176,9 +177,9 @@ export default function NotesPage() {
                 </>
               )}
             </div>
-          ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

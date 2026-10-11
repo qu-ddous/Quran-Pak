@@ -4,8 +4,9 @@ import { PageHeader } from '../components/ui/SharedComponents';
 
 export default function AboutPage() {
   return (
-    <div style={{ maxWidth: 860, margin: '0 auto', padding: '32px 16px' }}>
-      <PageHeader
+    <div className="quran-page-container" style={{ paddingTop: 32, paddingBottom: 64 }}>
+      <div style={{ maxWidth: 880, margin: '0 auto' }}>
+        <PageHeader
         title="About Noor Quran"
         subtitle="A reverent, beautiful, and distraction-free sanctuary for reciting and understanding the Word of Allah."
       />
@@ -77,6 +78,7 @@ export default function AboutPage() {
             Browse Surahs <ArrowRight size={16} />
           </Link>
         </div>
+      </div>
       </div>
     </div>
   );

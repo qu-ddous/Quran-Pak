@@ -34,8 +34,9 @@ export default function SettingsPage() {
   };
 
   return (
-    <div style={{ maxWidth: 860, margin: '0 auto', padding: '32px 16px' }}>
-      <PageHeader
+    <div className="quran-page-container" style={{ paddingTop: 32, paddingBottom: 64 }}>
+      <div style={{ maxWidth: 880, margin: '0 auto' }}>
+        <PageHeader
         title="Settings & Preferences"
         subtitle="Customize script size, translation edition, reciter voices, and display preferences. All preferences are saved locally on your device."
       />
@@ -322,6 +323,7 @@ export default function SettingsPage() {
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

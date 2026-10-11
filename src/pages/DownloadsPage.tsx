@@ -68,7 +68,8 @@ export default function DownloadsPage() {
   const cachedCount = cached.size;
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: '40px 24px 64px' }}>
+    <div className="quran-page-container" style={{ paddingTop: 40, paddingBottom: 64 }}>
+      <div style={{ maxWidth: 960, margin: '0 auto' }}>
       <PageHeader
         title="Offline Downloads"
         subtitle="Cache Quran Arabic text for offline reading. Audio requires an internet connection (caching audio is not permitted under Al Quran Cloud CDN terms)."
@@ -154,6 +155,7 @@ export default function DownloadsPage() {
         Only Arabic text ({ARABIC_EDITION} edition) is cached. Translations are not cached.
         Cached data is stored in your browser's IndexedDB. Clearing browser data removes the cache.
       </p>
+      </div>
     </div>
   );
 }
