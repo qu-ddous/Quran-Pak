@@ -39,9 +39,8 @@ export default function Header() {
         className="top-site-header"
       >
         <div
+          className="quran-page-container"
           style={{
-            maxWidth: 1320,
-            margin: '0 auto',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',

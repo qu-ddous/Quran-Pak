@@ -463,7 +463,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Main Content Container (Structured Editorial Flow) ─── */}
-      <div style={{ maxWidth: 1240, margin: '0 auto', padding: '50px 24px 80px' }}>
+      <div className="quran-page-container" style={{ paddingBottom: 80, paddingTop: 50 }}>
 
         {/* Continue Reading Bar (if exists) */}
         {lastRead && (

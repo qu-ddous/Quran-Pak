@@ -16,7 +16,7 @@ export default function Footer() {
         padding: '32px 24px 28px',
       }}
     >
-      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+      <div className="quran-page-container">
         <div style={{
           display: 'flex',
           flexWrap: 'wrap',

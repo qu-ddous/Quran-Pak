@@ -125,12 +125,12 @@ export default function QuranBrowserPage() {
   if (error) return <ErrorState message={error} onRetry={load} />;
 
   return (
-    <div style={{ maxWidth: 1540, width: '100%', margin: '0 auto', padding: '0 24px 100px' }}>
+    <div className="quran-page-container" style={{ paddingBottom: 100 }}>
       {/* ─── 1. Panoramic Arched Hero Banner ─── */}
       <section className="quran-hero-banner hero-bg-quran">
         <div className="quran-hero-overlay" />
 
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: 680 }}>
+        <div className="hero-glass-card">
           {/* Bismillah Calligraphy */}
           <p
             className="arabic-text"

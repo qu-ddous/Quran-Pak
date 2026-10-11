@@ -219,7 +219,25 @@ body {
   }
 }
 
-/* ─── Panoramic Full-Width Hero Section (Matching User Reference) ─────────── */
+/* ─── Universal Site Container (Exact User Specification) ─────────────────── */
+.quran-page-container {
+  max-width: 1336px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 32px;
+  padding-right: 32px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .quran-page-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* ─── Panoramic Full-Width Hero Section (Direct Image Visibility) ─────────── */
 .hero-fullwidth {
   width: 100%;
   position: relative;
@@ -237,37 +255,48 @@ body {
 .hero-fullwidth-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, 
-    rgba(254, 252, 248, 0.98) 0%, 
-    rgba(254, 252, 248, 0.95) 34%, 
-    rgba(254, 252, 248, 0.82) 48%, 
-    rgba(254, 252, 248, 0.25) 70%, 
-    transparent 100%
-  );
+  /* Light subtle vignette only so the authentic image is directly visible */
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.16) 100%);
   pointer-events: none;
 }
 
 .dark .hero-fullwidth-overlay {
-  background: linear-gradient(90deg, 
-    rgba(10, 18, 14, 0.98) 0%, 
-    rgba(10, 18, 14, 0.95) 34%, 
-    rgba(10, 18, 14, 0.82) 48%, 
-    rgba(10, 18, 14, 0.3) 70%, 
-    transparent 100%
-  );
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.30) 100%);
 }
 
 .hero-content-wrapper {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 1360px;
+  max-width: 1336px;
   margin: 0 auto;
   padding: 60px 32px;
 }
 
 .hero-text-container {
   max-width: 640px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 36px 36px;
+  border-radius: 28px;
+  border: 1.5px solid rgba(212, 175, 55, 0.45);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12), 0 0 24px rgba(212, 175, 55, 0.18);
+}
+
+.dark .hero-text-container {
+  background: rgba(10, 24, 18, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(212, 175, 55, 0.5);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 24px rgba(212, 175, 55, 0.2);
+}
+
+@media (max-width: 768px) {
+  .hero-text-container {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
 }
 
 .hero-headline {
@@ -1044,43 +1073,67 @@ body {
   margin-right: calc(-50vw + 50%);
   border-radius: 0;
   overflow: hidden;
-  padding: 56px max(24px, calc((100vw - 1540px) / 2));
+  padding: 60px max(32px, calc((100vw - 1336px) / 2));
   margin-bottom: 36px;
   border-top: 1px solid var(--color-border-gold);
   border-bottom: 2px solid var(--color-border-gold);
   background-size: cover;
-  background-position: right 30% center;
-  box-shadow: 0 16px 40px rgba(27, 67, 50, 0.15), 0 0 20px rgba(212, 175, 55, 0.2);
+  background-repeat: no-repeat;
+  box-shadow: 0 16px 40px rgba(27, 67, 50, 0.12), 0 0 20px rgba(212, 175, 55, 0.15);
 }
 
-.hero-bg-quran { background-image: url('/hero-bg-clean.jpg'); }
+@media (max-width: 768px) {
+  .quran-hero-banner {
+    padding: 36px 16px;
+  }
+}
+
+.hero-bg-quran { background-image: url('/hero-bg-clean.jpg'); background-position: right 25% center; }
 .hero-bg-juz { background-image: url('/juz-hero-bg.jpg'); background-position: center; }
-.hero-bg-search { background-image: url('/search-hero-bg.jpg'); background-position: right 25% center; }
+.hero-bg-search { background-image: url('/search-hero-bg.jpg'); background-position: right 20% center; }
 .hero-bg-listen { background-image: url('/listen-hero-bg.jpg'); background-position: center; }
 .hero-bg-bookmarks { background-image: url('/bookmarks-hero-bg.jpg'); background-position: center; }
 .hero-bg-progress { background-image: url('/progress-hero-bg.jpg'); background-position: center; }
 
+/* Direct image visibility: light atmospheric tint only, preserving full photographic colors */
 .quran-hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, 
-    rgba(254, 252, 248, 0.97) 0%, 
-    rgba(254, 252, 248, 0.93) 44%, 
-    rgba(254, 252, 248, 0.75) 68%, 
-    rgba(254, 252, 248, 0.25) 92%, 
-    transparent 100%
-  );
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.16) 100%);
   pointer-events: none;
 }
 
 .dark .quran-hero-overlay {
-  background: linear-gradient(90deg, 
-    rgba(10, 18, 14, 0.98) 0%, 
-    rgba(10, 18, 14, 0.94) 44%, 
-    rgba(10, 18, 14, 0.78) 68%, 
-    rgba(10, 18, 14, 0.3) 92%, 
-    transparent 100%
-  );
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.32) 100%);
+}
+
+/* Luxury Frosted Glass Card for Hero Text — lets full image shine directly around it */
+.hero-glass-card {
+  position: relative;
+  z-index: 2;
+  max-width: 660px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(212, 175, 55, 0.45);
+  border-radius: 24px;
+  padding: 32px 36px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12), 0 0 24px rgba(212, 175, 55, 0.18);
+}
+
+.dark .hero-glass-card {
+  background: rgba(10, 24, 18, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(212, 175, 55, 0.5);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 24px rgba(212, 175, 55, 0.2);
+}
+
+@media (max-width: 768px) {
+  .hero-glass-card {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
 }
 
 /* ─── Surah Reader Luxury Cartouche Header ────────────────────────────────── */
