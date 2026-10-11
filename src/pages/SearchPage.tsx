@@ -4,7 +4,7 @@ import { Search, ExternalLink, AlertCircle } from 'lucide-react';
 import { searchQuran, AVAILABLE_TRANSLATIONS, DEFAULT_TRANSLATION_EN } from '../api/quranApi';
 import { useSettings } from '../context/SettingsContext';
 import type { SearchMatch } from '../types/quran';
-import { LoadingSpinner, ErrorState, EmptyState, PageHeader } from '../components/ui/SharedComponents';
+import { LoadingSpinner, EmptyState, PageHeader } from '../components/ui/SharedComponents';
 
 // Parse "2:255" style references
 function parseSurahAyahRef(query: string): { surah: number; ayah: number } | null {
@@ -17,17 +17,17 @@ function parseSurahAyahRef(query: string): { surah: number; ayah: number } | nul
 }
 
 export default function SearchPage() {
+  const { settings } = useSettings();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') ?? '';
   const [query, setQuery] = useState(initialQuery);
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
-  const [edition, setEdition] = useState(DEFAULT_TRANSLATION_EN);
+  const [edition, setEdition] = useState(settings.translationEdition || DEFAULT_TRANSLATION_EN);
   const [results, setResults] = useState<SearchMatch[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState(0);
   const debounceRef = useRef<number | undefined>(undefined);
-  const { settings } = useSettings();
 
   useEffect(() => { document.title = 'Search — Noor Quran'; }, []);
 

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1b4332" />
+      <stop offset="100%" stop-color="#2d6a4f" />
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#d4af37" />
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="40" fill="url(#bg)" />
+  <circle cx="96" cy="96" r="76" fill="none" stroke="url(#gold)" stroke-width="2" stroke-dasharray="6,4" opacity="0.6" />
+  <!-- Quran Book Shape -->
+  <path d="M44 136 C64 128 84 130 96 136 C108 130 128 128 148 136 L148 64 C128 56 108 58 96 64 C84 58 64 56 44 64 Z" fill="none" stroke="url(#gold)" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" />
+  <line x1="96" y1="64" x2="96" y2="136" stroke="url(#gold)" stroke-width="4" stroke-linecap="round" />
+  <!-- Crescent & Star accent -->
+  <path d="M96 38 C90 38 86 42 86 47 C86 52 90 56 96 56 C93 54 92 50 93 47 C94 44 96 41 96 38 Z" fill="url(#gold)" />
+</svg>

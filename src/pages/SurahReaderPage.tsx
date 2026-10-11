@@ -7,7 +7,7 @@ import {
 import { fetchSurahWithTranslation } from '../api/quranApi';
 import { buildAudioUrl } from '../api/quranApi';
 import { AVAILABLE_TRANSLATIONS } from '../api/quranApi';
-import { addBookmark, removeBookmark, isBookmarked, recordVisit } from '../db/userDb';
+import { addBookmark, removeBookmark, recordVisit } from '../db/userDb';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
 import type { Ayah, Surah } from '../types/quran';

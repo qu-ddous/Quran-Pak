@@ -1,0 +1,16 @@
+{
+  "name": "Noor Quran — Read the Noble Quran",
+  "short_name": "Noor Quran",
+  "description": "Read and listen to the Noble Quran in Arabic with English translations, audio recitation, and reflections.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fdfaf5",
+  "theme_color": "#2d6a4f",
+  "icons": [
+    {
+      "src": "/noor-icon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}

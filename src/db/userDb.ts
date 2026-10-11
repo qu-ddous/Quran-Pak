@@ -59,7 +59,7 @@ let _db: NoorDB | null = null;
 async function getDb(): Promise<NoorDB> {
   if (_db) return _db;
   _db = await openDB<any>(DB_NAME, DB_VERSION, {
-    upgrade(db) {
+    upgrade(db: any) {
       // Bookmarks
       if (!db.objectStoreNames.contains('bookmarks')) {
         const bs = db.createObjectStore('bookmarks', { keyPath: 'id' });
@@ -102,8 +102,8 @@ export async function removeBookmark(id: string): Promise<void> {
 
 export async function getBookmarks(): Promise<Bookmark[]> {
   const db = await getDb();
-  const all = await db.getAll('bookmarks');
-  return all.sort((a, b) => b.createdAt - a.createdAt);
+  const all: Bookmark[] = await db.getAll('bookmarks');
+  return all.sort((a: Bookmark, b: Bookmark) => b.createdAt - a.createdAt);
 }
 
 export async function isBookmarked(id: string): Promise<boolean> {
@@ -130,15 +130,15 @@ export async function deleteNote(id: string): Promise<void> {
 
 export async function getNotes(): Promise<Note[]> {
   const db = await getDb();
-  const all = await db.getAll('notes');
-  return all.sort((a, b) => b.updatedAt - a.updatedAt);
+  const all: Note[] = await db.getAll('notes');
+  return all.sort((a: Note, b: Note) => b.updatedAt - a.updatedAt);
 }
 
 export async function getNotesBySurah(surahNumber: number): Promise<Note[]> {
   const db = await getDb();
   const index = db.transaction('notes').store.index('by-surah');
-  const all = await index.getAll(surahNumber);
-  return all.sort((a, b) => b.updatedAt - a.updatedAt);
+  const all: Note[] = await index.getAll(surahNumber);
+  return all.sort((a: Note, b: Note) => b.updatedAt - a.updatedAt);
 }
 
 // ─── Reading History ──────────────────────────────────────────────────────────
@@ -151,8 +151,8 @@ export async function recordVisit(surahNumber: number, ayahNumber: number): Prom
 
 export async function getRecentHistory(limit = 20): Promise<ReadingHistory[]> {
   const db = await getDb();
-  const all = await db.getAll('readingHistory');
-  return all.sort((a, b) => b.visitedAt - a.visitedAt).slice(0, limit);
+  const all: ReadingHistory[] = await db.getAll('readingHistory');
+  return all.sort((a: ReadingHistory, b: ReadingHistory) => b.visitedAt - a.visitedAt).slice(0, limit);
 }
 
 export async function getLastRead(): Promise<ReadingHistory | null> {

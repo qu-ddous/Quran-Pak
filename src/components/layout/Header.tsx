@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
   BookOpen, Search, Headphones, Bookmark, BarChart2,
@@ -79,7 +79,7 @@ export default function Header() {
                 key={to}
                 to={to}
                 end={to === '/'}
-                style={({ isActive }) => ({
+                style={({ isActive }: { isActive: boolean }) => ({
                   padding: '6px 12px',
                   textDecoration: 'none',
                   borderRadius: 6,
@@ -193,7 +193,7 @@ export default function Header() {
                 to={to}
                 end={to === '/'}
                 onClick={closeMobile}
-                style={({ isActive }) => ({
+                style={({ isActive }: { isActive: boolean }) => ({
                   display: 'flex',
                   alignItems: 'center',
                   gap: 12,
@@ -222,7 +222,7 @@ export default function Header() {
                 key={to}
                 to={to}
                 onClick={closeMobile}
-                style={({ isActive }) => ({
+                style={({ isActive }: { isActive: boolean }) => ({
                   display: 'flex',
                   alignItems: 'center',
                   gap: 12,

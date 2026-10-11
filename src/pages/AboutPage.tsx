@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BookOpen, Heart, Shield, Sparkles, Smartphone, ArrowRight } from 'lucide-react';
+import { Heart, Shield, Sparkles, Smartphone, ArrowRight } from 'lucide-react';
 import { PageHeader } from '../components/ui/SharedComponents';
 
 export default function AboutPage() {

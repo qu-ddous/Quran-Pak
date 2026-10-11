@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { JUZ_META } from '../types/quran';
-import { PageHeader, Badge } from '../components/ui/SharedComponents';
+import { PageHeader } from '../components/ui/SharedComponents';
 import { ChevronRight } from 'lucide-react';
 
 export default function JuzBrowserPage() {

@@ -1,8 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import { Play, Pause, SkipBack, SkipForward, Repeat, Volume2, ExternalLink } from 'lucide-react';
-import { fetchSurahList } from '../api/quranApi';
-import { buildAudioUrl, buildSurahAudioUrl } from '../api/quranApi';
+import { fetchSurahList, buildSurahAudioUrl } from '../api/quranApi';
 import { KNOWN_RECITERS } from '../types/quran';
 import { useSettings } from '../context/SettingsContext';
 import type { SurahMeta } from '../types/quran';
