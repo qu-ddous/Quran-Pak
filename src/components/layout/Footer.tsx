@@ -1,10 +1,11 @@
-import { Link } from 'react-router-dom';
-import { BookOpen, ExternalLink } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { BookOpen, Search, Settings } from 'lucide-react';
 
 const currentYear = new Date().getFullYear();
 
 export default function Footer() {
-  const year = currentYear;
+  const navigate = useNavigate();
+
   return (
     <footer
       role="contentinfo"
@@ -12,82 +13,93 @@ export default function Footer() {
         borderTop: '1px solid var(--color-border)',
         background: 'var(--color-surface)',
         marginTop: 'auto',
+        padding: '32px 24px 28px',
       }}
     >
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '40px 24px 24px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 32, marginBottom: 32 }}>
-          {/* Brand */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-              <div style={{ width: 28, height: 28, borderRadius: 6, background: 'var(--color-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <BookOpen size={15} color="white" aria-hidden="true" />
-              </div>
-              <span style={{ fontWeight: 700, color: 'var(--color-brand)', fontSize: '0.95rem' }}>Noor Quran</span>
+      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 24,
+          paddingBottom: 24,
+          borderBottom: '1px solid var(--color-border)',
+        }}>
+          {/* Brand Logo */}
+          <Link
+            to="/"
+            style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}
+            aria-label="Noor Quran"
+          >
+            <div className="icon-badge-shiny" style={{ width: 36, height: 36, borderRadius: 10 }}>
+              <BookOpen size={18} className="shiny-icon" aria-hidden="true" />
             </div>
-            <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: 0 }}>
-              A respectful Quran reading website for Arabic, Urdu, and English readers.
-            </p>
-          </div>
+            <span style={{ fontWeight: 800, color: 'var(--color-brand)', fontSize: '1.05rem', letterSpacing: '-0.01em' }}>
+              Noor Quran
+            </span>
+          </Link>
 
-          {/* Reading */}
-          <div>
-            <h3 style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-muted)', marginBottom: 12, marginTop: 0 }}>Reading</h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {[
-                ['/quran', 'Browse Surahs'],
-                ['/juz', 'Browse Juz'],
-                ['/search', 'Search Quran'],
-                ['/listen', 'Listen'],
-              ].map(([to, label]) => (
-                <li key={to}><Link to={to} style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', textDecoration: 'none' }}>{label}</Link></li>
-              ))}
-            </ul>
-          </div>
+          {/* Quick Nav Links */}
+          <nav aria-label="Footer navigation" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 24 }}>
+            <Link to="/quran" style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--color-text-muted)', textDecoration: 'none' }}>
+              Quran
+            </Link>
+            <Link to="/sources" style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--color-text-muted)', textDecoration: 'none' }}>
+              Sources &amp; Licenses
+            </Link>
+            <Link to="/about" style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--color-text-muted)', textDecoration: 'none' }}>
+              About
+            </Link>
+            <Link to="/privacy" style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--color-text-muted)', textDecoration: 'none' }}>
+              Privacy
+            </Link>
+          </nav>
 
-          {/* Personal */}
-          <div>
-            <h3 style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-muted)', marginBottom: 12, marginTop: 0 }}>Personal</h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {[
-                ['/bookmarks', 'Bookmarks'],
-                ['/notes', 'Notes'],
-                ['/progress', 'Progress'],
-                ['/downloads', 'Downloads'],
-              ].map(([to, label]) => (
-                <li key={to}><Link to={to} style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', textDecoration: 'none' }}>{label}</Link></li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Info */}
-          <div>
-            <h3 style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-muted)', marginBottom: 12, marginTop: 0 }}>Info</h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {[
-                ['/sources', 'Data Sources'],
-                ['/settings', 'Settings'],
-                ['/about', 'About'],
-                ['/privacy', 'Privacy'],
-              ].map(([to, label]) => (
-                <li key={to}><Link to={to} style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', textDecoration: 'none' }}>{label}</Link></li>
-              ))}
-            </ul>
+          {/* Right Controls (Search & Settings) */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <button
+              onClick={() => navigate('/search')}
+              aria-label="Search Quran"
+              className="btn-ghost"
+              style={{
+                width: 36,
+                height: 36,
+                padding: 0,
+                borderRadius: 10,
+                border: '1px solid var(--color-border-gold)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              title="Search Quran"
+            >
+              <Search size={16} className="shiny-icon" style={{ color: 'var(--color-accent)' }} />
+            </button>
+            <button
+              onClick={() => navigate('/settings')}
+              aria-label="Settings"
+              className="btn-ghost"
+              style={{
+                width: 36,
+                height: 36,
+                padding: 0,
+                borderRadius: 10,
+                border: '1px solid var(--color-border-gold)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              title="Settings"
+            >
+              <Settings size={16} className="shiny-icon" style={{ color: 'var(--color-brand)' }} />
+            </button>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 20, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-          <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-            © {year} Noor Quran — Quran text served by{' '}
-            <a href="https://alquran.cloud" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-brand)', textDecoration: 'none' }}>
-              Al Quran Cloud <ExternalLink size={10} aria-hidden="true" style={{ verticalAlign: 'middle' }} />
-            </a>
-            {' '}(Islamic Network). All translations used per their respective licenses.
-          </p>
-          <div style={{ display: 'flex', gap: 16 }}>
-            <Link to="/sources" style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textDecoration: 'none' }}>Sources &amp; Licenses</Link>
-            <Link to="/privacy" style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textDecoration: 'none' }}>Privacy</Link>
-          </div>
+        {/* Copyright tagline matching reference */}
+        <div style={{ paddingTop: 20, textAlign: 'center', fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>
+          © {currentYear} Noor Quran. A calm space to reconnect with the Quran.
         </div>
       </div>
     </footer>
