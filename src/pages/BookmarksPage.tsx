@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Bookmark, Trash2, ExternalLink } from 'lucide-react';
+import { Bookmark, Trash2, ExternalLink, Sparkles, Copy, Search, BookOpen, ArrowRight } from 'lucide-react';
 import { getBookmarks, removeBookmark } from '../db/userDb';
 import { useToast } from '../context/ToastContext';
 import type { Bookmark as BookmarkType } from '../db/userDb';
-import { LoadingSpinner, EmptyState, PageHeader } from '../components/ui/SharedComponents';
+import { LoadingSpinner, EmptyState } from '../components/ui/SharedComponents';
 
 export default function BookmarksPage() {
   const [bookmarks, setBookmarks] = useState<BookmarkType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filterQuery, setFilterQuery] = useState('');
   const { showToast } = useToast();
 
   useEffect(() => {
-    document.title = 'Bookmarks — Noor Quran';
+    document.title = 'Saved Bookmarks — Noor Quran';
     getBookmarks().then(setBookmarks).finally(() => setLoading(false));
   }, []);
 
@@ -22,74 +23,237 @@ export default function BookmarksPage() {
     showToast('Bookmark removed', 'info');
   };
 
-  if (loading) return <LoadingSpinner text="Loading bookmarks…" />;
+  const copyBookmark = (bm: BookmarkType) => {
+    const text = `Surah ${bm.surahEnglishName} [${bm.surahNumber}:${bm.ayahNumber}]\n${bm.ayahText}\n(Noor Quran)`;
+    navigator.clipboard.writeText(text).then(() => showToast('Ayah copied to clipboard', 'success'));
+  };
+
+  const filteredBookmarks = bookmarks.filter((b) => {
+    if (!filterQuery.trim()) return true;
+    const q = filterQuery.toLowerCase().trim();
+    return (
+      b.surahEnglishName.toLowerCase().includes(q) ||
+      b.surahNumber.toString().includes(q) ||
+      b.ayahNumber.toString().includes(q) ||
+      b.ayahText.includes(q)
+    );
+  });
+
+  const uniqueSurahsCount = new Set(bookmarks.map(b => b.surahNumber)).size;
+
+  if (loading) return <LoadingSpinner text="Loading your bookmarks…" />;
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '40px 24px 64px' }}>
-      <PageHeader
-        title="Bookmarks"
-        subtitle="Your saved ayahs. Bookmarks are stored on this device only and persist between visits."
-      />
+    <div style={{ maxWidth: 960, margin: '0 auto', padding: '24px 20px 100px' }}>
+      {/* ─── Panoramic Luxury Header Banner ─── */}
+      <div className="quran-hero-banner" style={{ padding: '38px 32px', marginBottom: 28 }}>
+        <div className="quran-hero-overlay" />
+        <div style={{ position: 'relative', zIndex: 2, maxWidth: 660 }}>
+          <div style={{
+            fontSize: '1.45rem',
+            color: 'var(--color-gold-500)',
+            fontFamily: "'Amiri', serif",
+            fontWeight: 800,
+            marginBottom: 8,
+          }}>
+            آيات محفوظة ومفضلة
+          </div>
+
+          <h1 style={{
+            fontFamily: "'Playfair Display', Georgia, serif",
+            fontSize: 'clamp(2rem, 4vw, 3rem)',
+            fontWeight: 800,
+            color: 'var(--color-brand)',
+            lineHeight: 1.15,
+            margin: '0 0 12px',
+          }}>
+            Saved Sacred Ayahs
+          </h1>
+
+          <p style={{
+            fontSize: '1rem',
+            lineHeight: 1.6,
+            color: 'var(--color-text)',
+            opacity: 0.9,
+            marginBottom: 20,
+          }}>
+            Your personal sanctuary of divine verses saved for reflection, daily recitation, and spiritual memorization.
+          </p>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '6px 14px',
+              borderRadius: 9999,
+              background: 'rgba(212, 175, 55, 0.18)',
+              border: '1.5px solid var(--color-border-gold)',
+              fontWeight: 800,
+              fontSize: '0.85rem',
+              color: 'var(--color-brand)',
+            }}>
+              <Bookmark size={15} className="shiny-icon" /> {bookmarks.length} Saved {bookmarks.length === 1 ? 'Verse' : 'Verses'}
+            </span>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '6px 14px',
+              borderRadius: 9999,
+              background: 'rgba(45, 106, 79, 0.16)',
+              border: '1.5px solid var(--color-primary-300)',
+              fontWeight: 800,
+              fontSize: '0.85rem',
+              color: 'var(--color-brand)',
+            }}>
+              <BookOpen size={15} className="shiny-icon" /> {uniqueSurahsCount} Distinct Chapters
+            </span>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '6px 14px',
+              borderRadius: 9999,
+              background: 'rgba(212, 175, 55, 0.18)',
+              border: '1.5px solid var(--color-border-gold)',
+              fontWeight: 800,
+              fontSize: '0.85rem',
+              color: 'var(--color-brand)',
+            }}>
+              <Sparkles size={15} className="shiny-icon" /> Private Device Storage
+            </span>
+          </div>
+        </div>
+      </div>
 
       {bookmarks.length === 0 ? (
         <EmptyState
-          title="No bookmarks yet"
-          message="Open any Surah and tap 'Bookmark' on an ayah to save it here. Bookmarks stay saved after you close your browser."
-          icon={<Bookmark size={40} style={{ color: 'var(--color-text-muted)', opacity: 0.4 }} aria-hidden="true" />}
+          title="No Bookmarks Saved Yet"
+          message="While reading any Surah, tap the Bookmark icon on any Ayah to preserve it here for quick access."
+          icon={<Bookmark size={48} style={{ color: 'var(--color-gold-500)', opacity: 0.5 }} />}
         />
       ) : (
         <>
-          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', marginBottom: 20 }}>
-            {bookmarks.length} saved {bookmarks.length === 1 ? 'ayah' : 'ayahs'}
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {bookmarks.map((bm) => (
-              <div key={bm.id} className="card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-                <div style={{
-                  width: 40, height: 40, borderRadius: 8, background: 'var(--color-primary-100)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                }}>
-                  <Bookmark size={18} style={{ color: 'var(--color-brand)' }} aria-hidden="true" />
-                </div>
-                <div style={{ flex: 1, overflow: 'hidden' }}>
-                  <div style={{ fontWeight: 700, color: 'var(--color-brand)', marginBottom: 4, fontSize: '0.875rem' }}>
-                    {bm.surahEnglishName} ({bm.surahNumber}:{bm.ayahNumber})
+          {/* Search bar inside bookmarks */}
+          <div style={{ position: 'relative', marginBottom: 24 }}>
+            <Search size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
+            <input
+              type="search"
+              value={filterQuery}
+              onChange={(e) => setFilterQuery(e.target.value)}
+              placeholder="Filter saved verses by Surah name or Ayah text…"
+              style={{
+                width: '100%',
+                padding: '12px 16px 12px 44px',
+                borderRadius: 14,
+                border: '1.5px solid var(--color-border-gold)',
+                background: 'var(--color-surface)',
+                color: 'var(--color-text)',
+                fontSize: '0.92rem',
+                outline: 'none',
+              }}
+            />
+          </div>
+
+          {/* Bookmarks List */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {filteredBookmarks.map((bm) => (
+              <div
+                key={bm.id}
+                className="card"
+                style={{
+                  padding: '24px 28px',
+                  borderRadius: 18,
+                  border: '1.5px solid var(--color-border-gold)',
+                  boxShadow: '0 4px 18px rgba(0,0,0,0.02)',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div className="icon-badge-gold" style={{ width: 36, height: 36, borderRadius: '50%' }}>
+                      <Bookmark size={18} className="shiny-icon" />
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: 800, color: 'var(--color-brand)', fontSize: '1rem' }}>
+                        Surah {bm.surahEnglishName} ({bm.surahNumber}:{bm.ayahNumber})
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                        Saved {new Date(bm.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+                      </div>
+                    </div>
                   </div>
-                  <p className="arabic-text" lang="ar" style={{ fontSize: '1.1rem', margin: '0 0 8px', color: 'var(--color-text)', lineHeight: 1.6 }}>
-                    {bm.ayahText}{bm.ayahText.length >= 80 ? '…' : ''}
-                  </p>
-                  <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)' }}>
-                    Saved {new Date(bm.createdAt).toLocaleDateString()}
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <button
+                      onClick={() => copyBookmark(bm)}
+                      className="btn-ghost"
+                      style={{ padding: '6px 10px', borderRadius: 8 }}
+                      title="Copy Ayah"
+                    >
+                      <Copy size={16} />
+                    </button>
+
+                    <button
+                      onClick={() => handleRemove(bm.id)}
+                      className="btn-ghost"
+                      style={{ padding: '6px 10px', borderRadius: 8, color: '#dc2626' }}
+                      title="Remove Bookmark"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+
+                    <Link
+                      to={`/surah/${bm.surahNumber}#ayah-${bm.ayahNumber}`}
+                      className="btn-primary"
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: 8,
+                        fontSize: '0.82rem',
+                        fontWeight: 700,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        textDecoration: 'none',
+                      }}
+                    >
+                      <span>Read Ayah</span>
+                      <ExternalLink size={14} />
+                    </Link>
                   </div>
                 </div>
-                <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-                  <Link
-                    to={`/surah/${bm.surahNumber}#ayah-${bm.ayahNumber}`}
-                    aria-label={`Open ${bm.surahEnglishName} ayah ${bm.ayahNumber}`}
-                    className="btn-ghost"
-                    style={{ padding: 8 }}
-                  >
-                    <ExternalLink size={14} aria-hidden="true" />
-                  </Link>
-                  <button
-                    onClick={() => handleRemove(bm.id)}
-                    aria-label={`Remove bookmark for ${bm.surahEnglishName} ayah ${bm.ayahNumber}`}
-                    className="btn-ghost"
-                    style={{ padding: 8, color: '#c0392b' }}
-                  >
-                    <Trash2 size={14} aria-hidden="true" />
-                  </button>
-                </div>
+
+                <p
+                  className="arabic-text"
+                  lang="ar"
+                  style={{
+                    fontSize: '1.5rem',
+                    margin: 0,
+                    color: 'var(--color-text)',
+                    lineHeight: 2,
+                    direction: 'rtl',
+                    textAlign: 'right',
+                  }}
+                >
+                  {bm.ayahText}{bm.ayahText.length >= 80 ? '…' : ''}
+                </p>
               </div>
             ))}
           </div>
         </>
       )}
 
-      <p style={{ marginTop: 32, fontSize: '0.78rem', color: 'var(--color-text-muted)', borderTop: '1px solid var(--color-border)', paddingTop: 16 }}>
-        Bookmarks are stored in your browser's IndexedDB. They are not sent to any server and are only visible on this device.
-        To clear all bookmarks, visit <Link to="/settings" style={{ color: 'var(--color-brand)', textDecoration: 'none' }}>Settings</Link>.
-      </p>
+      {/* Footer Info */}
+      <div style={{ marginTop: 44, padding: '18px 24px', borderRadius: 16, background: 'var(--color-surface)', border: '1px solid var(--color-border-gold)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+        <span style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>
+          Bookmarks are securely cached in local IndexedDB. They remain safely stored on this device.
+        </span>
+        <Link to="/quran" style={{ fontSize: '0.82rem', color: 'var(--color-accent)', fontWeight: 700, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+          <span>Browse All Surahs</span>
+          <ArrowRight size={14} />
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,10 +1,14 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Repeat, Volume2, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import {
+  Play, Pause, SkipBack, SkipForward, Repeat, Volume2, Sparkles,
+  Headphones, Search, BookOpen, VolumeX,
+} from 'lucide-react';
 import { fetchSurahList, buildSurahAudioUrl } from '../api/quranApi';
 import { KNOWN_RECITERS } from '../types/quran';
 import { useSettings } from '../context/SettingsContext';
 import type { SurahMeta } from '../types/quran';
-import { LoadingSpinner, PageHeader } from '../components/ui/SharedComponents';
+import { LoadingSpinner } from '../components/ui/SharedComponents';
 
 export default function ListenPage() {
   const { settings, updateSetting } = useSettings();
@@ -17,12 +21,15 @@ export default function ListenPage() {
   const [isLooping, setIsLooping] = useState(false);
   const [autoPlayNext, setAutoPlayNext] = useState(true);
   const [audioError, setAudioError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [volume, setVolume] = useState(1);
+  const [isMuted, setIsMuted] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const playAudioForSurahRef = useRef<(surahNum: number) => void>(() => {});
 
   useEffect(() => {
-    document.title = 'Listen to the Quran — Noor Quran';
+    document.title = 'Listen to Holy Quran — Noor Quran Audio Sanctuary';
     fetchSurahList().then(setSurahs).finally(() => setLoading(false));
   }, []);
 
@@ -36,6 +43,7 @@ export default function ListenPage() {
     const audio = new Audio(audioUrl);
     audioRef.current = audio;
     audio.loop = isLooping;
+    audio.volume = isMuted ? 0 : volume;
 
     audio.ontimeupdate = () => setCurrentTime(audio.currentTime);
     audio.ondurationchange = () => setDuration(audio.duration);
@@ -59,10 +67,10 @@ export default function ListenPage() {
       setIsPlaying(true);
       setAudioError(null);
     }).catch(() => {
-      setAudioError('Could not play audio. Click the Play button directly.');
+      setAudioError('Could not auto-start audio. Tap Play to begin recitation.');
       setIsPlaying(false);
     });
-  }, [settings.reciterIdentifier, isLooping, autoPlayNext]);
+  }, [settings.reciterIdentifier, isLooping, autoPlayNext, volume, isMuted]);
 
   useEffect(() => {
     playAudioForSurahRef.current = playAudioForSurah;
@@ -104,6 +112,22 @@ export default function ListenPage() {
     }
   };
 
+  const handleVolumeChange = (v: number) => {
+    setVolume(v);
+    setIsMuted(false);
+    if (audioRef.current) audioRef.current.volume = v;
+  };
+
+  const toggleMute = () => {
+    if (isMuted) {
+      setIsMuted(false);
+      if (audioRef.current) audioRef.current.volume = volume;
+    } else {
+      setIsMuted(true);
+      if (audioRef.current) audioRef.current.volume = 0;
+    }
+  };
+
   const formatTime = (t: number) => {
     if (!isFinite(t)) return '0:00';
     const m = Math.floor(t / 60);
@@ -120,57 +144,186 @@ export default function ListenPage() {
   const selectedReciter = KNOWN_RECITERS.find(r => r.identifier === settings.reciterIdentifier) ?? KNOWN_RECITERS[0];
   const selectedSurahMeta = surahs.find(s => s.number === selectedSurah);
 
-  return (
-    <div style={{ maxWidth: 1120, margin: '0 auto', padding: '32px 20px 80px' }}>
-      <PageHeader
-        title="Listen to Quran Recitations"
-        subtitle="Continuous full-chapter recitation streamed directly via Islamic Network high-speed CDN."
-      />
+  const filteredSurahs = surahs.filter((s) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      s.number.toString().includes(q) ||
+      s.englishName.toLowerCase().includes(q) ||
+      s.englishNameTranslation.toLowerCase().includes(q) ||
+      s.name.includes(q)
+    );
+  });
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 360px', gap: 28, alignItems: 'start' }} className="listen-grid">
-        {/* Surah list */}
-        <div>
-          <h2 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: 14, color: 'var(--color-text)', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Sparkles size={18} className="shiny-icon" style={{ color: 'var(--color-accent)' }} /> Choose Surah
-          </h2>
-          {loading ? <LoadingSpinner text="Loading Surahs…" /> : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 560, overflowY: 'auto', paddingRight: 6 }}>
-              {surahs.map((s) => {
+  return (
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 20px 100px' }}>
+      {/* ─── Panoramic Luxury Header Banner ─── */}
+      <div className="quran-hero-banner" style={{ padding: '38px 32px', marginBottom: 28 }}>
+        <div className="quran-hero-overlay" />
+        <div style={{ position: 'relative', zIndex: 2, maxWidth: 680 }}>
+          <div style={{
+            fontSize: '1.45rem',
+            color: 'var(--color-gold-500)',
+            fontFamily: "'Amiri', serif",
+            fontWeight: 800,
+            marginBottom: 8,
+          }}>
+            استمع إلى القرآن الكريم
+          </div>
+
+          <h1 style={{
+            fontFamily: "'Playfair Display', Georgia, serif",
+            fontSize: 'clamp(2rem, 4vw, 3rem)',
+            fontWeight: 800,
+            color: 'var(--color-brand)',
+            lineHeight: 1.15,
+            margin: '0 0 12px',
+          }}>
+            Quran Audio Sanctuary
+          </h1>
+
+          <p style={{
+            fontSize: '1rem',
+            lineHeight: 1.6,
+            color: 'var(--color-text)',
+            opacity: 0.9,
+            marginBottom: 20,
+          }}>
+            Experience continuous high-definition full-chapter recitations streamed via Islamic Network CDN, chanted by the world's most revered Qaris.
+          </p>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '6px 14px',
+              borderRadius: 9999,
+              background: 'rgba(212, 175, 55, 0.18)',
+              border: '1.5px solid var(--color-border-gold)',
+              fontWeight: 800,
+              fontSize: '0.85rem',
+              color: 'var(--color-brand)',
+            }}>
+              <Headphones size={15} className="shiny-icon" /> 128kbps Studio Quality
+            </span>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '6px 14px',
+              borderRadius: 9999,
+              background: 'rgba(45, 106, 79, 0.16)',
+              border: '1.5px solid var(--color-primary-300)',
+              fontWeight: 800,
+              fontSize: '0.85rem',
+              color: 'var(--color-brand)',
+            }}>
+              <Sparkles size={15} className="shiny-icon" /> 4 Master Reciters
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── 2-Column Audio Studio Console ─── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 420px', gap: 28, alignItems: 'start' }} className="listen-grid">
+        {/* Left Column: Surah Playlist with Filter */}
+        <div className="card" style={{ padding: '24px', borderRadius: 20, border: '1.5px solid var(--color-border-gold)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <h2 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0, color: 'var(--color-brand)', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <BookOpen size={18} className="shiny-icon" /> Surah Playlist (114)
+            </h2>
+            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+              {filteredSurahs.length} Available
+            </span>
+          </div>
+
+          {/* Quick Search */}
+          <div style={{ position: 'relative', marginBottom: 16 }}>
+            <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search Surah by name or number…"
+              style={{
+                width: '100%',
+                padding: '10px 14px 10px 38px',
+                borderRadius: 10,
+                border: '1px solid var(--color-border)',
+                background: 'var(--color-surface)',
+                color: 'var(--color-text)',
+                fontSize: '0.88rem',
+                outline: 'none',
+              }}
+            />
+          </div>
+
+          {/* Scrollable list */}
+          {loading ? (
+            <LoadingSpinner text="Loading playlist…" />
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 580, overflowY: 'auto', paddingRight: 6 }}>
+              {filteredSurahs.map((s) => {
                 const isSelected = s.number === selectedSurah;
                 return (
                   <button
                     key={s.number}
                     onClick={() => loadNewSurah(s.number, isPlaying)}
-                    aria-label={`Select ${s.englishName}`}
                     style={{
-                      display: 'flex', alignItems: 'center', gap: 14,
-                      padding: '12px 16px', borderRadius: 12, border: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 12,
+                      padding: '12px 16px',
+                      borderRadius: 14,
+                      border: isSelected ? '1.5px solid var(--color-gold-500)' : '1px solid var(--color-border)',
                       background: isSelected ? 'var(--gradient-emerald)' : 'var(--color-surface)',
                       color: isSelected ? '#ffffff' : 'var(--color-text)',
-                      cursor: 'pointer', textAlign: 'left',
-                      boxShadow: isSelected ? '0 4px 14px rgba(27,67,50,0.3)' : 'none',
-                      borderLeft: isSelected ? '4px solid var(--color-gold-500)' : '4px solid transparent',
-                      transition: 'all 0.15s ease',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      boxShadow: isSelected ? '0 6px 18px rgba(27,67,50,0.3)' : 'none',
+                      transition: 'all 0.2s ease',
                     }}
                   >
-                    <div style={{
-                      width: 32, height: 32, borderRadius: 8,
-                      background: isSelected ? 'var(--color-gold-500)' : 'var(--color-cream-200)',
-                      color: isSelected ? '#143526' : 'var(--color-brand)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontWeight: 800, fontSize: '0.8rem', flexShrink: 0,
-                    }}>
-                      {s.number}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {s.englishName}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: 10,
+                          background: isSelected ? 'var(--color-gold-500)' : 'var(--color-cream-200)',
+                          color: isSelected ? '#143526' : 'var(--color-brand)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontWeight: 800,
+                          fontSize: '0.85rem',
+                          flexShrink: 0,
+                        }}
+                      >
+                        {isSelected && isPlaying ? (
+                          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 16 }}>
+                            <span className="eq-bar eq-bar-1" style={{ background: '#143526' }} />
+                            <span className="eq-bar eq-bar-2" style={{ background: '#143526' }} />
+                            <span className="eq-bar eq-bar-3" style={{ background: '#143526' }} />
+                          </div>
+                        ) : (
+                          s.number
+                        )}
                       </div>
-                      <div style={{ fontSize: '0.74rem', opacity: 0.75 }}>
-                        {s.numberOfAyahs} Ayahs • {s.revelationType}
+
+                      <div>
+                        <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>
+                          {s.englishName}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', opacity: isSelected ? 0.9 : 0.65 }}>
+                          {s.numberOfAyahs} Ayahs • {s.revelationType}
+                        </div>
                       </div>
                     </div>
-                    <div className="arabic-text" lang="ar" style={{ fontSize: '1.2rem', color: isSelected ? '#fef08a' : 'var(--color-brand)', fontWeight: 700, flexShrink: 0 }}>
+
+                    <div className="arabic-text" lang="ar" style={{ fontSize: '1.25rem', fontWeight: 800, color: isSelected ? '#fef08a' : 'var(--color-brand)' }}>
                       {s.name}
                     </div>
                   </button>
@@ -180,148 +333,253 @@ export default function ListenPage() {
           )}
         </div>
 
-        {/* Player & Reciter settings */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {/* Reciter selector card */}
-          <div className="card" style={{ padding: 20, border: '1.5px solid var(--color-border-gold)' }}>
-            <h3 style={{ fontSize: '0.92rem', fontWeight: 700, marginBottom: 12, color: 'var(--color-text)', display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Volume2 size={16} className="shiny-icon" style={{ color: 'var(--color-accent)' }} /> Qari (Reciter)
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {KNOWN_RECITERS.map((r) => (
-                <label
-                  key={r.identifier}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px',
-                    borderRadius: 10, cursor: 'pointer',
-                    background: settings.reciterIdentifier === r.identifier ? 'var(--color-primary-50)' : 'transparent',
-                    border: `1.5px solid ${settings.reciterIdentifier === r.identifier ? 'var(--color-gold-500)' : 'var(--color-border)'}`,
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name="reciter"
-                    value={r.identifier}
-                    checked={settings.reciterIdentifier === r.identifier}
-                    onChange={() => {
-                      updateSetting('reciterIdentifier', r.identifier);
-                      loadNewSurah(selectedSurah, isPlaying);
-                    }}
-                    style={{ accentColor: 'var(--color-brand)' }}
-                  />
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--color-text)' }}>{r.name}</div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)' }}>Murattal</div>
-                  </div>
-                </label>
-              ))}
+        {/* Right Column: Grand Luxury Audio Deck */}
+        <div
+          style={{
+            position: 'sticky',
+            top: 24,
+            background: 'linear-gradient(135deg, #092c21 0%, #175440 60%, #0d382b 100%)',
+            borderRadius: 24,
+            padding: '32px 28px',
+            color: '#ffffff',
+            border: '2px solid var(--color-border-gold)',
+            boxShadow: '0 16px 40px rgba(10, 35, 26, 0.45), 0 0 25px rgba(212, 175, 55, 0.35)',
+            textAlign: 'center',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Subtle spinning vinyl / holy medallion */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+            <div
+              className={isPlaying ? 'spinning-disc' : 'spinning-disc-paused'}
+              style={{
+                width: 140,
+                height: 140,
+                borderRadius: '50%',
+                background: 'radial-gradient(circle, #2d6a4f 0%, #143526 50%, #081c14 100%)',
+                border: '4px solid var(--color-gold-500)',
+                boxShadow: '0 0 30px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(0,0,0,0.8)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+              }}
+            >
+              <div style={{
+                width: 50,
+                height: 50,
+                borderRadius: '50%',
+                background: 'var(--color-gold-500)',
+                color: '#143526',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 10px rgba(0,0,0,0.5)',
+              }}>
+                <Headphones size={24} />
+              </div>
             </div>
           </div>
 
-          {/* Interactive Player Card */}
-          <div className="card" style={{ padding: 24, border: '2px solid var(--color-gold-500)', boxShadow: '0 8px 30px rgba(0,0,0,0.06)' }}>
-            {selectedSurahMeta && (
-              <>
-                <div style={{ textAlign: 'center', marginBottom: 20 }}>
-                  <div className="arabic-text pulse-gold" lang="ar" style={{ fontSize: '2.5rem', color: 'var(--color-brand)', fontWeight: 800, margin: '0 0 4px' }}>
-                    {selectedSurahMeta.name}
-                  </div>
-                  <div style={{ fontWeight: 800, fontSize: '1.15rem', color: 'var(--color-text)', marginBottom: 2 }}>
-                    Surah {selectedSurahMeta.englishName}
-                  </div>
-                  <div style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>
-                    Recited by {selectedReciter.name}
-                  </div>
-                </div>
+          {/* Active Surah Titles */}
+          {selectedSurahMeta && (
+            <>
+              <div className="arabic-text" lang="ar" style={{ fontSize: '2.5rem', color: '#fef08a', fontWeight: 800, margin: '0 0 4px', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+                {selectedSurahMeta.name}
+              </div>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', fontWeight: 800, marginBottom: 2 }}>
+                {selectedSurahMeta.englishName}
+              </div>
+              <div style={{ fontSize: '0.85rem', color: '#bce5cf', fontStyle: 'italic', marginBottom: 18 }}>
+                "{selectedSurahMeta.englishNameTranslation}" • {selectedSurahMeta.numberOfAyahs} Verses
+              </div>
+            </>
+          )}
 
-                {audioError && (
-                  <p style={{ fontSize: '0.82rem', color: '#c0392b', textAlign: 'center', marginBottom: 16 }}>{audioError}</p>
-                )}
+          {/* Reciter Selector Pill */}
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#fef08a', display: 'block', marginBottom: 6 }}>
+              RECITER VOICE
+            </label>
+            <select
+              value={settings.reciterIdentifier}
+              onChange={(e) => {
+                updateSetting('reciterIdentifier', e.target.value);
+                if (isPlaying) {
+                  setTimeout(() => playAudioForSurah(selectedSurah), 100);
+                }
+              }}
+              style={{
+                width: '100%',
+                padding: '8px 12px',
+                borderRadius: 10,
+                border: '1.5px solid var(--color-border-gold)',
+                background: 'rgba(0, 0, 0, 0.35)',
+                color: '#ffffff',
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                outline: 'none',
+              }}
+            >
+              {KNOWN_RECITERS.map((r) => (
+                <option key={r.identifier} value={r.identifier} style={{ background: '#143526', color: '#ffffff' }}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-                {/* Seek bar */}
-                <div style={{ marginBottom: 18 }}>
-                  <input
-                    type="range"
-                    min={0}
-                    max={duration || 100}
-                    value={currentTime}
-                    onChange={(e) => seek(Number(e.target.value))}
-                    aria-label="Seek audio position"
-                    style={{ width: '100%', accentColor: 'var(--color-gold-500)' }}
-                  />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: 'var(--color-text-muted)', marginTop: 4 }}>
-                    <span>{formatTime(currentTime)}</span>
-                    <span>{formatTime(duration)}</span>
-                  </div>
-                </div>
+          {/* Audio Error Banner */}
+          {audioError && (
+            <div style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(239, 68, 68, 0.25)', border: '1px solid #ef4444', color: '#fca5a5', fontSize: '0.78rem', marginBottom: 16 }}>
+              {audioError}
+            </div>
+          )}
 
-                {/* Main Controls with Shiny Buttons */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 18 }}>
-                  <button
-                    onClick={() => loadNewSurah(Math.max(1, selectedSurah - 1), isPlaying)}
-                    aria-label="Previous Surah"
-                    className="btn-ghost"
-                    style={{ padding: 10, borderRadius: '50%' }}
-                    disabled={selectedSurah <= 1}
-                  >
-                    <SkipBack size={20} className="shiny-icon" />
-                  </button>
+          {/* Scrubber Range Bar */}
+          <div style={{ marginBottom: 20 }}>
+            <input
+              type="range"
+              min={0}
+              max={duration || 100}
+              value={currentTime}
+              onChange={(e) => seek(parseFloat(e.target.value))}
+              style={{
+                width: '100%',
+                accentColor: 'var(--color-gold-500)',
+                cursor: 'pointer',
+              }}
+            />
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: '#bce5cf', marginTop: 4 }}>
+              <span>{formatTime(currentTime)}</span>
+              <span>{formatTime(duration)}</span>
+            </div>
+          </div>
 
-                  <button
-                    onClick={isPlaying ? pauseAudio : playAudio}
-                    aria-label={isPlaying ? 'Pause' : 'Play'}
-                    className="btn-gold"
-                    style={{
-                      width: 58, height: 58, borderRadius: '50%', padding: 0,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}
-                  >
-                    {isPlaying ? <Pause size={24} /> : <Play size={24} style={{ marginLeft: 3 }} />}
-                  </button>
+          {/* Playback Action Buttons */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 20 }}>
+            {/* Prev Surah */}
+            <button
+              onClick={() => selectedSurah > 1 && loadNewSurah(selectedSurah - 1, isPlaying)}
+              disabled={selectedSurah <= 1}
+              style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', opacity: selectedSurah <= 1 ? 0.35 : 1 }}
+              title="Previous Surah"
+            >
+              <SkipBack size={22} />
+            </button>
 
-                  <button
-                    onClick={() => loadNewSurah(Math.min(114, selectedSurah + 1), isPlaying)}
-                    aria-label="Next Surah"
-                    className="btn-ghost"
-                    style={{ padding: 10, borderRadius: '50%' }}
-                    disabled={selectedSurah >= 114}
-                  >
-                    <SkipForward size={20} className="shiny-icon" />
-                  </button>
-                </div>
+            {/* Big Main Play/Pause */}
+            <button
+              onClick={() => isPlaying ? pauseAudio() : playAudio()}
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: '50%',
+                background: 'var(--gradient-gold)',
+                color: '#143526',
+                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                boxShadow: '0 0 20px rgba(212, 175, 55, 0.6)',
+                transition: 'transform 0.15s ease',
+              }}
+              onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.92)'; }}
+              onMouseUp={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+            >
+              {isPlaying ? <Pause size={26} fill="#143526" /> : <Play size={26} fill="#143526" style={{ marginLeft: 3 }} />}
+            </button>
 
-                {/* Repeat & Auto-Advance Toggles */}
-                <div style={{ display: 'flex', justifyContent: 'center', gap: 12, borderTop: '1px solid var(--color-border)', paddingTop: 14 }}>
-                  <button
-                    onClick={toggleLoop}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 6,
-                      background: isLooping ? 'var(--color-gold-soft)' : 'transparent',
-                      border: `1px solid ${isLooping ? 'var(--color-gold-500)' : 'var(--color-border)'}`,
-                      color: isLooping ? 'var(--color-brand)' : 'var(--color-text-muted)',
-                      padding: '6px 12px', borderRadius: 8, fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
-                    }}
-                  >
-                    <Repeat size={14} className="shiny-icon" />
-                    <span>Loop {isLooping ? 'ON' : 'OFF'}</span>
-                  </button>
+            {/* Next Surah */}
+            <button
+              onClick={() => selectedSurah < 114 && loadNewSurah(selectedSurah + 1, isPlaying)}
+              disabled={selectedSurah >= 114}
+              style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', opacity: selectedSurah >= 114 ? 0.35 : 1 }}
+              title="Next Surah"
+            >
+              <SkipForward size={22} />
+            </button>
+          </div>
 
-                  <button
-                    onClick={() => setAutoPlayNext(!autoPlayNext)}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 6,
-                      background: autoPlayNext ? 'var(--color-primary-50)' : 'transparent',
-                      border: `1px solid ${autoPlayNext ? 'var(--color-brand)' : 'var(--color-border)'}`,
-                      color: autoPlayNext ? 'var(--color-brand)' : 'var(--color-text-muted)',
-                      padding: '6px 12px', borderRadius: 8, fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
-                    }}
-                  >
-                    <Sparkles size={14} className="shiny-icon" />
-                    <span>Auto-Next {autoPlayNext ? 'ON' : 'OFF'}</span>
-                  </button>
-                </div>
-              </>
-            )}
+          {/* Secondary Controls: Repeat & Auto Next */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 20 }}>
+            <button
+              onClick={toggleLoop}
+              style={{
+                background: isLooping ? 'rgba(212, 175, 55, 0.35)' : 'rgba(0,0,0,0.25)',
+                border: '1px solid rgba(212, 175, 55, 0.4)',
+                color: isLooping ? '#fef08a' : '#ffffff',
+                padding: '6px 12px',
+                borderRadius: 8,
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              <Repeat size={14} /> Loop {isLooping ? 'ON' : 'OFF'}
+            </button>
+
+            <button
+              onClick={() => setAutoPlayNext(!autoPlayNext)}
+              style={{
+                background: autoPlayNext ? 'rgba(212, 175, 55, 0.35)' : 'rgba(0,0,0,0.25)',
+                border: '1px solid rgba(212, 175, 55, 0.4)',
+                color: autoPlayNext ? '#fef08a' : '#ffffff',
+                padding: '6px 12px',
+                borderRadius: 8,
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              Auto-Next {autoPlayNext ? 'ON' : 'OFF'}
+            </button>
+          </div>
+
+          {/* Volume Control */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, paddingTop: 16, borderTop: '1px solid rgba(212, 175, 55, 0.25)' }}>
+            <button onClick={toggleMute} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}>
+              {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+            </button>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.05}
+              value={isMuted ? 0 : volume}
+              onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+              style={{ width: 120, accentColor: 'var(--color-gold-500)', cursor: 'pointer' }}
+            />
+          </div>
+
+          {/* Read this Surah direct link */}
+          <div style={{ marginTop: 20 }}>
+            <Link
+              to={`/surah/${selectedSurah}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '8px 18px',
+                borderRadius: 12,
+                background: 'rgba(255,255,255,0.1)',
+                border: '1px solid rgba(255,255,255,0.25)',
+                color: '#ffffff',
+                textDecoration: 'none',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+              }}
+            >
+              <BookOpen size={14} /> Read Surah {selectedSurah} with Translation
+            </Link>
           </div>
         </div>
       </div>
