@@ -3,8 +3,9 @@ import { PageHeader } from '../components/ui/SharedComponents';
 
 export default function SourcesPage() {
   return (
-    <div style={{ maxWidth: 860, margin: '0 auto', padding: '32px 16px' }}>
-      <PageHeader
+    <div className="quran-page-container" style={{ paddingTop: 32, paddingBottom: 64 }}>
+      <div style={{ maxWidth: 880, margin: '0 auto' }}>
+        <PageHeader
         title="Sources, Text Integrity & Methodology"
         subtitle="Full transparency regarding where our Quran text, translations, recitations, and scholarly boundaries originate."
       />
@@ -132,6 +133,7 @@ export default function SourcesPage() {
             ))}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

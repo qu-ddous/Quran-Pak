@@ -3,8 +3,9 @@ import { PageHeader } from '../components/ui/SharedComponents';
 
 export default function PrivacyPage() {
   return (
-    <div style={{ maxWidth: 860, margin: '0 auto', padding: '32px 16px' }}>
-      <PageHeader
+    <div className="quran-page-container" style={{ paddingTop: 32, paddingBottom: 64 }}>
+      <div style={{ maxWidth: 880, margin: '0 auto' }}>
+        <PageHeader
         title="Privacy Policy"
         subtitle="Noor Quran is built with privacy as a foundational principle. We believe worship and reflection are between you and Allah alone."
       />
@@ -58,6 +59,7 @@ export default function PrivacyPage() {
             You maintain 100% ownership over your data. You can delete individual bookmarks or notes at any time, or use the <strong>Reset All Local Data</strong> button in <a href="/settings" style={{ color: 'var(--color-brand)', fontWeight: 600 }}>Settings</a> to instantly purge all stored records from your browser.
           </p>
         </div>
+      </div>
       </div>
     </div>
   );

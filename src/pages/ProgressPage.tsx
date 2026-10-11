@@ -438,7 +438,7 @@ export default function ProgressPage() {
                         Surah {item.surahNumber}, Ayah {item.ayahNumber}
                       </div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                        {new Date(item.visitedAt).toLocaleDateString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+                        {new Date(item.visitedAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
                       </div>
                     </div>
                   </div>
