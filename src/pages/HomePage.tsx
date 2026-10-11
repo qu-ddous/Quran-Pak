@@ -5,9 +5,7 @@ import {
   Sparkles, Compass, Play, Pause, SkipBack, SkipForward,
   Shuffle, Repeat, Volume2, VolumeX, Heart, Clock
 } from 'lucide-react';
-import { fetchSurahList } from '../api/quranApi';
 import { getLastRead } from '../db/userDb';
-import type { SurahMeta } from '../types/quran';
 import type { ReadingHistory } from '../db/userDb';
 
 const QUICK_TAGS = [
@@ -19,13 +17,173 @@ const QUICK_TAGS = [
   { label: 'Ayatul Kursi (2:255)', link: '/search?q=2:255' },
 ];
 
-const SAMPLE_JUZ = [
-  { number: 1, name: 'Alif Lam Meem', start: 'Al-Fatihah 1', end: 'Al-Baqarah 141' },
-  { number: 2, name: 'Sayaqool', start: 'Al-Baqarah 142', end: 'Al-Baqarah 252' },
-  { number: 3, name: 'Tilkal Rusul', start: 'Al-Baqarah 253', end: 'Aal \'Imran 92' },
-  { number: 4, name: 'Lan Tanaaloo', start: 'Aal \'Imran 93', end: 'An-Nisa 23' },
-  { number: 5, name: 'Wal Muhsanat', start: 'An-Nisa 24', end: 'An-Nisa 147' },
-  { number: 6, name: 'La Yuhibbullah', start: 'An-Nisa 148', end: 'Al-Ma\'idah 81' },
+
+export const SURAH_SHOWCASE_DATA = [
+  {
+    number: 1,
+    name: 'سُورَةُ ٱلْفَاتِحَةِ',
+    englishName: 'Al-Fatihah',
+    englishNameTranslation: 'The Opening',
+    numberOfAyahs: 7,
+    revelationType: 'Meccan',
+    teaser: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ • الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
+    colorTheme: {
+      gradient: 'linear-gradient(135deg, #092c21 0%, #175440 60%, #0d382b 100%)',
+      border: '#d4af37',
+      glow: 'rgba(212, 175, 55, 0.55)',
+      accent: '#fef08a',
+      badgeBg: 'linear-gradient(135deg, #ca8a04 0%, #eab308 100%)',
+      colorName: 'Royal Emerald',
+    },
+  },
+  {
+    number: 2,
+    name: 'سُورَةُ البَقَرَةِ',
+    englishName: 'Al-Baqarah',
+    englishNameTranslation: 'The Cow',
+    numberOfAyahs: 286,
+    revelationType: 'Medinan',
+    teaser: 'الۤمۤ • ذَٰلِكَ ٱلْكِتَـٰبُ لَا رَيْبَ ۛ فِيهِ ۛ هُدًۭى لِّلْمُتَّقِينَ',
+    colorTheme: {
+      gradient: 'linear-gradient(135deg, #451a03 0%, #854d0e 55%, #713f12 100%)',
+      border: '#fde047',
+      glow: 'rgba(234, 179, 8, 0.55)',
+      accent: '#fef9c3',
+      badgeBg: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)',
+      colorName: 'Imperial Amber',
+    },
+  },
+  {
+    number: 3,
+    name: 'سُورَةُ آلِ عِمْرَانَ',
+    englishName: 'Aal \'Imran',
+    englishNameTranslation: 'Family of Imran',
+    numberOfAyahs: 200,
+    revelationType: 'Medinan',
+    teaser: 'الۤمۤ • ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ',
+    colorTheme: {
+      gradient: 'linear-gradient(135deg, #081d38 0%, #1d4ed8 55%, #1e3a8a 100%)',
+      border: '#60a5fa',
+      glow: 'rgba(59, 130, 246, 0.55)',
+      accent: '#dbeafe',
+      badgeBg: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+      colorName: 'Persian Sapphire',
+    },
+  },
+  {
+    number: 4,
+    name: 'سُورَةُ النِّسَاءِ',
+    englishName: 'An-Nisa',
+    englishNameTranslation: 'The Women',
+    numberOfAyahs: 176,
+    revelationType: 'Medinan',
+    teaser: 'يَـٰٓأَيُّهَا ٱلنَّاسُ ٱتَّقُوا۟ رَبَّكُمُ ٱلَّذِى خَلَقَكُم مِّن نَّفْسٍۢ وَٰحِدَةٍۢ',
+    colorTheme: {
+      gradient: 'linear-gradient(135deg, #4c0519 0%, #9f1239 55%, #881337 100%)',
+      border: '#fb7185',
+      glow: 'rgba(244, 63, 94, 0.55)',
+      accent: '#ffe4e6',
+      badgeBg: 'linear-gradient(135deg, #e11d48 0%, #f43f5e 100%)',
+      colorName: 'Crimson Ruby',
+    },
+  },
+  {
+    number: 5,
+    name: 'سُورَةُ المَائِدَةِ',
+    englishName: 'Al-Ma\'idah',
+    englishNameTranslation: 'The Table Spread',
+    numberOfAyahs: 120,
+    revelationType: 'Medinan',
+    teaser: 'يَـٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوٓا۟ أَوْفُوا۟ بِٱلْعُقُودِ ۚ',
+    colorTheme: {
+      gradient: 'linear-gradient(135deg, #2e0854 0%, #6b21a8 55%, #581c87 100%)',
+      border: '#c084fc',
+      glow: 'rgba(168, 85, 247, 0.55)',
+      accent: '#f3e8ff',
+      badgeBg: 'linear-gradient(135deg, #7e22ce 0%, #9333ea 100%)',
+      colorName: 'Velvet Amethyst',
+    },
+  },
+  {
+    number: 6,
+    name: 'سُورَةُ الأَنْعَامِ',
+    englishName: 'Al-An\'am',
+    englishNameTranslation: 'The Cattle',
+    numberOfAyahs: 165,
+    revelationType: 'Meccan',
+    teaser: 'ٱلْحَمْدُ لِلَّهِ ٱلَّذِى خَلَقَ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضَ وَجَعَلَ ٱلظُّلُمَـٰتِ وَٱلنُّورَ',
+    colorTheme: {
+      gradient: 'linear-gradient(135deg, #022c22 0%, #0f766e 55%, #115e59 100%)',
+      border: '#2dd4bf',
+      glow: 'rgba(20, 184, 166, 0.55)',
+      accent: '#ccfbf1',
+      badgeBg: 'linear-gradient(135deg, #0d9488 0%, #14b8a6 100%)',
+      colorName: 'Peacock Jade',
+    },
+  },
+];
+
+export const JUZ_SHOWCASE_DATA = [
+  {
+    number: 1,
+    name: 'الجزء الأول (الم)',
+    englishName: 'Juz 1 • Alif Lam Meem',
+    englishNameTranslation: 'Al-Fatihah 1 – Al-Baqarah 141',
+    numberOfAyahs: 148,
+    revelationType: 'Part 1',
+    teaser: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ • صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ',
+    colorTheme: SURAH_SHOWCASE_DATA[0].colorTheme,
+  },
+  {
+    number: 2,
+    name: 'الجزء الثاني (سَيَقُولُ)',
+    englishName: 'Juz 2 • Sayaqool',
+    englishNameTranslation: 'Al-Baqarah 142 – Al-Baqarah 252',
+    numberOfAyahs: 111,
+    revelationType: 'Part 2',
+    teaser: 'سَيَقُولُ السُّفَهَاءُ مِنَ النَّاسِ مَا وَلَّاهُمْ عَن قِبْلَتِهِمُ',
+    colorTheme: SURAH_SHOWCASE_DATA[1].colorTheme,
+  },
+  {
+    number: 3,
+    name: 'الجزء الثالث (تِلْكَ الرُّسُلُ)',
+    englishName: 'Juz 3 • Tilkal Rusul',
+    englishNameTranslation: 'Al-Baqarah 253 – Aal \'Imran 92',
+    numberOfAyahs: 126,
+    revelationType: 'Part 3',
+    teaser: 'تِلْكَ الرُّسُلُ فَضَّلْنَا بَعْضَهُمْ عَلَىٰ بَعْضٍ ۘ',
+    colorTheme: SURAH_SHOWCASE_DATA[2].colorTheme,
+  },
+  {
+    number: 4,
+    name: 'الجزء الرابع (لَن تَنَالُوا)',
+    englishName: 'Juz 4 • Lan Tanaaloo',
+    englishNameTranslation: 'Aal \'Imran 93 – An-Nisa 23',
+    numberOfAyahs: 131,
+    revelationType: 'Part 4',
+    teaser: 'لَن تَنَالُوا الْبِرَّ حَتَّىٰ تُنفِقُوا مِمَّا تُحِبُّونَ ۚ',
+    colorTheme: SURAH_SHOWCASE_DATA[3].colorTheme,
+  },
+  {
+    number: 5,
+    name: 'الجزء الخامس (وَالْمُحْصَنَاتُ)',
+    englishName: 'Juz 5 • Wal Muhsanat',
+    englishNameTranslation: 'An-Nisa 24 – An-Nisa 147',
+    numberOfAyahs: 124,
+    revelationType: 'Part 5',
+    teaser: 'وَالْمُحْصَنَاتُ مِنَ النِّسَاءِ إِلَّا مَا مَلَكَتْ أَيْمَانُكُمْ ۖ',
+    colorTheme: SURAH_SHOWCASE_DATA[4].colorTheme,
+  },
+  {
+    number: 6,
+    name: 'الجزء السادس (لَا يُحِبُّ اللَّهُ)',
+    englishName: 'Juz 6 • La Yuhibbullah',
+    englishNameTranslation: 'An-Nisa 148 – Al-Ma\'idah 81',
+    numberOfAyahs: 110,
+    revelationType: 'Part 6',
+    teaser: 'لَّا يُحِبُّ اللَّهُ الْجَهْرَ بِالسُّوءِ مِنَ الْقَوْلِ إِلَّا مَن ظُلِمَ ۚ',
+    colorTheme: SURAH_SHOWCASE_DATA[5].colorTheme,
+  },
 ];
 
 const TRANSLATION_PREVIEWS: Record<string, { name: string; bismillah: string; ayah1: string; ayah2: string }> = {
@@ -68,6 +226,20 @@ export default function HomePage() {
   const [lastRead, setLastRead] = useState<ReadingHistory | null>(null);
   const [heroSearch, setHeroSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'surah' | 'juz'>('surah');
+
+  // 3D Showcase State
+  const [showcaseIndex, setShowcaseIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [showcaseViewMode, setShowcaseViewMode] = useState<'3d' | 'grid'>('3d');
+
+  // Auto-advance 3D showcase cards every 4 seconds
+  useEffect(() => {
+    if (isPaused || showcaseViewMode !== '3d') return;
+    const interval = setInterval(() => {
+      setShowcaseIndex((prev) => (prev + 1) % 6);
+    }, 3800);
+    return () => clearInterval(interval);
+  }, [isPaused, showcaseViewMode]);
 
   // Interactive reading section state
   const [selectedTranslation, setSelectedTranslation] = useState<string>('en.sahih');
@@ -121,8 +293,6 @@ export default function HomePage() {
   const currentReciter = RECITERS.find((r) => r.id === selectedReciterId) || RECITERS[0];
   const translationData = TRANSLATION_PREVIEWS[selectedTranslation] || TRANSLATION_PREVIEWS['en.sahih'];
 
-  // 6 initial Surahs for Explore section
-  const exploreSurahs = surahs.slice(0, 6);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -433,7 +603,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ─── 3. "Explore the Quran" (Surah / Juz Switcher) ─── */}
+        {/* ─── 3. "Explore the Quran" with 3D Colorful Card Showcase ─── */}
         <section style={{ marginBottom: 74, textAlign: 'center' }}>
           <h2 className="section-title-editorial">
             Explore the Quran
@@ -442,130 +612,396 @@ export default function HomePage() {
             Browse by Surah or Juz and start your journey wherever you feel ready.
           </p>
 
-          {/* Toggle pill */}
-          <div className="explore-toggle-pill">
-            <button
-              onClick={() => setActiveTab('surah')}
-              className={`explore-toggle-btn ${activeTab === 'surah' ? 'active' : ''}`}
-            >
-              Surah
-            </button>
-            <button
-              onClick={() => setActiveTab('juz')}
-              className={`explore-toggle-btn ${activeTab === 'juz' ? 'active' : ''}`}
-            >
-              Juz
-            </button>
+          {/* Controls: Tab Switcher & View Mode */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 16, marginBottom: 24 }}>
+            {/* Surah / Juz toggle */}
+            <div className="explore-toggle-pill" style={{ margin: 0 }}>
+              <button
+                onClick={() => {
+                  setActiveTab('surah');
+                  setShowcaseIndex(0);
+                }}
+                className={`explore-toggle-btn ${activeTab === 'surah' ? 'active' : ''}`}
+              >
+                Surah
+              </button>
+              <button
+                onClick={() => {
+                  setActiveTab('juz');
+                  setShowcaseIndex(0);
+                }}
+                className={`explore-toggle-btn ${activeTab === 'juz' ? 'active' : ''}`}
+              >
+                Juz
+              </button>
+            </div>
+
+            {/* View Mode Toggle: 3D Showcase vs Grid */}
+            <div style={{
+              display: 'inline-flex',
+              background: 'rgba(212, 175, 55, 0.1)',
+              padding: '3px',
+              borderRadius: 9999,
+              border: '1px solid rgba(212, 175, 55, 0.3)',
+            }}>
+              <button
+                onClick={() => setShowcaseViewMode('3d')}
+                style={{
+                  padding: '6px 16px',
+                  borderRadius: 9999,
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: showcaseViewMode === '3d' ? 'var(--color-brand)' : 'transparent',
+                  color: showcaseViewMode === '3d' ? '#ffffff' : 'var(--color-text-muted)',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                ✨ 3D Showcase
+              </button>
+              <button
+                onClick={() => setShowcaseViewMode('grid')}
+                style={{
+                  padding: '6px 16px',
+                  borderRadius: 9999,
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: showcaseViewMode === 'grid' ? 'var(--color-brand)' : 'transparent',
+                  color: showcaseViewMode === 'grid' ? '#ffffff' : 'var(--color-text-muted)',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                ▦ 6 Cards Grid
+              </button>
+            </div>
           </div>
 
-          {/* 6 Cards Grid (2 columns) */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 16, marginBottom: 32, textAlign: 'left' }}>
-            {activeTab === 'surah' ? (
-              exploreSurahs.map((s) => (
-                <Link
-                  key={s.number}
-                  to={`/surah/${s.number}`}
-                  className="surah-clean-card"
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <div style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 12,
-                      background: 'rgba(45, 106, 79, 0.1)',
-                      border: '1px solid rgba(45, 106, 79, 0.25)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--color-brand)',
-                    }}>
-                      <BookOpen size={20} className="shiny-icon" />
-                    </div>
-                    <div>
-                      <div style={{ fontWeight: 800, fontSize: '1.02rem', color: 'var(--color-brand)', marginBottom: 2 }}>
-                        {s.englishName}
-                      </div>
-                      <div style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>
-                        {s.englishNameTranslation}
-                      </div>
-                    </div>
-                  </div>
+          {/* Current Data Set (Surah or Juz) */}
+          {(() => {
+            const currentList = activeTab === 'surah' ? SURAH_SHOWCASE_DATA : JUZ_SHOWCASE_DATA;
 
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '4px 10px',
-                    borderRadius: 9999,
-                    background: 'rgba(212, 175, 55, 0.1)',
-                    border: '1px solid rgba(212, 175, 55, 0.3)',
-                    color: 'var(--color-brand)',
-                    fontWeight: 700,
-                    fontSize: '0.84rem',
-                  }}>
-                    <span>{s.number}</span>
-                    <ChevronRight size={14} />
-                  </div>
-                </Link>
-              ))
-            ) : (
-              SAMPLE_JUZ.map((j) => (
-                <Link
-                  key={j.number}
-                  to={`/juz/${j.number}`}
-                  className="surah-clean-card"
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <div style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 12,
-                      background: 'rgba(212, 175, 55, 0.12)',
-                      border: '1px solid rgba(212, 175, 55, 0.35)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--color-accent)',
-                    }}>
-                      <Compass size={20} className="shiny-icon" />
+            return (
+              <>
+                {showcaseViewMode === '3d' ? (
+                  /* ─── 3D Showcase Stage with Animated Track & Popping Active Card ─── */
+                  <div
+                    className="showcase-stage-wrapper"
+                    onMouseEnter={() => setIsPaused(true)}
+                    onMouseLeave={() => setIsPaused(false)}
+                  >
+                    {/* Background Animated Conveyor Patti with Laser Beam */}
+                    <div className="showcase-conveyor-track">
+                      <div className="showcase-track-center-beam" />
                     </div>
-                    <div>
-                      <div style={{ fontWeight: 800, fontSize: '1.02rem', color: 'var(--color-brand)', marginBottom: 2 }}>
-                        Juz {j.number} • {j.name}
-                      </div>
-                      <div style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>
-                        {j.start} – {j.end}
-                      </div>
-                    </div>
-                  </div>
 
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '4px 10px',
-                    borderRadius: 9999,
-                    background: 'rgba(212, 175, 55, 0.1)',
-                    border: '1px solid rgba(212, 175, 55, 0.3)',
-                    color: 'var(--color-brand)',
-                    fontWeight: 700,
-                    fontSize: '0.84rem',
-                  }}>
-                    <span>{j.number}</span>
-                    <ChevronRight size={14} />
+                    {/* Left & Right Manual Navigation Buttons */}
+                    <button
+                      onClick={() => setShowcaseIndex((prev) => (prev - 1 + 6) % 6)}
+                      aria-label="Previous Showcase Card"
+                      style={{
+                        position: 'absolute',
+                        left: 12,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        zIndex: 20,
+                        width: 44,
+                        height: 44,
+                        borderRadius: '50%',
+                        background: 'rgba(15, 56, 44, 0.85)',
+                        backdropFilter: 'blur(8px)',
+                        border: '1.5px solid #d4af37',
+                        color: '#ffffff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      <ChevronRight size={22} style={{ transform: 'rotate(180deg)' }} />
+                    </button>
+
+                    <button
+                      onClick={() => setShowcaseIndex((prev) => (prev + 1) % 6)}
+                      aria-label="Next Showcase Card"
+                      style={{
+                        position: 'absolute',
+                        right: 12,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        zIndex: 20,
+                        width: 44,
+                        height: 44,
+                        borderRadius: '50%',
+                        background: 'rgba(15, 56, 44, 0.85)',
+                        backdropFilter: 'blur(8px)',
+                        border: '1.5px solid #d4af37',
+                        color: '#ffffff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      <ChevronRight size={22} />
+                    </button>
+
+                    {/* 3D Viewport with 6 Cards positioned in 3D Perspective */}
+                    <div className="showcase-carousel-viewport">
+                      {currentList.map((item, idx) => {
+                        const diff = (idx - showcaseIndex + 6) % 6;
+                        let cardClass = 'showcase-card-3d ';
+                        if (diff === 0) {
+                          cardClass += 'showcase-card-active';
+                        } else if (diff === 1) {
+                          cardClass += 'showcase-card-next';
+                        } else if (diff === 5) {
+                          cardClass += 'showcase-card-prev';
+                        } else if (diff <= 2) {
+                          cardClass += 'showcase-card-hidden-right';
+                        } else {
+                          cardClass += 'showcase-card-hidden-left';
+                        }
+
+                        const theme = item.colorTheme;
+                        const isCurrentActive = diff === 0;
+
+                        return (
+                          <div
+                            key={item.number}
+                            className={cardClass}
+                            onClick={() => {
+                              if (!isCurrentActive) {
+                                setShowcaseIndex(idx);
+                              }
+                            }}
+                            style={{
+                              background: theme.gradient,
+                              border: `2px solid ${theme.border}`,
+                              boxShadow: isCurrentActive
+                                ? `0 24px 60px rgba(0, 0, 0, 0.55), 0 0 35px ${theme.glow}`
+                                : `0 10px 30px rgba(0, 0, 0, 0.35)`,
+                            }}
+                          >
+                            {/* Card Top: Hex Badge Number & Tag Pill */}
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                              <div style={{
+                                width: 42,
+                                height: 42,
+                                borderRadius: 12,
+                                background: theme.badgeBg,
+                                color: '#13281e',
+                                fontWeight: 900,
+                                fontSize: '1.15rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                                border: '1.5px solid rgba(255,255,255,0.7)',
+                              }}>
+                                {item.number}
+                              </div>
+
+                              <div style={{
+                                padding: '4px 12px',
+                                borderRadius: 20,
+                                background: 'rgba(0, 0, 0, 0.3)',
+                                border: `1px solid ${theme.border}`,
+                                color: theme.accent,
+                                fontSize: '0.78rem',
+                                fontWeight: 700,
+                                letterSpacing: '0.04em',
+                                textTransform: 'uppercase',
+                              }}>
+                                {item.revelationType} • {item.numberOfAyahs} Ayahs
+                              </div>
+                            </div>
+
+                            {/* Arabic Calligraphy Title */}
+                            <div
+                              className="arabic-text"
+                              lang="ar"
+                              style={{
+                                fontSize: isCurrentActive ? '2.2rem' : '1.75rem',
+                                color: theme.accent,
+                                margin: '0 0 10px',
+                                fontWeight: 800,
+                                lineHeight: 1.25,
+                                textShadow: '0 2px 14px rgba(0,0,0,0.6)',
+                                transition: 'all 0.3s ease',
+                              }}
+                            >
+                              {item.name}
+                            </div>
+
+                            {/* English Name & Translation */}
+                            <div style={{ fontWeight: 800, fontSize: '1.35rem', color: '#ffffff', letterSpacing: '-0.01em', marginBottom: 4 }}>
+                              {item.englishName}
+                            </div>
+                            <div style={{ fontSize: '0.92rem', color: 'rgba(255, 255, 255, 0.85)', marginBottom: 16 }}>
+                              {item.englishNameTranslation}
+                            </div>
+
+                            {/* Opening Verse Teaser (visible in active card) */}
+                            <div style={{
+                              padding: '12px 14px',
+                              borderRadius: 14,
+                              background: 'rgba(0, 0, 0, 0.28)',
+                              border: '1px dashed rgba(255, 255, 255, 0.25)',
+                              marginBottom: 20,
+                            }}>
+                              <p className="arabic-text" lang="ar" style={{ fontSize: '1.08rem', color: theme.accent, margin: 0, lineHeight: 1.5 }}>
+                                {item.teaser}
+                              </p>
+                            </div>
+
+                            {/* Action Button */}
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <span style={{ fontSize: '0.8rem', color: theme.accent, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
+                                <Sparkles size={14} className="shiny-icon" /> {theme.colorName}
+                              </span>
+
+                              <Link
+                                to={activeTab === 'surah' ? `/surah/${item.number}` : `/juz/${item.number}`}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                  padding: '9px 20px',
+                                  borderRadius: 9999,
+                                  background: '#ffffff',
+                                  color: '#0f2f24',
+                                  fontWeight: 800,
+                                  fontSize: '0.88rem',
+                                  textDecoration: 'none',
+                                  boxShadow: '0 4px 14px rgba(0,0,0,0.25)',
+                                  transition: 'all 0.15s ease',
+                                }}
+                              >
+                                <span>{activeTab === 'surah' ? 'Read Surah' : 'Open Juz'}</span>
+                                <ArrowRight size={15} />
+                              </Link>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* 6 Dots / Pills Indicators for the active opened card */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 18 }}>
+                      {currentList.map((item, idx) => {
+                        const isCur = idx === showcaseIndex;
+                        return (
+                          <button
+                            key={item.number}
+                            onClick={() => setShowcaseIndex(idx)}
+                            aria-label={`Go to ${item.englishName}`}
+                            style={{
+                              height: 10,
+                              width: isCur ? 36 : 10,
+                              borderRadius: 9999,
+                              background: isCur ? item.colorTheme.border : 'rgba(212, 175, 55, 0.25)',
+                              border: isCur ? `1.5px solid ${item.colorTheme.border}` : 'none',
+                              boxShadow: isCur ? `0 0 10px ${item.colorTheme.glow}` : 'none',
+                              cursor: 'pointer',
+                              transition: 'all 0.3s ease',
+                              padding: 0,
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
                   </div>
-                </Link>
-              ))
-            )}
+                ) : (
+                  /* ─── All 6 Cards Grid (Vibrant & Colorful) ─── */
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 18, marginBottom: 32, textAlign: 'left' }}>
+                    {currentList.map((item) => {
+                      const theme = item.colorTheme;
+                      return (
+                        <Link
+                          key={item.number}
+                          to={activeTab === 'surah' ? `/surah/${item.number}` : `/juz/${item.number}`}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '20px 22px',
+                            borderRadius: 18,
+                            background: theme.gradient,
+                            border: `2px solid ${theme.border}`,
+                            boxShadow: `0 8px 24px rgba(0,0,0,0.2), 0 0 16px ${theme.glow}`,
+                            color: '#ffffff',
+                            textDecoration: 'none',
+                            transition: 'all 0.25s ease',
+                          }}
+                          onMouseEnter={(e) => {
+                            (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px) scale(1.02)';
+                          }}
+                          onMouseLeave={(e) => {
+                            (e.currentTarget as HTMLElement).style.transform = '';
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                            <div style={{
+                              width: 44,
+                              height: 44,
+                              borderRadius: 12,
+                              background: theme.badgeBg,
+                              color: '#13281e',
+                              fontWeight: 900,
+                              fontSize: '1.1rem',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+                              border: '1.5px solid rgba(255,255,255,0.7)',
+                            }}>
+                              {item.number}
+                            </div>
+                            <div>
+                              <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#ffffff', marginBottom: 2 }}>
+                                {item.englishName}
+                              </div>
+                              <div style={{ fontSize: '0.82rem', color: 'rgba(255, 255, 255, 0.85)' }}>
+                                {item.englishNameTranslation}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div style={{ textAlign: 'right' }}>
+                            <div className="arabic-text" lang="ar" style={{ fontSize: '1.35rem', color: theme.accent, fontWeight: 700, marginBottom: 4 }}>
+                              {item.name}
+                            </div>
+                            <div style={{ fontSize: '0.76rem', color: theme.accent, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4 }}>
+                              <span>Open</span>
+                              <ChevronRight size={14} />
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            );
+          })()}
+
+          {/* Bottom link to view all 114 Surahs or 30 Juz */}
+          <div style={{ marginTop: 24 }}>
+            <Link
+              to={activeTab === 'surah' ? '/quran' : '/juz'}
+              className="btn-outline-gold"
+            >
+              <span>View all {activeTab === 'surah' ? '114 Surahs' : '30 Juz'}</span>
+              <ArrowRight size={15} />
+            </Link>
           </div>
-
-          <Link
-            to={activeTab === 'surah' ? '/quran' : '/juz'}
-            className="btn-outline-gold"
-          >
-            <span>View all {activeTab === 'surah' ? 'Surahs' : 'Juz'}</span>
-            <ArrowRight size={15} />
-          </Link>
         </section>
 
         {/* ─── 4. "Read with understanding" ─── */}
