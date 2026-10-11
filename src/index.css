@@ -636,3 +636,262 @@ body {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ─── Editorial Home Page Sections (Matching Design Reference) ───────────── */
+.section-title-editorial {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 3.4vw, 2.75rem);
+  font-weight: 700;
+  text-align: center;
+  color: #0f382c;
+  margin: 0 0 10px;
+  letter-spacing: -0.01em;
+}
+
+.dark .section-title-editorial {
+  color: #f0fdf4;
+}
+
+.section-subtitle-editorial {
+  font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+  color: #4b675b;
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 36px;
+  line-height: 1.6;
+}
+
+.dark .section-subtitle-editorial {
+  color: #9cd5bc;
+}
+
+/* ─── Feature Journey Cards (Read, Listen, Explore) ───────────────────────── */
+.journey-card {
+  display: flex;
+  background: #ffffff;
+  border: 1.5px solid rgba(212, 175, 55, 0.3);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  color: inherit;
+}
+
+.dark .journey-card {
+  background: #14221b;
+  border-color: rgba(212, 175, 55, 0.25);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+}
+
+.journey-card:hover {
+  transform: translateY(-4px);
+  border-color: #d4af37;
+  box-shadow: 0 12px 32px rgba(27, 67, 50, 0.12), 0 0 16px rgba(212, 175, 55, 0.2);
+}
+
+.journey-card-content {
+  flex: 1;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.journey-card-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #0f382c;
+  color: #d4af37;
+  border: 1px solid #d4af37;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 10px rgba(15, 56, 44, 0.2);
+}
+
+.dark .journey-card-icon-badge {
+  background: rgba(212, 175, 55, 0.15);
+  color: #fef08a;
+  border-color: #fef08a;
+}
+
+.journey-card-image {
+  width: 140px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  border-top-right-radius: 18px;
+  border-bottom-right-radius: 18px;
+}
+
+.round-arrow-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-brand);
+  margin-top: 16px;
+  transition: all 0.2s ease;
+}
+
+.journey-card:hover .round-arrow-btn {
+  background: var(--color-brand);
+  color: #ffffff;
+  border-color: var(--color-brand);
+}
+
+/* ─── Explore Section & Surah Cards ───────────────────────────────────────── */
+.explore-toggle-pill {
+  display: inline-flex;
+  background: #ede8dc;
+  padding: 4px;
+  border-radius: 9999px;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  margin-bottom: 30px;
+}
+
+.dark .explore-toggle-pill {
+  background: #1c2b22;
+  border-color: rgba(212, 175, 55, 0.25);
+}
+
+.explore-toggle-btn {
+  padding: 8px 30px;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.explore-toggle-btn.active {
+  background: #0f382c;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(15, 56, 44, 0.3);
+}
+
+.dark .explore-toggle-btn.active {
+  background: #1b4332;
+  color: #fef08a;
+}
+
+.explore-toggle-btn:not(.active) {
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.surah-clean-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1.5px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+.dark .surah-clean-card {
+  background: #16241c;
+  border-color: rgba(212, 175, 55, 0.25);
+}
+
+.surah-clean-card:hover {
+  transform: translateY(-2px);
+  border-color: #d4af37;
+  box-shadow: 0 6px 20px rgba(27, 67, 50, 0.1), 0 0 12px rgba(212, 175, 55, 0.15);
+}
+
+.btn-outline-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 28px;
+  border-radius: 9999px;
+  border: 1.5px solid #d4af37;
+  color: var(--color-brand);
+  background: rgba(255, 255, 255, 0.8);
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.dark .btn-outline-gold {
+  background: rgba(22, 36, 28, 0.8);
+  color: #fef08a;
+}
+
+.btn-outline-gold:hover {
+  background: #0f382c;
+  color: #ffffff;
+  border-color: #0f382c;
+  box-shadow: 0 4px 14px rgba(15, 56, 44, 0.25);
+}
+
+/* ─── Habit Step Card ─────────────────────────────────────────────────────── */
+.habit-step-card {
+  flex: 1;
+  background: #ffffff;
+  border: 1.5px solid rgba(212, 175, 55, 0.3);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+  transition: all 0.2s ease;
+}
+
+.dark .habit-step-card {
+  background: #16241c;
+  border-color: rgba(212, 175, 55, 0.25);
+}
+
+.habit-step-card:hover {
+  transform: translateY(-2px);
+  border-color: #d4af37;
+}
+
+.habit-icon-pill {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: rgba(254, 240, 138, 0.25);
+  border: 1.5px solid var(--color-border-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+/* ─── Arched CTA Banner ───────────────────────────────────────────────────── */
+.arched-cta-banner {
+  border-radius: 28px;
+  padding: 48px 36px;
+  background: linear-gradient(135deg, rgba(239, 246, 242, 0.95) 0%, rgba(253, 250, 245, 0.98) 100%);
+  border: 2px solid var(--color-border-gold);
+  box-shadow: 0 12px 36px rgba(27, 67, 50, 0.08), 0 0 20px rgba(212, 175, 55, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.dark .arched-cta-banner {
+  background: linear-gradient(135deg, rgba(16, 28, 22, 0.95) 0%, rgba(22, 38, 30, 0.98) 100%);
+}
