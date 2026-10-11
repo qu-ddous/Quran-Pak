@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Search, Filter } from 'lucide-react';
 import { fetchSurahList } from '../api/quranApi';
 import type { SurahMeta } from '../types/quran';
-import { LoadingSpinner, ErrorState, PageHeader, Badge } from '../components/ui/SharedComponents';
+import { LoadingSpinner, ErrorState, PageHeader } from '../components/ui/SharedComponents';
 
 type RevelationType = 'all' | 'Meccan' | 'Medinan';
 
@@ -109,40 +109,33 @@ export default function QuranBrowserPage() {
           No Surahs found for "{query}". Try a different search.
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 14 }}>
           {filtered.map((s) => (
             <Link key={s.number} to={`/surah/${s.number}`} style={{ textDecoration: 'none' }}>
-              <div
-                className="card"
-                style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 16, transition: 'transform 0.15s, box-shadow 0.15s' }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 6px 20px rgba(0,0,0,0.1)'; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.transform = ''; (e.currentTarget as HTMLDivElement).style.boxShadow = ''; }}
-              >
-                {/* Number */}
-                <div style={{
-                  width: 44, height: 44, borderRadius: 10,
-                  background: 'linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700))',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: 'white', fontWeight: 700, fontSize: '0.9rem', flexShrink: 0,
-                }}>
+              <div className="surah-card-emerald">
+                {/* Number Badge */}
+                <div className="surah-card-number-badge">
                   {s.number}
                 </div>
 
-                {/* Names */}
-                <div style={{ flex: 1, overflow: 'hidden' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-                    <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-text)' }}>{s.englishName}</span>
-                    <Badge
-                      label={s.revelationType === 'Meccan' ? 'Makkah' : 'Madinah'}
-                      variant={s.revelationType === 'Meccan' ? 'gold' : 'green'}
-                    />
+                {/* English Info */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 800, fontSize: '1.05rem', color: '#ffffff', letterSpacing: '-0.01em', marginBottom: 2 }}>
+                    {s.englishName}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>
-                    {s.englishNameTranslation} · {s.numberOfAyahs} ayahs
+                  <div style={{ fontSize: '0.8rem', color: '#bce5cf', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                    <span>{s.numberOfAyahs} Ayahs</span>
+                    <span>•</span>
+                    <span>{s.revelationType}</span>
                   </div>
-                  <div className="arabic-text" lang="ar" style={{ fontSize: '1.1rem', color: 'var(--color-brand)', margin: 0, lineHeight: 1.2 }}>
-                    {s.name}
+                  <div style={{ fontSize: '0.74rem', color: '#8ed1ae', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    "{s.englishNameTranslation}"
                   </div>
+                </div>
+
+                {/* Glowing Golden Arabic Name */}
+                <div className="surah-card-arabic" lang="ar">
+                  {s.name}
                 </div>
               </div>
             </Link>

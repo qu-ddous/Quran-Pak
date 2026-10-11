@@ -170,22 +170,53 @@ body {
   box-shadow: 0 3px 10px rgba(212, 175, 55, 0.4);
 }
 
-/* ─── Floating Navbar with Rounded Border ─────────────────────────────────── */
+/* ─── Site Header & Floating Navigation Bar ───────────────────────────────── */
+.top-site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(253, 250, 245, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--color-border);
+  padding: 10px 20px 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.dark .top-site-header {
+  background: rgba(13, 20, 16, 0.95);
+  border-bottom-color: rgba(212, 175, 55, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
 .floating-navbar {
-  margin: 12px auto 0;
-  max-width: 1240px;
-  border-radius: 20px;
-  background: rgba(253, 250, 245, 0.88);
+  margin: 0 auto;
+  border-radius: 24px;
+  background: rgba(253, 250, 245, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1.5px solid var(--color-border-gold);
-  box-shadow: 0 8px 30px rgba(27, 67, 50, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 20px rgba(27, 67, 50, 0.08), 0 0 10px rgba(212, 175, 55, 0.15);
   transition: all 0.2s ease;
 }
 
 .dark .floating-navbar {
-  background: rgba(21, 32, 26, 0.88);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(212, 175, 55, 0.15);
+  background: rgba(21, 32, 26, 0.92);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 12px rgba(212, 175, 55, 0.2);
+}
+
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none !important;
+  }
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+}
+@media (min-width: 769px) {
+  .mobile-menu-btn {
+    display: none !important;
+  }
 }
 
 /* ─── Active Ayah Recitation Highlight ────────────────────────────────────── */
@@ -200,6 +231,58 @@ body {
 .dark .active-playing-ayah {
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.14) 0%, rgba(72, 187, 120, 0.08) 100%) !important;
   box-shadow: 0 0 22px rgba(212, 175, 55, 0.4) !important;
+}
+
+/* ─── Luxurious Emerald & Gold Surah Card (As in user reference) ─────────── */
+.surah-card-emerald {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 22px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #183e2e 0%, #22543d 60%, #153728 100%);
+  border: 1.5px solid rgba(212, 175, 55, 0.45);
+  box-shadow: 0 6px 20px rgba(10, 31, 22, 0.25), inset 4px 0 0 #d4af37;
+  color: #ffffff;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.surah-card-emerald:hover {
+  transform: translateY(-3px) scale(1.01);
+  border-color: #d4af37;
+  box-shadow: 0 10px 28px rgba(27, 67, 50, 0.35), 0 0 16px rgba(212, 175, 55, 0.45), inset 6px 0 0 #fef08a;
+}
+
+.surah-card-number-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--gradient-gold);
+  color: #143526;
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  border: 1px solid #ca8a04;
+}
+
+.surah-card-arabic {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #fef08a;
+  direction: rtl;
+  margin: 0;
+  line-height: 1.2;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.55);
+  flex-shrink: 0;
 }
 
 /* ─── Traditional Mushaf Page Layout ──────────────────────────────────────── */

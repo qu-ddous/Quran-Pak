@@ -34,44 +34,50 @@ export default function Header() {
 
   return (
     <>
-      <div style={{ position: 'sticky', top: 0, zIndex: 100, padding: '10px 16px 6px' }}>
-        <header
-          role="banner"
-          className="floating-navbar"
+      <header
+        role="banner"
+        className="top-site-header"
+      >
+        <div
           style={{
-            maxWidth: 1260,
+            maxWidth: 1320,
             margin: '0 auto',
-            padding: '0 20px',
             display: 'flex',
             alignItems: 'center',
-            height: 64,
-            gap: 20,
+            justifyContent: 'space-between',
+            gap: 16,
           }}
         >
-          {/* Logo with Shiny Emblem */}
+          {/* Logo with Shiny Emblem — Outside Navigation Bar */}
           <Link
             to="/"
             style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none', flexShrink: 0 }}
             aria-label="Noor Quran — Go to home"
           >
-            <div className="icon-badge-shiny" style={{ width: 40, height: 40, borderRadius: 12 }}>
+            <div className="icon-badge-shiny" style={{ width: 42, height: 42, borderRadius: 12 }}>
               <BookOpen size={20} className="shiny-icon" aria-hidden="true" />
             </div>
             <div style={{ lineHeight: 1.15 }}>
-              <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--color-brand)', letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', gap: 5 }}>
+              <div style={{ fontWeight: 800, fontSize: '1.08rem', color: 'var(--color-brand)', letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span>Noor Quran</span>
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-accent)', display: 'inline-block' }} />
               </div>
-              <div className="arabic-text" style={{ fontSize: '0.8rem', color: 'var(--color-accent)', fontWeight: 700, lineHeight: 1.2 }}>نور القرآن</div>
+              <div className="arabic-text" style={{ fontSize: '0.82rem', color: 'var(--color-accent)', fontWeight: 700, lineHeight: 1.2 }}>نور القرآن</div>
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation Bar — Pure Navigation Pill */}
           <nav
             role="navigation"
             aria-label="Main navigation"
-            style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, justifyContent: 'center' }}
-            className="desktop-nav"
+            className="floating-navbar desktop-nav"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              padding: '5px 8px',
+              borderRadius: 24,
+            }}
           >
             {NAV_LINKS.map(({ to, label, icon: Icon }) => (
               <NavLink
@@ -81,22 +87,23 @@ export default function Header() {
                 style={({ isActive }: { isActive: boolean }) => ({
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 7,
-                  padding: '7px 14px',
+                  gap: 6,
+                  padding: '7px 13px',
                   textDecoration: 'none',
-                  borderRadius: 10,
-                  fontSize: '0.88rem',
+                  borderRadius: 14,
+                  fontSize: '0.86rem',
                   fontWeight: isActive ? 700 : 500,
                   color: isActive ? 'var(--color-brand)' : 'var(--color-text-muted)',
-                  background: isActive ? 'var(--color-gold-soft, rgba(212, 175, 55, 0.12))' : 'transparent',
+                  background: isActive ? 'var(--color-gold-soft, rgba(212, 175, 55, 0.14))' : 'transparent',
                   border: isActive ? '1px solid rgba(212, 175, 55, 0.45)' : '1px solid transparent',
-                  boxShadow: isActive ? '0 2px 8px rgba(212, 175, 55, 0.18)' : 'none',
+                  boxShadow: isActive ? '0 2px 8px rgba(212, 175, 55, 0.2)' : 'none',
                   transition: 'all 0.15s ease',
+                  whiteSpace: 'nowrap',
                 })}
               >
                 {({ isActive }: { isActive: boolean }) => (
                   <>
-                    <Icon size={16} className={isActive ? 'shiny-icon' : undefined} style={{ color: isActive ? 'var(--color-accent)' : 'inherit' }} />
+                    <Icon size={15} className={isActive ? 'shiny-icon' : undefined} style={{ color: isActive ? 'var(--color-accent)' : 'inherit' }} />
                     <span>{label}</span>
                   </>
                 )}
@@ -104,7 +111,7 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Right side controls */}
+          {/* Right Side Controls — Outside Navigation Bar */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
             {/* Quick search shortcut */}
             <button
@@ -112,18 +119,20 @@ export default function Header() {
               aria-label="Search Quran"
               className="btn-ghost"
               style={{
-                width: 38,
-                height: 38,
+                width: 40,
+                height: 40,
                 padding: 0,
-                borderRadius: 10,
-                border: '1px solid var(--color-border)',
+                borderRadius: 12,
+                border: '1.5px solid var(--color-border-gold)',
+                background: 'rgba(212, 175, 55, 0.08)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                cursor: 'pointer',
               }}
               title="Search Quran"
             >
-              <Search size={17} className="shiny-icon" style={{ color: 'var(--color-brand)' }} />
+              <Search size={18} className="shiny-icon" style={{ color: 'var(--color-accent)' }} />
             </button>
 
             {/* Dark mode toggle with shiny styling */}
@@ -133,21 +142,22 @@ export default function Header() {
               title={settings.darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
               className="btn-ghost"
               style={{
-                width: 38,
-                height: 38,
+                width: 40,
+                height: 40,
                 padding: 0,
-                borderRadius: 10,
-                border: '1px solid var(--color-border-gold)',
+                borderRadius: 12,
+                border: '1.5px solid var(--color-border-gold)',
                 background: settings.darkMode ? 'rgba(212, 175, 55, 0.15)' : 'rgba(254, 240, 138, 0.25)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                cursor: 'pointer',
               }}
             >
               {settings.darkMode ? (
-                <Sun size={18} className="shiny-icon" style={{ color: 'var(--color-accent)' }} />
+                <Sun size={19} className="shiny-icon" style={{ color: 'var(--color-accent)' }} />
               ) : (
-                <Moon size={18} className="shiny-icon" style={{ color: 'var(--color-brand)' }} />
+                <Moon size={19} className="shiny-icon" style={{ color: 'var(--color-brand)' }} />
               )}
             </button>
 
@@ -159,10 +169,10 @@ export default function Header() {
               aria-controls="mobile-nav-drawer"
               className="btn-ghost mobile-menu-btn"
               style={{
-                width: 38,
-                height: 38,
+                width: 40,
+                height: 40,
                 padding: 0,
-                borderRadius: 10,
+                borderRadius: 12,
                 border: '1px solid var(--color-border)',
                 display: 'none',
                 alignItems: 'center',
@@ -172,8 +182,8 @@ export default function Header() {
               {mobileOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
-        </header>
-      </div>
+        </div>
+      </header>
 
       {/* Mobile Drawer */}
       <div
