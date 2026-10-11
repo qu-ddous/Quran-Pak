@@ -117,7 +117,7 @@ export default function SurahReaderPage() {
     }
 
     const targetAyah = arabic.ayahs[index];
-    const audioUrl = buildAudioUrl(targetAyah.number, settings.reciterIdentifier);
+    const audioUrl = buildAudioUrl(targetAyah.number, settings.reciterIdentifier, num, targetAyah.numberInSurah);
 
     if (audioRef.current) {
       audioRef.current.pause();

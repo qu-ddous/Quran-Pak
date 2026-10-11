@@ -1039,26 +1039,35 @@ body {
 /* ─── Quran Browser Page Hero Banner ──────────────────────────────────────── */
 .quran-hero-banner {
   position: relative;
-  width: 100%;
-  border-radius: 24px;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  border-radius: 0;
   overflow: hidden;
-  padding: 44px 32px;
+  padding: 56px max(24px, calc((100vw - 1540px) / 2));
   margin-bottom: 36px;
-  border: 2px solid var(--color-border-gold);
-  background-image: url('/hero-bg-clean.jpg');
+  border-top: 1px solid var(--color-border-gold);
+  border-bottom: 2px solid var(--color-border-gold);
   background-size: cover;
   background-position: right 30% center;
   box-shadow: 0 16px 40px rgba(27, 67, 50, 0.15), 0 0 20px rgba(212, 175, 55, 0.2);
 }
 
+.hero-bg-quran { background-image: url('/hero-bg-clean.jpg'); }
+.hero-bg-juz { background-image: url('/juz-hero-bg.jpg'); background-position: center; }
+.hero-bg-search { background-image: url('/search-hero-bg.jpg'); background-position: right 25% center; }
+.hero-bg-listen { background-image: url('/listen-hero-bg.jpg'); background-position: center; }
+.hero-bg-bookmarks { background-image: url('/bookmarks-hero-bg.jpg'); background-position: center; }
+.hero-bg-progress { background-image: url('/progress-hero-bg.jpg'); background-position: center; }
+
 .quran-hero-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(90deg, 
-    rgba(254, 252, 248, 0.96) 0%, 
-    rgba(254, 252, 248, 0.92) 42%, 
-    rgba(254, 252, 248, 0.72) 65%, 
-    rgba(254, 252, 248, 0.2) 90%, 
+    rgba(254, 252, 248, 0.97) 0%, 
+    rgba(254, 252, 248, 0.93) 44%, 
+    rgba(254, 252, 248, 0.75) 68%, 
+    rgba(254, 252, 248, 0.25) 92%, 
     transparent 100%
   );
   pointer-events: none;
@@ -1066,10 +1075,10 @@ body {
 
 .dark .quran-hero-overlay {
   background: linear-gradient(90deg, 
-    rgba(10, 18, 14, 0.97) 0%, 
-    rgba(10, 18, 14, 0.93) 42%, 
-    rgba(10, 18, 14, 0.75) 65%, 
-    rgba(10, 18, 14, 0.25) 90%, 
+    rgba(10, 18, 14, 0.98) 0%, 
+    rgba(10, 18, 14, 0.94) 44%, 
+    rgba(10, 18, 14, 0.78) 68%, 
+    rgba(10, 18, 14, 0.3) 92%, 
     transparent 100%
   );
 }

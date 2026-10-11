@@ -192,14 +192,47 @@ export async function fetchEditions(signal?: AbortSignal): Promise<Edition[]> {
   return apiFetch<Edition[]>('/edition', signal);
 }
 
+const SURAH_AUDIO_MAP: Record<string, string> = {
+  'ar.alafasy': 'https://server8.mp3quran.net/afs/',
+  'ar.abdurrahmaansudais': 'https://server11.mp3quran.net/sds/',
+  'ar.husary': 'https://server13.mp3quran.net/husr/',
+  'ar.minshawi': 'https://server10.mp3quran.net/minsh/',
+  'ar.maher': 'https://server12.mp3quran.net/maher/',
+  'ar.basit': 'https://server7.mp3quran.net/basit/',
+  'ar.ghamadi': 'https://server7.mp3quran.net/s_gmd/',
+};
+
+const VERSE_AUDIO_MAP: Record<string, string> = {
+  'ar.alafasy': 'https://everyayah.com/data/Alafasy_128kbps/',
+  'ar.abdurrahmaansudais': 'https://everyayah.com/data/Abdurrahmaan_As-Sudais_192kbps/',
+  'ar.husary': 'https://everyayah.com/data/Husary_128kbps/',
+  'ar.minshawi': 'https://everyayah.com/data/Minshawy_Murattal_128kbps/',
+  'ar.maher': 'https://everyayah.com/data/MaherAlMuaiqly128kbps/',
+  'ar.basit': 'https://everyayah.com/data/Abdul_Basit_Murattal_192kbps/',
+  'ar.ghamadi': 'https://everyayah.com/data/Ghamadi_40kbps/',
+};
+
 /** Build audio URL for a given global ayah number and reciter edition */
-export function buildAudioUrl(globalAyahNumber: number, reciterIdentifier: string): string {
-  // Al Quran Cloud CDN format:
-  // https://cdn.islamic.network/quran/audio/{bitrate}/{identifier}/{globalAyahNumber}.mp3
+export function buildAudioUrl(
+  globalAyahNumber: number,
+  reciterIdentifier: string,
+  surahNumber?: number,
+  ayahNumberInSurah?: number,
+): string {
+  if (surahNumber && ayahNumberInSurah) {
+    const s = String(surahNumber).padStart(3, '0');
+    const a = String(ayahNumberInSurah).padStart(3, '0');
+    const base = VERSE_AUDIO_MAP[reciterIdentifier];
+    if (base) {
+      return `${base}${s}${a}.mp3`;
+    }
+  }
   return `https://cdn.islamic.network/quran/audio/128/${reciterIdentifier}/${globalAyahNumber}.mp3`;
 }
 
 /** Build audio URL for an entire Surah */
 export function buildSurahAudioUrl(surahNumber: number, reciterIdentifier: string): string {
-  return `https://cdn.islamic.network/quran/audio-surah/128/${reciterIdentifier}/${surahNumber}.mp3`;
+  const base = SURAH_AUDIO_MAP[reciterIdentifier] || 'https://server8.mp3quran.net/afs/';
+  const padded = String(surahNumber).padStart(3, '0');
+  return `${base}${padded}.mp3`;
 }
