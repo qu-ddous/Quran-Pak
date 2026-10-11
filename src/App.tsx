@@ -3,6 +3,7 @@ import { SettingsProvider } from './context/SettingsContext';
 import { ToastProvider } from './context/ToastContext';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import MobileBottomNav from './components/layout/MobileBottomNav';
 
 // Pages (lazy-loaded)
 import { lazy, Suspense } from 'react';
@@ -63,6 +64,7 @@ export default function App() {
               </Suspense>
             </main>
             <Footer />
+            <MobileBottomNav />
           </div>
         </ToastProvider>
       </SettingsProvider>

@@ -1265,3 +1265,172 @@ body {
   z-index: 2;
 }
 
+/* ─── Mobile Bottom App Navigation Bar (Native Mobile Experience) ────────── */
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* Extra bottom padding on main so content never hides behind floating dock */
+  main#main-content {
+    padding-bottom: 96px !important;
+  }
+
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    height: 66px;
+    background: rgba(254, 252, 248, 0.95);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 28px;
+    border: 1.5px solid var(--color-border-gold);
+    box-shadow: 0 12px 36px rgba(15, 45, 33, 0.18), 0 0 18px rgba(212, 175, 55, 0.22);
+    align-items: center;
+    justify-content: space-around;
+    padding: 4px 6px;
+    z-index: 150;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark .mobile-bottom-nav {
+    background: rgba(12, 24, 18, 0.95);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 20px rgba(212, 175, 55, 0.25);
+    border-color: rgba(212, 175, 55, 0.45);
+  }
+
+  .mobile-nav-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    padding: 6px 4px;
+    border-radius: 20px;
+    transition: all 0.18s ease;
+    position: relative;
+    color: var(--color-text-muted);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-nav-tab:active {
+    transform: scale(0.92);
+  }
+
+  .mobile-tab-icon-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 28px;
+    transition: all 0.2s ease;
+  }
+
+  .tab-icon {
+    color: var(--color-text-muted);
+    transition: all 0.18s ease;
+  }
+
+  .mobile-nav-tab-active {
+    color: var(--color-brand);
+  }
+
+  .mobile-nav-tab-active .mobile-tab-icon-wrap {
+    background: rgba(212, 175, 55, 0.16);
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    border-radius: 14px;
+    width: 44px;
+    height: 28px;
+  }
+
+  .tab-icon-active {
+    color: var(--color-accent) !important;
+  }
+
+  .mobile-tab-indicator {
+    position: absolute;
+    bottom: -3px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 6px var(--color-accent);
+  }
+
+  .mobile-tab-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    margin-top: 2px;
+    letter-spacing: 0.01em;
+    transition: color 0.18s ease;
+  }
+
+  .mobile-nav-tab-active .mobile-tab-label {
+    font-weight: 800;
+    color: var(--color-brand);
+  }
+}
+
+/* ─── Listen Page Responsive Audio Console ─── */
+.listen-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: 28px;
+  align-items: start;
+}
+
+.listen-player-deck {
+  position: sticky;
+  top: 24px;
+  background: linear-gradient(135deg, #092c21 0%, #175440 60%, #0d382b 100%);
+  border-radius: 24px;
+  padding: 32px 28px;
+  color: #ffffff;
+  border: 2px solid var(--color-border-gold);
+  box-shadow: 0 16px 40px rgba(10, 35, 26, 0.45), 0 0 25px rgba(212, 175, 55, 0.35);
+  text-align: center;
+  overflow: hidden;
+}
+
+@media (max-width: 992px) {
+  .listen-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+
+  .listen-player-deck {
+    order: -1; /* Puts player at the top on mobile/tablets! */
+    position: relative !important;
+    top: 0 !important;
+    padding: 22px 18px !important;
+    border-radius: 20px !important;
+  }
+
+  .listen-disc-container {
+    margin-bottom: 12px !important;
+  }
+
+  .listen-disc {
+    width: 104px !important;
+    height: 104px !important;
+  }
+
+  .listen-disc-inner {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .listen-surah-arabic {
+    font-size: 1.8rem !important;
+  }
+
+  .listen-surah-english {
+    font-size: 1.25rem !important;
+  }
+}
+

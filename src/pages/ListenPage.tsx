@@ -225,7 +225,7 @@ export default function ListenPage() {
       </div>
 
       {/* ─── 2-Column Audio Studio Console ─── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 420px', gap: 28, alignItems: 'start' }} className="listen-grid">
+      <div className="listen-grid">
         {/* Left Column: Surah Playlist with Filter */}
         <div className="card" style={{ padding: '24px', borderRadius: 20, border: '1.5px solid var(--color-border-gold)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -333,24 +333,11 @@ export default function ListenPage() {
         </div>
 
         {/* Right Column: Grand Luxury Audio Deck */}
-        <div
-          style={{
-            position: 'sticky',
-            top: 24,
-            background: 'linear-gradient(135deg, #092c21 0%, #175440 60%, #0d382b 100%)',
-            borderRadius: 24,
-            padding: '32px 28px',
-            color: '#ffffff',
-            border: '2px solid var(--color-border-gold)',
-            boxShadow: '0 16px 40px rgba(10, 35, 26, 0.45), 0 0 25px rgba(212, 175, 55, 0.35)',
-            textAlign: 'center',
-            overflow: 'hidden',
-          }}
-        >
+        <div className="listen-player-deck">
           {/* Subtle spinning vinyl / holy medallion */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+          <div className="listen-disc-container" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
             <div
-              className={isPlaying ? 'spinning-disc' : 'spinning-disc-paused'}
+              className={`listen-disc ${isPlaying ? 'spinning-disc' : 'spinning-disc-paused'}`}
               style={{
                 width: 140,
                 height: 140,
@@ -364,17 +351,20 @@ export default function ListenPage() {
                 position: 'relative',
               }}
             >
-              <div style={{
-                width: 50,
-                height: 50,
-                borderRadius: '50%',
-                background: 'var(--color-gold-500)',
-                color: '#143526',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 0 10px rgba(0,0,0,0.5)',
-              }}>
+              <div
+                className="listen-disc-inner"
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: '50%',
+                  background: 'var(--color-gold-500)',
+                  color: '#143526',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 0 10px rgba(0,0,0,0.5)',
+                }}
+              >
                 <Headphones size={24} />
               </div>
             </div>
@@ -383,10 +373,10 @@ export default function ListenPage() {
           {/* Active Surah Titles */}
           {selectedSurahMeta && (
             <>
-              <div className="arabic-text" lang="ar" style={{ fontSize: '2.5rem', color: '#fef08a', fontWeight: 800, margin: '0 0 4px', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+              <div className="listen-surah-arabic arabic-text" lang="ar" style={{ fontSize: '2.5rem', color: '#fef08a', fontWeight: 800, margin: '0 0 4px', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
                 {selectedSurahMeta.name}
               </div>
-              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', fontWeight: 800, marginBottom: 2 }}>
+              <div className="listen-surah-english" style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', fontWeight: 800, marginBottom: 2 }}>
                 {selectedSurahMeta.englishName}
               </div>
               <div style={{ fontSize: '0.85rem', color: '#bce5cf', fontStyle: 'italic', marginBottom: 18 }}>
