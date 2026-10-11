@@ -46,75 +46,87 @@ export default function HomePage() {
   const featuredSurahs = surahs.filter((s) => FEATURED_SURAH_NUMBERS.includes(s.number));
 
   return (
-    <div style={{ maxWidth: 1260, margin: '0 auto', padding: '16px 20px 80px' }}>
-      {/* ─── Hero Banner with Islamic Radiance & Holy Quran Image ─── */}
+    <div>
+      {/* ─── Panoramic Full-Width Hero Section (Matching User Reference) ─── */}
       <section
-        style={{
-          borderRadius: 24,
-          padding: '40px 32px',
-          background: 'var(--gradient-emerald)',
-          color: '#ffffff',
-          position: 'relative',
-          overflow: 'hidden',
-          marginBottom: 40,
-          border: '2px solid var(--color-gold-500)',
-          boxShadow: '0 16px 40px rgba(27, 67, 50, 0.25), 0 0 20px rgba(212, 175, 55, 0.3)',
-        }}
+        className="hero-fullwidth"
+        aria-label="Noor Quran Hero Banner"
       >
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: 36,
-          alignItems: 'center',
-          position: 'relative',
-          zIndex: 2,
-        }}>
-          {/* Left Column: Calligraphy, Heading, Search & Tags */}
-          <div>
-            {/* Bismillah Calligraphy */}
+        <div className="hero-fullwidth-overlay" />
+
+        <div className="hero-content-wrapper">
+          <div className="hero-text-container">
+            {/* Arabic Bismillah Calligraphy */}
             <p
-              className="arabic-text pulse-gold"
+              className="arabic-text"
               lang="ar"
               style={{
-                fontSize: '2.8rem',
-                color: '#fef08a',
-                margin: '0 0 8px',
-                fontWeight: 800,
-                textShadow: '0 0 16px rgba(212, 175, 55, 0.6), 0 2px 4px rgba(0,0,0,0.5)',
-                lineHeight: 1.3,
-                textAlign: 'left',
+                fontSize: '1.9rem',
+                color: 'var(--color-accent)',
+                margin: '0 0 10px',
+                fontWeight: 700,
+                lineHeight: 1.2,
+                textShadow: '0 0 16px rgba(212, 175, 55, 0.4)',
               }}
               aria-label="Bismillah ir-Rahman ir-Rahim"
             >
               بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
             </p>
 
-            <h1 style={{
-              fontSize: 'clamp(2rem, 3.5vw, 2.7rem)',
-              fontWeight: 800,
-              margin: '0 0 12px',
-              color: '#ffffff',
-              letterSpacing: '-0.02em',
-              lineHeight: 1.2,
-            }}>
-              Recite, Reflect & Connect with <span style={{ color: 'var(--color-accent)' }}>Noor Quran</span>
+            {/* Editorial Headline matching reference screenshot */}
+            <h1 className="hero-headline">
+              A calm space<br />
+              to reconnect<br />
+              <span className="hero-gold-text">with the Quran</span>
             </h1>
 
-            <p style={{
-              fontSize: '1rem',
-              color: '#dcf2e6',
-              marginBottom: 24,
-              lineHeight: 1.6,
-            }}>
-              The Noble Quran in verified Uthmani Arabic script, English & Urdu translations, authentic verse recitation, and offline reading. 100% free with zero advertisements.
+            {/* Subtitle matching reference */}
+            <p className="hero-subtext">
+              Read, listen and reflect — at your own pace.
             </p>
+
+            {/* Action Buttons matching reference */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center', marginBottom: 28 }}>
+              <Link
+                to="/quran"
+                className="hero-cta-btn"
+                id="hero-start-reading-btn"
+              >
+                <BookOpen size={20} className="shiny-icon" style={{ color: 'var(--color-accent)' }} />
+                <span>Start reading</span>
+                <ArrowRight size={18} />
+              </Link>
+
+              <Link
+                to="/listen"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '13px 24px',
+                  borderRadius: 9999,
+                  background: 'rgba(255, 255, 255, 0.88)',
+                  backdropFilter: 'blur(8px)',
+                  border: '1.5px solid var(--color-border-gold)',
+                  color: 'var(--color-brand)',
+                  fontWeight: 700,
+                  fontSize: '0.96rem',
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.06)',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <Headphones size={18} className="shiny-icon" style={{ color: 'var(--color-accent)' }} />
+                <span>Listen Audio</span>
+              </Link>
+            </div>
 
             {/* Quick Search Form */}
             <form
               onSubmit={handleHeroSearch}
               style={{
-                maxWidth: 520,
-                marginBottom: 20,
+                maxWidth: 480,
+                marginBottom: 16,
                 position: 'relative',
                 display: 'flex',
                 alignItems: 'center',
@@ -127,13 +139,13 @@ export default function HomePage() {
                 placeholder="Search verse or chapter (e.g. Yaseen, 2:255)…"
                 style={{
                   width: '100%',
-                  padding: '13px 115px 13px 18px',
-                  borderRadius: 14,
-                  border: '2px solid rgba(212, 175, 55, 0.6)',
-                  background: 'rgba(255, 255, 255, 0.95)',
+                  padding: '12px 105px 12px 18px',
+                  borderRadius: 9999,
+                  border: '1.5px solid var(--color-border-gold)',
+                  background: 'rgba(255, 255, 255, 0.94)',
                   color: 'var(--color-ink-900)',
-                  fontSize: '0.92rem',
-                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
+                  fontSize: '0.9rem',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
                   outline: 'none',
                 }}
               />
@@ -142,10 +154,10 @@ export default function HomePage() {
                 className="btn-gold"
                 style={{
                   position: 'absolute',
-                  right: 5,
-                  padding: '8px 16px',
-                  fontSize: '0.85rem',
-                  borderRadius: 10,
+                  right: 4,
+                  padding: '7px 16px',
+                  fontSize: '0.84rem',
+                  borderRadius: 9999,
                 }}
               >
                 <Search size={14} /> Search
@@ -153,9 +165,9 @@ export default function HomePage() {
             </form>
 
             {/* Quick jump tags */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, alignItems: 'center' }}>
-              <span style={{ fontSize: '0.78rem', color: '#bce5cf', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
-                <Sparkles size={12} className="shiny-icon" /> Quick Jump:
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
+              <span style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <Sparkles size={12} className="shiny-icon" /> Popular:
               </span>
               {QUICK_TAGS.map((tag) => (
                 <Link
@@ -163,10 +175,10 @@ export default function HomePage() {
                   to={tag.link ?? `/surah/${tag.number}`}
                   style={{
                     fontSize: '0.76rem',
-                    color: '#fef08a',
-                    background: 'rgba(0, 0, 0, 0.25)',
-                    border: '1px solid rgba(212, 175, 55, 0.4)',
-                    padding: '4px 10px',
+                    color: 'var(--color-brand)',
+                    background: 'rgba(212, 175, 55, 0.12)',
+                    border: '1px solid rgba(212, 175, 55, 0.35)',
+                    padding: '3px 10px',
                     borderRadius: 20,
                     textDecoration: 'none',
                     fontWeight: 600,
@@ -178,48 +190,11 @@ export default function HomePage() {
               ))}
             </div>
           </div>
-
-          {/* Right Column: High Definition Holy Quran Illustration */}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ position: 'relative', width: '100%', maxWidth: 460 }}>
-              <img
-                src="/quran-hero.jpg"
-                alt="Holy Quran on carved wooden rehal with glowing divine golden noor light"
-                style={{
-                  width: '100%',
-                  height: 'auto',
-                  borderRadius: 20,
-                  border: '2px solid var(--color-gold-500)',
-                  boxShadow: '0 16px 40px rgba(0, 0, 0, 0.45), 0 0 25px rgba(212, 175, 55, 0.45)',
-                  display: 'block',
-                  objectFit: 'cover',
-                }}
-              />
-              {/* Floating emblem badge */}
-              <div style={{
-                position: 'absolute',
-                bottom: 12,
-                left: 14,
-                background: 'rgba(20, 53, 38, 0.85)',
-                backdropFilter: 'blur(8px)',
-                border: '1px solid var(--color-gold-500)',
-                color: '#fef08a',
-                padding: '6px 12px',
-                borderRadius: 12,
-                fontSize: '0.78rem',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-              }}>
-                <Sparkles size={13} className="shiny-icon" />
-                <span>Holy Quran • Al-Mushaf Ash-Shareef</span>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
+
+      {/* ─── Main Content Container (Bounded width for comfortable reading) ─── */}
+      <div style={{ maxWidth: 1260, margin: '0 auto', padding: '36px 20px 80px' }}>
 
       {/* ─── Continue Reading Banner (if user has history) ─── */}
       {lastRead && (
@@ -401,6 +376,7 @@ export default function HomePage() {
           </div>
         )}
       </section>
+    </div>
     </div>
   );
 }
