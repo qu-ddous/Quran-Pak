@@ -80,9 +80,9 @@ export default function SearchPage() {
   const translationInfo = AVAILABLE_TRANSLATIONS.find(t => t.identifier === edition);
 
   return (
-    <div style={{ maxWidth: 960, margin: '0 auto', padding: '24px 20px 100px' }}>
+    <div style={{ maxWidth: 1540, width: '100%', margin: '0 auto', padding: '0 24px 100px' }}>
       {/* ─── Panoramic Luxury Header Banner ─── */}
-      <div className="quran-hero-banner" style={{ padding: '40px 32px' }}>
+      <div className="quran-hero-banner hero-bg-search">
         <div className="quran-hero-overlay" />
         <div style={{ position: 'relative', zIndex: 2, maxWidth: 660 }}>
           <div style={{

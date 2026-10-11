@@ -40,9 +40,9 @@ export default function JuzBrowserPage() {
   });
 
   return (
-    <div style={{ maxWidth: 1260, margin: '0 auto', padding: '24px 20px 100px' }}>
+    <div style={{ maxWidth: 1540, width: '100%', margin: '0 auto', padding: '0 24px 100px' }}>
       {/* ─── Panoramic Luxury Hero Banner ─── */}
-      <div className="quran-hero-banner">
+      <div className="quran-hero-banner hero-bg-juz">
         <div className="quran-hero-overlay" />
         <div style={{ position: 'relative', zIndex: 2, maxWidth: 680 }}>
           {/* Ornate Bismillah calligraphic badge */}

@@ -44,9 +44,9 @@ export default function BookmarksPage() {
   if (loading) return <LoadingSpinner text="Loading your bookmarks…" />;
 
   return (
-    <div style={{ maxWidth: 960, margin: '0 auto', padding: '24px 20px 100px' }}>
+    <div style={{ maxWidth: 1540, width: '100%', margin: '0 auto', padding: '0 24px 100px' }}>
       {/* ─── Panoramic Luxury Header Banner ─── */}
-      <div className="quran-hero-banner" style={{ padding: '38px 32px', marginBottom: 28 }}>
+      <div className="quran-hero-banner hero-bg-bookmarks">
         <div className="quran-hero-overlay" />
         <div style={{ position: 'relative', zIndex: 2, maxWidth: 660 }}>
           <div style={{

@@ -214,7 +214,7 @@ export default function SurahReaderPage() {
   const currentPlayingIndex = arabic.ayahs.findIndex(a => a.numberInSurah === playingAyah);
 
   return (
-    <div style={{ maxWidth: 940, margin: '0 auto', padding: '24px 20px 140px' }}>
+    <div style={{ maxWidth: 1360, width: '100%', margin: '0 auto', padding: '24px 24px 140px' }}>
       {/* Top Header Navigation Strip */}
       <div style={{
         display: 'flex',
