@@ -1,12 +1,10 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
-  ChevronLeft, ChevronRight, Bookmark, BookmarkCheck, Copy, Play, Flag,
-  Settings2, Volume2,
+  ChevronLeft, ChevronRight, Bookmark, BookmarkCheck, Copy, Play, Pause,
+  Square, Settings2, BookOpen, Layers, Volume2, Repeat,
 } from 'lucide-react';
-import { fetchSurahWithTranslation } from '../api/quranApi';
-import { buildAudioUrl } from '../api/quranApi';
-import { AVAILABLE_TRANSLATIONS } from '../api/quranApi';
+import { fetchSurahWithTranslation, buildAudioUrl, AVAILABLE_TRANSLATIONS } from '../api/quranApi';
 import { addBookmark, removeBookmark, recordVisit } from '../db/userDb';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
@@ -14,7 +12,35 @@ import type { Ayah, Surah } from '../types/quran';
 import { LoadingSpinner, ErrorState, Bismillah, Badge } from '../components/ui/SharedComponents';
 import type { Bookmark as BookmarkType } from '../db/userDb';
 
-const FONT_SIZE_MAP = { sm: '1.4rem', md: '1.75rem', lg: '2.1rem', xl: '2.5rem' };
+const FONT_SIZE_MAP = { sm: '1.45rem', md: '1.8rem', lg: '2.15rem', xl: '2.6rem' };
+
+/**
+ * Remove duplicate leading Bismillah from Ayah 1.
+ * Surah 1: Bismillah IS Ayah 1 (leave intact, don't show separate banner).
+ * Surah 9: No Bismillah at all (scholarly rule).
+ * Surah 2-114: API attaches Bismillah to Ayah 1 text, but we display the ornate header banner,
+ * so we strip it from Ayah 1 body to avoid duplicate display.
+ */
+function stripLeadingBismillah(text: string, surahNumber: number, ayahNumberInSurah: number): string {
+  if (surahNumber === 1 || surahNumber === 9 || ayahNumberInSurah !== 1) {
+    return text;
+  }
+  const knownPrefixes = [
+    'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+    'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+    'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ',
+    'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ',
+    'بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ',
+    'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ',
+  ];
+  for (const prefix of knownPrefixes) {
+    if (text.startsWith(prefix)) {
+      return text.slice(prefix.length).trim();
+    }
+  }
+  // Fallback regex for slight diacritic differences
+  return text.replace(/^ب[\u064B-\u065F\u0670]*س[\u064B-\u065F\u0670]*م[\u064B-\u065F\u0670]*\s+[\u0600-\u06FF\s]+?الر[\u064B-\u065F\u0670]*ح[\u064B-\u065F\u0670]*ي[\u064B-\u065F\u0670]*م[\u064B-\u065F\u0670]*\s*/, '').trim();
+}
 
 export default function SurahReaderPage() {
   const { surahNumber } = useParams<{ surahNumber: string }>();
@@ -31,10 +57,22 @@ export default function SurahReaderPage() {
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
   const [showSettings, setShowSettings] = useState(false);
 
-  // Audio state
+  // View Mode: 'cards' (Verse by verse with translation) or 'mushaf' (Traditional Continuous Holy Book Page)
+  const [viewMode, setViewMode] = useState<'cards' | 'mushaf'>('cards');
+
+  // Audio Playback & Auto-Play Next
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playingAyah, setPlayingAyah] = useState<number | null>(null);
   const [audioLoading, setAudioLoading] = useState(false);
+  const [autoPlay, setAutoPlay] = useState(true);
+  const autoPlayRef = useRef(true);
+  const playAyahByIndexRef = useRef<(index: number) => Promise<void>>(async () => {});
+
+  useEffect(() => {
+    autoPlayRef.current = autoPlay;
+  }, [autoPlay]);
+
+  const [activeModalAyah, setActiveModalAyah] = useState<Ayah | null>(null);
 
   const load = useCallback(async () => {
     if (isNaN(num) || num < 1 || num > 114) {
@@ -58,43 +96,86 @@ export default function SurahReaderPage() {
 
   useEffect(() => {
     load();
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
   }, [load]);
 
   useEffect(() => {
-    if (arabic) document.title = `${arabic.englishName} — Noor Quran`;
+    if (arabic) document.title = `${arabic.englishName} (${arabic.name}) — Noor Quran`;
   }, [arabic]);
 
-  // Play ayah audio
-  const playAyah = async (ayah: Ayah) => {
-    const audioUrl = buildAudioUrl(ayah.number, settings.reciterIdentifier);
+  // Play Ayah audio with Auto-Play forward chain
+  const playAyahByIndex = useCallback(async (index: number) => {
+    if (!arabic || index < 0 || index >= arabic.ayahs.length) {
+      setPlayingAyah(null);
+      return;
+    }
+
+    const targetAyah = arabic.ayahs[index];
+    const audioUrl = buildAudioUrl(targetAyah.number, settings.reciterIdentifier);
+
     if (audioRef.current) {
       audioRef.current.pause();
     }
+
     const audio = new Audio(audioUrl);
     audioRef.current = audio;
-    setPlayingAyah(ayah.numberInSurah);
+    setPlayingAyah(targetAyah.numberInSurah);
     setAudioLoading(true);
+
     audio.oncanplay = () => setAudioLoading(false);
-    audio.onended = () => setPlayingAyah(null);
-    audio.onerror = () => {
-      showToast('Audio unavailable for this ayah. Please check your internet connection.', 'error');
-      setPlayingAyah(null);
-      setAudioLoading(false);
+
+    audio.onended = () => {
+      if (autoPlayRef.current && index + 1 < arabic.ayahs.length) {
+        // Auto play next verse
+        playAyahByIndexRef.current(index + 1);
+        const nextAyahNumber = arabic.ayahs[index + 1].numberInSurah;
+        const el = document.getElementById(`ayah-${nextAyahNumber}`);
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        setPlayingAyah(null);
+        if (index + 1 >= arabic.ayahs.length) {
+          showToast(`Completed recitation of Surah ${arabic.englishName}`, 'success');
+        }
+      }
     };
+
+    audio.onerror = () => {
+      showToast('Audio temporarily unavailable. Continuing next verse…', 'error');
+      setAudioLoading(false);
+      if (autoPlayRef.current && index + 1 < arabic.ayahs.length) {
+        setTimeout(() => playAyahByIndexRef.current(index + 1), 1000);
+      } else {
+        setPlayingAyah(null);
+      }
+    };
+
     try {
       await audio.play();
+      const el = document.getElementById(`ayah-${targetAyah.numberInSurah}`);
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } catch {
-      showToast('Could not play audio. This may require user interaction first.', 'error');
+      showToast('Click play again to start audio playback.', 'info');
       setPlayingAyah(null);
+      setAudioLoading(false);
     }
-  };
+  }, [arabic, settings.reciterIdentifier, showToast]);
+
+  useEffect(() => {
+    playAyahByIndexRef.current = playAyahByIndex;
+  }, [playAyahByIndex]);
 
   const stopAudio = () => {
-    audioRef.current?.pause();
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
     setPlayingAyah(null);
   };
 
-  // Bookmark helpers
   const toggleBookmark = async (ayah: Ayah) => {
     const id = `${num}:${ayah.numberInSurah}`;
     const already = bookmarkedIds.has(id);
@@ -111,104 +192,216 @@ export default function SurahReaderPage() {
       };
       await addBookmark(bm);
       setBookmarkedIds((prev) => new Set(prev).add(id));
-      showToast('Bookmark saved', 'success');
+      showToast('Ayah bookmarked', 'success');
     }
   };
 
-  // Copy ayah reference
-  const copyReference = (ayah: Ayah) => {
-    const ref = `${arabic?.englishName} (${num}:${ayah.numberInSurah}) — ${ayah.text.slice(0, 60)}…`;
-    navigator.clipboard.writeText(ref).then(() => showToast('Reference copied to clipboard', 'success'));
-  };
-
-  // Report
-  const reportAyah = (ayah: Ayah) => {
-    const subject = encodeURIComponent(`Content issue — Surah ${num}, Ayah ${ayah.numberInSurah}`);
-    const body = encodeURIComponent(`Surah: ${num} (${arabic?.englishName})\nAyah: ${ayah.numberInSurah}\nEdition: ${settings.translationEdition}\n\nIssue description:\n`);
-    window.open(`mailto:feedback@noorquran.app?subject=${subject}&body=${body}`, '_blank');
+  const copyReference = (ayah: Ayah, cleanedText: string) => {
+    const translationAyah = translation?.ayahs[ayah.numberInSurah - 1];
+    const textToCopy = `${arabic?.englishName} [${num}:${ayah.numberInSurah}]\n${cleanedText}\n\nTranslation: ${translationAyah?.text ?? ''}\n(Noor Quran — noorquran.app)`;
+    navigator.clipboard.writeText(textToCopy).then(() => showToast('Ayah and translation copied', 'success'));
   };
 
   if (loading) return <LoadingSpinner text={`Loading Surah ${num}…`} />;
   if (error) return <ErrorState message={error} onRetry={load} />;
   if (!arabic) return null;
 
-  const showBismillah = num !== 1 && num !== 9;
+  // Header Bismillah rule:
+  // Surah 1: Bismillah is verse 1 (no extra banner)
+  // Surah 9: No Bismillah at all
+  // All others: Display ornamental Bismillah banner
+  const showBismillahBanner = num !== 1 && num !== 9;
+
+  const currentPlayingIndex = arabic.ayahs.findIndex(a => a.numberInSurah === playingAyah);
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px 80px' }}>
-      {/* Navigation */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
-        <Link to="/quran" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 4 }}>
-          <ChevronLeft size={14} aria-hidden="true" /> All Surahs
-        </Link>
-        <span style={{ color: 'var(--color-border)' }}>·</span>
-        {num > 1 && (
-          <button onClick={() => navigate(`/surah/${num - 1}`)} className="btn-ghost" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>
-            <ChevronLeft size={14} aria-hidden="true" /> Prev
+    <div style={{ maxWidth: 880, margin: '0 auto', padding: '24px 20px 120px' }}>
+      {/* Top Navigation & Controls Bar */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: 12,
+        marginBottom: 24,
+        padding: '12px 18px',
+        borderRadius: 14,
+        background: 'var(--color-surface)',
+        border: '1px solid var(--color-border-gold)',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.03)',
+      }}>
+        {/* Prev / Next Surah */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button
+            onClick={() => num > 1 && navigate(`/surah/${num - 1}`)}
+            disabled={num <= 1}
+            aria-label="Previous Surah"
+            className="btn-secondary"
+            style={{ padding: '6px 12px', opacity: num <= 1 ? 0.4 : 1 }}
+          >
+            <ChevronLeft size={16} className="shiny-icon" />
+            <span className="hidden sm:inline">Previous</span>
           </button>
-        )}
-        {num < 114 && (
-          <button onClick={() => navigate(`/surah/${num + 1}`)} className="btn-ghost" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>
-            Next <ChevronRight size={14} aria-hidden="true" />
+
+          <Link to="/quran" className="btn-ghost" style={{ padding: '6px 10px', fontSize: '0.85rem' }}>
+            <Layers size={15} className="shiny-icon" /> All Surahs
+          </Link>
+
+          <button
+            onClick={() => num < 114 && navigate(`/surah/${num + 1}`)}
+            disabled={num >= 114}
+            aria-label="Next Surah"
+            className="btn-secondary"
+            style={{ padding: '6px 12px', opacity: num >= 114 ? 0.4 : 1 }}
+          >
+            <span className="hidden sm:inline">Next</span>
+            <ChevronRight size={16} className="shiny-icon" />
           </button>
-        )}
-        <div style={{ marginLeft: 'auto' }}>
-          <button onClick={() => setShowSettings(!showSettings)} className="btn-ghost" aria-label="Reading settings" style={{ padding: '6px 10px' }}>
-            <Settings2 size={16} aria-hidden="true" />
+        </div>
+
+        {/* View mode switcher & Settings */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {/* View mode: Cards vs Mushaf */}
+          <div style={{ display: 'flex', background: 'var(--color-cream-100)', padding: 3, borderRadius: 10, border: '1px solid var(--color-border)' }}>
+            <button
+              onClick={() => setViewMode('cards')}
+              style={{
+                padding: '5px 10px',
+                borderRadius: 8,
+                border: 'none',
+                background: viewMode === 'cards' ? 'var(--color-brand)' : 'transparent',
+                color: viewMode === 'cards' ? '#fff' : 'var(--color-text-muted)',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 5,
+              }}
+            >
+              <Layers size={14} /> Cards
+            </button>
+            <button
+              onClick={() => setViewMode('mushaf')}
+              style={{
+                padding: '5px 10px',
+                borderRadius: 8,
+                border: 'none',
+                background: viewMode === 'mushaf' ? 'var(--color-brand)' : 'transparent',
+                color: viewMode === 'mushaf' ? '#fff' : 'var(--color-text-muted)',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 5,
+              }}
+            >
+              <BookOpen size={14} /> Mushaf Page
+            </button>
+          </div>
+
+          {/* Continuous Auto-Play toggle button */}
+          <button
+            onClick={() => {
+              if (playingAyah !== null) {
+                stopAudio();
+              } else {
+                playAyahByIndex(0);
+              }
+            }}
+            className={playingAyah !== null ? 'btn-gold' : 'btn-primary'}
+            style={{ padding: '7px 14px', fontSize: '0.85rem' }}
+          >
+            {playingAyah !== null ? (
+              <>
+                <Square size={14} className="shiny-icon" />
+                <span>Stop Recitation</span>
+              </>
+            ) : (
+              <>
+                <Play size={14} className="shiny-icon" />
+                <span>Auto-Play Surah</span>
+              </>
+            )}
+          </button>
+
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            aria-label="Reading Settings"
+            className="btn-ghost"
+            style={{ width: 36, height: 36, padding: 0, borderRadius: 8, border: '1px solid var(--color-border)' }}
+            title="Reading Settings"
+          >
+            <Settings2 size={17} className="shiny-icon" />
           </button>
         </div>
       </div>
 
-      {/* Reader Settings Panel */}
+      {/* Reader Settings Drawer/Panel */}
       {showSettings && (
-        <div className="card" style={{ padding: '20px', marginBottom: 24 }}>
-          <h3 style={{ margin: '0 0 16px', fontSize: '0.95rem', fontWeight: 700 }}>Reading Settings</h3>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
-            {/* Font size */}
+        <div className="card" style={{ padding: 20, marginBottom: 24, border: '1.5px solid var(--color-border-gold)', background: 'var(--color-surface)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--color-brand)', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Settings2 size={18} className="shiny-icon" /> Reading & Display Preferences
+            </div>
+            <button onClick={() => setShowSettings(false)} className="btn-ghost" style={{ padding: 4, fontSize: '0.8rem' }}>Close</button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16 }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: 6 }}>Arabic Font Size</label>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-muted)', display: 'block', marginBottom: 6 }}>
+                Arabic Font Size
+              </label>
               <div style={{ display: 'flex', gap: 6 }}>
-                {(['sm', 'md', 'lg', 'xl'] as const).map((sz) => (
+                {(['sm', 'md', 'lg', 'xl'] as const).map((s) => (
                   <button
-                    key={sz}
-                    onClick={() => updateSetting('arabicFontSize', sz)}
-                    aria-label={`Font size ${sz}`}
+                    key={s}
+                    onClick={() => updateSetting('arabicFontSize', s)}
                     style={{
-                      padding: '6px 12px', borderRadius: 6, border: '1.5px solid',
-                      borderColor: settings.arabicFontSize === sz ? 'var(--color-brand)' : 'var(--color-border)',
-                      background: settings.arabicFontSize === sz ? 'var(--color-primary-50)' : 'var(--color-surface)',
-                      color: settings.arabicFontSize === sz ? 'var(--color-brand)' : 'var(--color-text-muted)',
-                      fontWeight: 600, cursor: 'pointer', fontSize: '0.8rem', fontFamily: 'inherit',
+                      flex: 1,
+                      padding: '6px',
+                      borderRadius: 6,
+                      border: `1.5px solid ${settings.arabicFontSize === s ? 'var(--color-brand)' : 'var(--color-border)'}`,
+                      background: settings.arabicFontSize === s ? 'var(--color-primary-50)' : 'transparent',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      fontSize: '0.85rem',
+                      color: settings.arabicFontSize === s ? 'var(--color-brand)' : 'var(--color-text)',
                     }}
                   >
-                    {sz.toUpperCase()}
+                    {s.toUpperCase()}
                   </button>
                 ))}
               </div>
             </div>
-            {/* Reading mode */}
+
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: 6 }}>Reading Mode</label>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-muted)', display: 'block', marginBottom: 6 }}>
+                Content Display
+              </label>
               <select
                 value={settings.readingMode}
-                onChange={(e) => updateSetting('readingMode', e.target.value as 'both' | 'arabic-only' | 'translation-only')}
-                style={{ padding: '6px 12px', border: '1.5px solid var(--color-border)', borderRadius: 6, background: 'var(--color-surface)', color: 'var(--color-text)', fontFamily: 'inherit', fontSize: '0.875rem' }}
+                onChange={(e) => updateSetting('readingMode', e.target.value as any)}
+                style={{ width: '100%', padding: '7px 10px', borderRadius: 8, border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', fontSize: '0.85rem' }}
               >
-                <option value="both">Arabic + Translation</option>
+                <option value="both">Arabic & Translation</option>
                 <option value="arabic-only">Arabic Only</option>
                 <option value="translation-only">Translation Only</option>
               </select>
             </div>
-            {/* Translation */}
+
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: 6 }}>Translation</label>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-muted)', display: 'block', marginBottom: 6 }}>
+                Translation Edition
+              </label>
               <select
                 value={settings.translationEdition}
                 onChange={(e) => updateSetting('translationEdition', e.target.value)}
-                style={{ padding: '6px 12px', border: '1.5px solid var(--color-border)', borderRadius: 6, background: 'var(--color-surface)', color: 'var(--color-text)', fontFamily: 'inherit', fontSize: '0.875rem' }}
+                style={{ width: '100%', padding: '7px 10px', borderRadius: 8, border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', fontSize: '0.85rem' }}
               >
                 {AVAILABLE_TRANSLATIONS.map((t) => (
-                  <option key={t.identifier} value={t.identifier}>{t.englishName}</option>
+                  <option key={t.identifier} value={t.identifier}>{t.name} ({t.language})</option>
                 ))}
               </select>
             </div>
@@ -216,144 +409,372 @@ export default function SurahReaderPage() {
         </div>
       )}
 
-      {/* Surah Header */}
-      <div style={{ textAlign: 'center', marginBottom: 32 }}>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 12 }}>
-          <Badge label={`Surah ${arabic.number}`} variant="default" />
-          <Badge label={arabic.revelationType === 'Meccan' ? 'Makkah' : 'Madinah'} variant={arabic.revelationType === 'Meccan' ? 'gold' : 'green'} />
-          <Badge label={`${arabic.numberOfAyahs} Ayahs`} variant="muted" />
+      {/* Ornate Surah Cartouche Header (Proper Holy Book Frame) */}
+      <div className="mushaf-surah-cartouche">
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginBottom: 12 }}>
+          <Badge label={`Surah ${arabic.number}`} variant="gold" />
+          <Badge label={arabic.revelationType === 'Meccan' ? 'Makkah' : 'Madinah'} variant="green" />
+          <Badge label={`${arabic.numberOfAyahs} Ayahs`} variant="gold" />
         </div>
-        <h1 className="arabic-text" lang="ar" style={{ fontSize: '3rem', color: 'var(--color-brand)', marginBottom: 4, fontWeight: 700 }}>
+        <h1
+          className="arabic-text"
+          lang="ar"
+          style={{
+            fontSize: '3.4rem',
+            color: '#fef08a',
+            margin: '0 0 4px',
+            fontWeight: 800,
+            textShadow: '0 2px 10px rgba(0,0,0,0.4)',
+            lineHeight: 1.4,
+          }}
+        >
           {arabic.name}
         </h1>
-        <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-text)', marginBottom: 4 }}>{arabic.englishName}</div>
-        <div style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)' }}>{arabic.englishNameTranslation}</div>
+        <div style={{ fontSize: '1.6rem', fontWeight: 700, color: '#ffffff', letterSpacing: '0.02em', marginBottom: 4 }}>
+          {arabic.englishName}
+        </div>
+        <div style={{ fontSize: '1rem', color: '#bce5cf', fontStyle: 'italic' }}>
+          "{arabic.englishNameTranslation}"
+        </div>
       </div>
 
-      {showBismillah && <Bismillah />}
+      {/* Bismillah Banner (Only displayed when appropriate, and not duplicated) */}
+      {showBismillahBanner && <Bismillah />}
 
-      {/* Ayahs */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-        {arabic.ayahs.map((ayah) => {
-          const translationAyah = translation?.ayahs[ayah.numberInSurah - 1];
-          const bmId = `${num}:${ayah.numberInSurah}`;
-          const isPlaying = playingAyah === ayah.numberInSurah;
-          const isBm = bookmarkedIds.has(bmId);
-
-          return (
-            <div
-              key={ayah.number}
-              id={`ayah-${ayah.numberInSurah}`}
-              className="card"
-              style={{ padding: '24px', position: 'relative' }}
-            >
-              {/* Ayah number badge */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
-                <div style={{
-                  width: 36, height: 36, borderRadius: '50%', background: 'var(--color-primary-100)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontWeight: 700, fontSize: '0.82rem', color: 'var(--color-brand)',
-                }} aria-label={`Ayah ${ayah.numberInSurah}`}>
-                  {ayah.numberInSurah}
-                </div>
-              </div>
-
-              {/* Arabic text */}
-              {settings.readingMode !== 'translation-only' && (
-                <p
-                  className="arabic-text"
-                  lang="ar"
+      {/* VIEW 1: TRADITIONAL MUSHAF PAGE VIEW */}
+      {viewMode === 'mushaf' && (
+        <div className="mushaf-frame">
+          <div style={{ textAlign: 'center', marginBottom: 18, color: 'var(--color-accent)', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.05em' }}>
+            ✦ MUSHAF CONTINUOUS RECITATION ✦
+          </div>
+          <div
+            className={`arabic-text font-arabic-${settings.arabicFontSize}`}
+            style={{
+              textAlign: 'justify',
+              textJustify: 'inter-word',
+              direction: 'rtl',
+              color: 'var(--color-text)',
+              lineHeight: 2.5,
+              fontSize: FONT_SIZE_MAP[settings.arabicFontSize],
+            }}
+          >
+            {arabic.ayahs.map((ayah, idx) => {
+              const cleanedText = stripLeadingBismillah(ayah.text, num, ayah.numberInSurah);
+              const isPlaying = playingAyah === ayah.numberInSurah;
+              return (
+                <span
+                  key={ayah.number}
+                  id={`ayah-${ayah.numberInSurah}`}
+                  onClick={() => setActiveModalAyah(ayah)}
                   style={{
-                    fontSize: FONT_SIZE_MAP[settings.arabicFontSize],
-                    color: 'var(--color-text)',
-                    margin: '0 0 20px',
-                    padding: '8px 0',
-                    borderBottom: settings.readingMode === 'both' ? '1px solid var(--color-border)' : 'none',
+                    cursor: 'pointer',
+                    padding: '2px 4px',
+                    borderRadius: 6,
+                    backgroundColor: isPlaying ? 'rgba(212, 175, 55, 0.25)' : 'transparent',
+                    boxShadow: isPlaying ? '0 0 10px rgba(212, 175, 55, 0.5)' : 'none',
+                    transition: 'background 0.2s ease',
                   }}
+                  title={`Ayah ${ayah.numberInSurah} — Tap for audio & translation`}
                 >
-                  {ayah.text}
-                </p>
-              )}
-
-              {/* Translation text */}
-              {settings.readingMode !== 'arabic-only' && translationAyah && (
-                <div>
-                  <p style={{ margin: '0 0 8px', lineHeight: 1.8, color: 'var(--color-text)', fontSize: '0.97rem' }}
-                    lang={AVAILABLE_TRANSLATIONS.find(t => t.identifier === settings.translationEdition)?.language ?? 'en'}
-                    dir={AVAILABLE_TRANSLATIONS.find(t => t.identifier === settings.translationEdition)?.direction === 'rtl' ? 'rtl' : 'ltr'}
+                  {cleanedText}
+                  <span
+                    className="ayah-end-symbol"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      playAyahByIndex(idx);
+                    }}
+                    title={`Ayah ${ayah.numberInSurah} — Click to play audio`}
                   >
-                    {translationAyah.text}
-                  </p>
-                  <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', textAlign: 'right' }}>
-                    — {AVAILABLE_TRANSLATIONS.find(t => t.identifier === settings.translationEdition)?.name ?? settings.translationEdition}
+                    {ayah.numberInSurah}
+                  </span>
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* VIEW 2: CARD / VERSE-BY-VERSE VIEW */}
+      {viewMode === 'cards' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {arabic.ayahs.map((ayah, idx) => {
+            const cleanedText = stripLeadingBismillah(ayah.text, num, ayah.numberInSurah);
+            const translationAyah = translation?.ayahs[ayah.numberInSurah - 1];
+            const bmId = `${num}:${ayah.numberInSurah}`;
+            const isPlaying = playingAyah === ayah.numberInSurah;
+            const isBm = bookmarkedIds.has(bmId);
+
+            return (
+              <div
+                key={ayah.number}
+                id={`ayah-${ayah.numberInSurah}`}
+                className={`card ${isPlaying ? 'active-playing-ayah' : ''}`}
+                style={{ padding: '24px 28px', position: 'relative' }}
+              >
+                {/* Header row with Ayah marker badge & Sajda badge */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div className="icon-badge-gold" style={{ width: 34, height: 34, borderRadius: '50%', fontWeight: 800, fontSize: '0.85rem' }}>
+                      {ayah.numberInSurah}
+                    </div>
+                    {ayah.sajda && (
+                      <Badge label="Sajda Required" variant="gold" />
+                    )}
+                  </div>
+
+                  {/* Actions for this Ayah */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <button
+                      onClick={() => isPlaying ? stopAudio() : playAyahByIndex(idx)}
+                      aria-label={isPlaying ? 'Pause audio' : 'Play verse audio'}
+                      className="btn-ghost"
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: 8,
+                        background: isPlaying ? 'var(--color-brand)' : 'var(--color-cream-100)',
+                        color: isPlaying ? '#ffffff' : 'var(--color-brand)',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        opacity: isPlaying && audioLoading ? 0.7 : 1,
+                      }}
+                      disabled={isPlaying && audioLoading}
+                    >
+                      {isPlaying ? (
+                        <>
+                          <Pause size={14} className="shiny-icon" /> {audioLoading ? 'Loading…' : 'Playing'}
+                        </>
+                      ) : (
+                        <>
+                          <Play size={14} className="shiny-icon" /> Recite
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      onClick={() => toggleBookmark(ayah)}
+                      aria-label="Bookmark ayah"
+                      className="btn-ghost"
+                      style={{ padding: '6px 8px', borderRadius: 8, color: isBm ? 'var(--color-accent)' : undefined }}
+                      title={isBm ? 'Bookmarked' : 'Add bookmark'}
+                    >
+                      {isBm ? <BookmarkCheck size={18} className="shiny-icon" /> : <Bookmark size={18} />}
+                    </button>
+
+                    <button
+                      onClick={() => copyReference(ayah, cleanedText)}
+                      aria-label="Copy ayah text and translation"
+                      className="btn-ghost"
+                      style={{ padding: '6px 8px', borderRadius: 8 }}
+                      title="Copy reference"
+                    >
+                      <Copy size={16} />
+                    </button>
                   </div>
                 </div>
-              )}
 
-              {/* Ayah actions */}
-              <div style={{ display: 'flex', gap: 6, marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--color-border)', flexWrap: 'wrap' }}>
-                <button
-                  onClick={() => isPlaying ? stopAudio() : playAyah(ayah)}
-                  aria-label={isPlaying ? `Stop audio for ayah ${ayah.numberInSurah}` : `Play audio for ayah ${ayah.numberInSurah}`}
-                  className="btn-ghost"
-                  style={{ padding: '6px 10px', fontSize: '0.8rem', color: isPlaying ? 'var(--color-brand)' : undefined }}
-                  disabled={audioLoading && isPlaying}
-                >
-                  {isPlaying ? <Volume2 size={14} aria-hidden="true" /> : <Play size={14} aria-hidden="true" />}
-                  {isPlaying ? 'Stop' : 'Play'}
-                </button>
-                <button
-                  onClick={() => toggleBookmark(ayah)}
-                  aria-label={isBm ? `Remove bookmark for ayah ${ayah.numberInSurah}` : `Bookmark ayah ${ayah.numberInSurah}`}
-                  className="btn-ghost"
-                  style={{ padding: '6px 10px', fontSize: '0.8rem', color: isBm ? 'var(--color-brand)' : undefined }}
-                >
-                  {isBm ? <BookmarkCheck size={14} aria-hidden="true" /> : <Bookmark size={14} aria-hidden="true" />}
-                  {isBm ? 'Saved' : 'Bookmark'}
-                </button>
-                <button
-                  onClick={() => copyReference(ayah)}
-                  aria-label={`Copy reference for ayah ${ayah.numberInSurah}`}
-                  className="btn-ghost"
-                  style={{ padding: '6px 10px', fontSize: '0.8rem' }}
-                >
-                  <Copy size={14} aria-hidden="true" /> Copy
-                </button>
-                <button
-                  onClick={() => reportAyah(ayah)}
-                  aria-label={`Report issue with ayah ${ayah.numberInSurah}`}
-                  className="btn-ghost"
-                  style={{ padding: '6px 10px', fontSize: '0.8rem', marginLeft: 'auto', color: 'var(--color-text-muted)' }}
-                >
-                  <Flag size={14} aria-hidden="true" /> Report
-                </button>
+                {/* Arabic text (without duplicate Bismillah) */}
+                {settings.readingMode !== 'translation-only' && (
+                  <p
+                    className="arabic-text"
+                    lang="ar"
+                    style={{
+                      fontSize: FONT_SIZE_MAP[settings.arabicFontSize],
+                      color: isPlaying ? 'var(--color-brand)' : 'var(--color-text)',
+                      margin: '0 0 18px',
+                      padding: '4px 0',
+                      lineHeight: 2.3,
+                      borderBottom: settings.readingMode === 'both' ? '1px dashed var(--color-border)' : 'none',
+                    }}
+                  >
+                    {cleanedText}
+                  </p>
+                )}
+
+                {/* Translation text */}
+                {settings.readingMode !== 'arabic-only' && translationAyah && (
+                  <div>
+                    <p style={{ margin: '0 0 6px', lineHeight: 1.8, color: 'var(--color-text)', fontSize: '0.98rem' }}>
+                      {translationAyah.text}
+                    </p>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textAlign: 'right' }}>
+                      — {AVAILABLE_TRANSLATIONS.find(t => t.identifier === settings.translationEdition)?.name ?? settings.translationEdition}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Floating Sticky Audio Player Dock (when audio is active) */}
+      {playingAyah !== null && (
+        <div style={{
+          position: 'fixed',
+          bottom: 24,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '92%',
+          maxWidth: 620,
+          background: 'var(--gradient-emerald)',
+          color: '#ffffff',
+          borderRadius: 20,
+          padding: '14px 22px',
+          boxShadow: '0 12px 36px rgba(0,0,0,0.4), 0 0 16px rgba(212, 175, 55, 0.35)',
+          border: '1.5px solid var(--color-gold-500)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 16,
+          animation: 'page-fade 0.25s ease',
+        }}>
+          {/* Info */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div className="icon-badge-gold" style={{ width: 40, height: 40, borderRadius: 12 }}>
+              <Volume2 size={20} className="shiny-icon" />
+            </div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#fef08a' }}>
+                Surah {arabic.englishName} : Ayah {playingAyah}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#bce5cf' }}>
+                Auto-Advancing Recitation
               </div>
             </div>
-          );
-        })}
-      </div>
+          </div>
 
-      {/* Prev/Next navigation */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 40, gap: 12 }}>
-        {num > 1 ? (
-          <button onClick={() => navigate(`/surah/${num - 1}`)} className="btn-secondary">
-            <ChevronLeft size={16} aria-hidden="true" /> Previous Surah
-          </button>
-        ) : <span />}
-        {num < 114 && (
-          <button onClick={() => navigate(`/surah/${num + 1}`)} className="btn-primary">
-            Next Surah <ChevronRight size={16} aria-hidden="true" />
-          </button>
-        )}
-      </div>
+          {/* Controls */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {/* Auto Play toggle */}
+            <button
+              onClick={() => {
+                setAutoPlay(!autoPlay);
+                showToast(`Auto-advance next verse: ${!autoPlay ? 'ON' : 'OFF'}`, 'info');
+              }}
+              style={{
+                background: autoPlay ? 'rgba(212, 175, 55, 0.25)' : 'transparent',
+                border: '1px solid var(--color-gold-500)',
+                color: '#fef08a',
+                padding: '6px 10px',
+                borderRadius: 8,
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 5,
+              }}
+              title="Toggle Auto Play Next"
+            >
+              <Repeat size={13} className="shiny-icon" />
+              <span>Auto {autoPlay ? 'ON' : 'OFF'}</span>
+            </button>
 
-      {/* Attribution */}
-      <p style={{ marginTop: 32, fontSize: '0.78rem', color: 'var(--color-text-muted)', borderTop: '1px solid var(--color-border)', paddingTop: 16 }}>
-        Arabic Quran text: <strong>quran-uthmani</strong> edition via <a href="https://api.alquran.cloud" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-brand)', textDecoration: 'none' }}>Al Quran Cloud API</a> (Islamic Network).
-        Translation: <strong>{AVAILABLE_TRANSLATIONS.find(t => t.identifier === settings.translationEdition)?.name}</strong>.
-        Audio: {settings.reciterIdentifier} via Al Quran Cloud CDN.
-        See <Link to="/sources" style={{ color: 'var(--color-brand)', textDecoration: 'none' }}>Sources &amp; Licenses</Link>.
-      </p>
+            {/* Previous Verse */}
+            <button
+              onClick={() => currentPlayingIndex > 0 && playAyahByIndex(currentPlayingIndex - 1)}
+              disabled={currentPlayingIndex <= 0}
+              style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', opacity: currentPlayingIndex <= 0 ? 0.4 : 1 }}
+              title="Previous Ayah"
+            >
+              <ChevronLeft size={20} />
+            </button>
+
+            {/* Stop Recitation */}
+            <button
+              onClick={stopAudio}
+              style={{
+                background: '#ca8a04',
+                border: 'none',
+                color: '#143526',
+                borderRadius: '50%',
+                width: 36,
+                height: 36,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                boxShadow: '0 0 10px rgba(212, 175, 55, 0.5)',
+              }}
+              title="Stop Recitation"
+            >
+              <Square size={16} fill="#143526" />
+            </button>
+
+            {/* Next Verse */}
+            <button
+              onClick={() => currentPlayingIndex < arabic.ayahs.length - 1 && playAyahByIndex(currentPlayingIndex + 1)}
+              disabled={currentPlayingIndex >= arabic.ayahs.length - 1}
+              style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', opacity: currentPlayingIndex >= arabic.ayahs.length - 1 ? 0.4 : 1 }}
+              title="Next Ayah"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Modal when clicking verse in Mushaf view */}
+      {activeModalAyah && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.5)',
+          backdropFilter: 'blur(3px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 20,
+          zIndex: 2000,
+        }}
+        onClick={() => setActiveModalAyah(null)}
+        >
+          <div
+            className="card"
+            style={{ maxWidth: 520, width: '100%', padding: 24, border: '2px solid var(--color-gold-500)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <Badge label={`Surah ${arabic.englishName} : Ayah ${activeModalAyah.numberInSurah}`} variant="gold" />
+              <button onClick={() => setActiveModalAyah(null)} className="btn-ghost" style={{ padding: 4 }}>✕</button>
+            </div>
+
+            <p className="arabic-text" style={{ fontSize: '1.7rem', color: 'var(--color-brand)', marginBottom: 16, lineHeight: 2 }}>
+              {stripLeadingBismillah(activeModalAyah.text, num, activeModalAyah.numberInSurah)}
+            </p>
+
+            {translation?.ayahs[activeModalAyah.numberInSurah - 1] && (
+              <p style={{ color: 'var(--color-text)', lineHeight: 1.7, fontSize: '0.95rem', marginBottom: 20 }}>
+                {translation.ayahs[activeModalAyah.numberInSurah - 1].text}
+              </p>
+            )}
+
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => {
+                  playAyahByIndex(activeModalAyah.numberInSurah - 1);
+                  setActiveModalAyah(null);
+                }}
+                className="btn-primary"
+                style={{ padding: '8px 16px', fontSize: '0.85rem' }}
+              >
+                <Play size={14} className="shiny-icon" /> Play Recitation
+              </button>
+              <button
+                onClick={() => {
+                  toggleBookmark(activeModalAyah);
+                  setActiveModalAyah(null);
+                }}
+                className="btn-secondary"
+                style={{ padding: '8px 14px', fontSize: '0.85rem' }}
+              >
+                <Bookmark size={14} /> Bookmark
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

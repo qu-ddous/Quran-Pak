@@ -1,60 +1,79 @@
 @import "tailwindcss";
 
-/* ─── Design Tokens ───────────────────────────────────────────────────────── */
+/* ─── Design Tokens & Rich Color Palette ──────────────────────────────────── */
 :root {
-  /* Primary palette — forest green */
+  /* Royal Emerald Palette */
   --color-primary-50:  #f0faf4;
   --color-primary-100: #dcf2e6;
   --color-primary-200: #bce5cf;
   --color-primary-300: #8ed1ae;
-  --color-primary-400: #5bb589;
-  --color-primary-500: #3a9a6b;
-  --color-primary-600: #2d7d56;
-  --color-primary-700: #2d6a4f;  /* brand primary */
-  --color-primary-800: #1f4a36;
-  --color-primary-900: #163325;
+  --color-primary-400: #48bb78;
+  --color-primary-500: #2f855a;
+  --color-primary-600: #22543d;
+  --color-primary-700: #1b4332;  /* Deep brand emerald */
+  --color-primary-800: #143526;
+  --color-primary-900: #0a1f16;
 
-  /* Warm gold accent */
-  --color-gold-300: #f6d76b;
-  --color-gold-400: #e8b84d;
-  --color-gold-500: #c9972a;
-  --color-gold-600: #a8791a;
+  /* Radiant Imperial Gold */
+  --color-gold-100: #fefce8;
+  --color-gold-200: #fef08a;
+  --color-gold-300: #fde047;
+  --color-gold-400: #eab308;
+  --color-gold-500: #d4af37;  /* Metallic gold */
+  --color-gold-600: #ca8a04;
+  --color-gold-700: #a16207;
 
-  /* Warm neutrals (cream background) */
-  --color-cream-50:  #fdfaf5;
+  /* Rich Heritage Parchment */
+  --color-cream-50:  #fdfcf7;
   --color-cream-100: #faf6ed;
-  --color-cream-200: #f5ede0;
-  --color-cream-300: #ede0ce;
-  --color-cream-400: #dfd0b8;
+  --color-cream-200: #f4ecdc;
+  --color-cream-300: #eadbc5;
+  --color-cream-400: #ddc7aa;
 
-  /* Dark text */
-  --color-ink-900: #1a1411;
-  --color-ink-700: #3d302a;
-  --color-ink-500: #6b5a52;
-  --color-ink-300: #a89a94;
+  /* Vibrant Accents */
+  --color-ruby:      #991b1b;
+  --color-amber:     #d97706;
+  --color-teal:      #0f766e;
+  --color-sapphire:  #1e40af;
 
-  /* Semantic */
+  /* Dark Text */
+  --color-ink-900: #16120e;
+  --color-ink-700: #332923;
+  --color-ink-500: #5c4d44;
+  --color-ink-300: #9c897f;
+
+  /* Semantic Mappings */
   --color-bg:        var(--color-cream-50);
   --color-surface:   #ffffff;
   --color-border:    var(--color-cream-300);
+  --color-border-gold: rgba(212, 175, 55, 0.45);
   --color-text:      var(--color-ink-900);
   --color-text-muted: var(--color-ink-500);
-  --color-brand:     var(--color-primary-700);
-  --color-accent:    var(--color-gold-500);
+  --color-brand:     #1b4332;
+  --color-accent:    #d4af37;
+
+  /* Metallic Gradients */
+  --gradient-gold: linear-gradient(135deg, #fef08a 0%, #d4af37 50%, #b45309 100%);
+  --gradient-gold-soft: linear-gradient(135deg, rgba(254, 240, 138, 0.25) 0%, rgba(212, 175, 55, 0.15) 100%);
+  --gradient-emerald: linear-gradient(135deg, #2d6a4f 0%, #1b4332 60%, #081c15 100%);
+  --gradient-emerald-light: linear-gradient(135deg, #40916c 0%, #2d6a4f 100%);
+  --gradient-parchment: linear-gradient(180deg, #fdfbf7 0%, #f7f1e5 100%);
 }
 
-/* ─── Dark Mode ────────────────────────────────────────────────────────────── */
+/* ─── Rich Dark Theme ─────────────────────────────────────────────────────── */
 .dark {
-  --color-bg:        #111815;
-  --color-surface:   #1c2620;
-  --color-border:    #2e3d36;
-  --color-text:      #e8f0ec;
-  --color-text-muted: #8fa99a;
-  --color-brand:     #5bb589;
-  --color-accent:    #e8b84d;
+  --color-bg:        #0d1410;
+  --color-surface:   #15201a;
+  --color-border:    #22332a;
+  --color-border-gold: rgba(212, 175, 55, 0.35);
+  --color-text:      #f0fdf4;
+  --color-text-muted: #94a3b8;
+  --color-brand:     #48bb78;
+  --color-accent:    #facc15;
+  --gradient-parchment: linear-gradient(180deg, #15201a 0%, #101914 100%);
 }
 
-/* ─── Base styles ─────────────────────────────────────────────────────────── */
+/* ─── Global Reset & Typography ───────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -73,99 +92,237 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Arabic Typography ────────────────────────────────────────────────────── */
+/* ─── Arabic Typography ───────────────────────────────────────────────────── */
 .arabic-text {
   font-family: 'Noto Naskh Arabic', 'Traditional Arabic', serif;
   direction: rtl;
   text-align: right;
-  line-height: 2;
+  line-height: 2.2;
   letter-spacing: 0;
 }
 
-/* ─── Scrollbar ────────────────────────────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+.font-arabic-sm { font-size: 1.35rem; line-height: 2.1; }
+.font-arabic-md { font-size: 1.65rem; line-height: 2.3; }
+.font-arabic-lg { font-size: 2.05rem; line-height: 2.5; }
+.font-arabic-xl { font-size: 2.55rem; line-height: 2.7; }
+
+/* ─── Shiny & Glow Effects ────────────────────────────────────────────────── */
+.shiny-icon {
+  filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.45));
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-primary-300);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary-500);
+.shiny-icon:hover {
+  filter: drop-shadow(0 0 9px rgba(212, 175, 55, 0.85));
+  transform: scale(1.08);
 }
 
-/* ─── Focus ring ────────────────────────────────────────────────────────────── */
-:focus-visible {
-  outline: 2px solid var(--color-brand);
-  outline-offset: 2px;
-  border-radius: 4px;
+.shiny-icon-emerald {
+  filter: drop-shadow(0 0 5px rgba(56, 161, 105, 0.5));
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+.shiny-icon-emerald:hover {
+  filter: drop-shadow(0 0 9px rgba(72, 187, 120, 0.9));
+  transform: scale(1.08);
 }
 
-/* ─── Reduced motion ────────────────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+.glow-gold {
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.35), inset 0 0 8px rgba(254, 240, 138, 0.2);
 }
 
-/* ─── Utility classes ───────────────────────────────────────────────────────── */
-.card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+.glow-emerald {
+  box-shadow: 0 0 16px rgba(45, 106, 79, 0.4), inset 0 0 8px rgba(72, 187, 120, 0.2);
+}
+
+/* Metallic icon box with glossy highlight */
+.icon-badge-shiny {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--gradient-emerald);
+  color: #fef08a;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 0 10px rgba(212, 175, 55, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.icon-badge-shiny::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(60deg, transparent 40%, rgba(255, 255, 255, 0.25) 50%, transparent 60%);
+  transform: rotate(25deg);
+  pointer-events: none;
+}
+
+.icon-badge-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--gradient-gold);
+  color: #143526;
+  border: 1px solid #ca8a04;
+  box-shadow: 0 3px 10px rgba(212, 175, 55, 0.4);
+}
+
+/* ─── Floating Navbar with Rounded Border ─────────────────────────────────── */
+.floating-navbar {
+  margin: 12px auto 0;
+  max-width: 1240px;
+  border-radius: 20px;
+  background: rgba(253, 250, 245, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid var(--color-border-gold);
+  box-shadow: 0 8px 30px rgba(27, 67, 50, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.dark .floating-navbar {
+  background: rgba(21, 32, 26, 0.88);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+/* ─── Active Ayah Recitation Highlight ────────────────────────────────────── */
+.active-playing-ayah {
+  border: 2px solid #d4af37 !important;
+  background: linear-gradient(135deg, rgba(254, 240, 138, 0.12) 0%, rgba(45, 106, 79, 0.05) 100%) !important;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3), 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+  transform: scale(1.008);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark .active-playing-ayah {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.14) 0%, rgba(72, 187, 120, 0.08) 100%) !important;
+  box-shadow: 0 0 22px rgba(212, 175, 55, 0.4) !important;
+}
+
+/* ─── Traditional Mushaf Page Layout ──────────────────────────────────────── */
+.mushaf-frame {
+  position: relative;
+  background: var(--gradient-parchment);
+  border: 2px solid var(--color-gold-500);
+  border-radius: 16px;
+  padding: 36px 32px;
+  box-shadow: 0 12px 40px rgba(27, 67, 50, 0.1), inset 0 0 25px rgba(212, 175, 55, 0.12);
+}
+
+.mushaf-frame::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px dashed rgba(212, 175, 55, 0.5);
   border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  pointer-events: none;
 }
 
+.mushaf-surah-cartouche {
+  background: var(--gradient-emerald);
+  color: #fef08a;
+  border: 2px solid var(--color-gold-500);
+  border-radius: 14px;
+  padding: 16px 24px;
+  text-align: center;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), 0 0 12px rgba(212, 175, 55, 0.25);
+}
+
+.ayah-end-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin: 0 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-gold-500);
+  background: var(--gradient-gold-soft);
+  color: var(--color-brand);
+  font-size: 0.82rem;
+  font-weight: 700;
+  vertical-align: middle;
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.35);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.ayah-end-symbol:hover {
+  transform: scale(1.15);
+  background: var(--gradient-gold);
+  color: #143526;
+}
+
+/* ─── Buttons & Controls ──────────────────────────────────────────────────── */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
-  background: var(--color-brand);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  padding: 10px 22px;
+  background: var(--gradient-emerald);
+  color: #fefce8;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 10px;
+  font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
-  font-family: inherit;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(27, 67, 50, 0.25), 0 0 8px rgba(212, 175, 55, 0.2);
 }
 .btn-primary:hover {
-  background: var(--color-primary-800);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(45,106,79,0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(27, 67, 50, 0.35), 0 0 14px rgba(212, 175, 55, 0.45);
 }
 .btn-primary:active {
   transform: translateY(0);
+}
+
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: var(--gradient-gold);
+  color: #143526;
+  border: 1px solid #b45309;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+}
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.55);
 }
 
 .btn-secondary {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
-  background: transparent;
+  padding: 9px 18px;
+  background: var(--color-surface);
   color: var(--color-brand);
-  border: 1.5px solid var(--color-brand);
-  border-radius: 8px;
-  font-size: 0.9rem;
+  border: 1.5px solid var(--color-border-gold);
+  border-radius: 10px;
+  font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s, transform 0.1s;
-  font-family: inherit;
+  transition: all 0.15s ease;
 }
 .btn-secondary:hover {
   background: var(--color-primary-50);
+  border-color: var(--color-gold-500);
   transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .btn-ghost {
@@ -180,61 +337,81 @@ body {
   font-size: 0.875rem;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s, color 0.15s;
-  font-family: inherit;
+  transition: all 0.15s ease;
 }
 .btn-ghost:hover {
   background: var(--color-cream-200);
   color: var(--color-text);
+  border-color: var(--color-border);
 }
 
-/* ─── Toast / Notification ──────────────────────────────────────────────────── */
-.toast {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--color-ink-900);
-  color: white;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  z-index: 9999;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-  animation: toast-in 0.25s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  max-width: 360px;
-  white-space: nowrap;
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.03);
+  transition: all 0.2s ease;
+}
+.card:hover {
+  border-color: var(--color-border-gold);
 }
 
-@keyframes toast-in {
-  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+.card-gold-accent {
+  border-top: 3px solid var(--color-gold-500) !important;
 }
 
-/* ─── Spinner ───────────────────────────────────────────────────────────────── */
-.spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--color-cream-300);
-  border-top-color: var(--color-brand);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary-300);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-500);
 }
 
+/* ─── Keyframe Animations ─────────────────────────────────────────────────── */
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-/* ─── Page fade-in ──────────────────────────────────────────────────────────── */
+@keyframes pulse-gold {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.4)); }
+  50% { filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.9)); }
+}
+
+.pulse-gold {
+  animation: pulse-gold 2s infinite ease-in-out;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer-bg {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-bg::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 2.5s infinite;
+}
+
 .page-enter {
-  animation: page-fade 0.3s ease;
+  animation: page-fade 0.25s ease-out;
 }
 
 @keyframes page-fade {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }

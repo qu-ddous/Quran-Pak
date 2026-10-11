@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { BookOpen, ExternalLink } from 'lucide-react';
 
+const currentYear = new Date().getFullYear();
+
 export default function Footer() {
-  const year = new Date().getFullYear();
+  const year = currentYear;
   return (
     <footer
       role="contentinfo"
