@@ -25,8 +25,14 @@ import type {
   Surah,
   SurahMeta,
 } from '../types/quran';
+import { cacheSurah, getCachedSurah } from '../db/userDb';
 
 const BASE_URL = 'https://api.alquran.cloud/v1';
+
+// In-memory cache for API responses (surah text never changes)
+const apiMemoryCache = new Map<string, { data: unknown; timestamp: number }>();
+const inFlightRequests = new Map<string, Promise<unknown>>();
+const CACHE_TTL_MS = 1000 * 60 * 60; // 1 hour
 
 /** Default Arabic text edition — Uthmani script */
 export const ARABIC_EDITION = 'quran-uthmani';
@@ -96,21 +102,67 @@ export const SEARCHABLE_EDITIONS: Edition[] = [
   ...AVAILABLE_TRANSLATIONS,
 ];
 
-/** Fetch with error handling and timeout */
-async function apiFetch<T>(path: string, signal?: AbortSignal): Promise<T> {
-  const url = `${BASE_URL}${path}`;
-  const response = await fetch(url, {
-    signal,
-    headers: { 'Accept': 'application/json' },
-  });
-  if (!response.ok) {
-    throw new Error(`API error ${response.status}: ${response.statusText} — ${url}`);
+/** Fetch with automatic retry for 5xx/network errors, deduplication, and in-memory caching */
+async function apiFetch<T>(path: string, signal?: AbortSignal, maxRetries = 3): Promise<T> {
+  const cached = apiMemoryCache.get(path);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data as T;
   }
-  const json: ApiResponse<T> = await response.json();
-  if (json.code !== 200) {
-    throw new Error(`API returned non-200 status: ${json.status}`);
+
+  // Deduplicate concurrent requests to the exact same path
+  if (inFlightRequests.has(path)) {
+    return inFlightRequests.get(path) as Promise<T>;
   }
-  return json.data;
+
+  const exec = (async (): Promise<T> => {
+    let attempt = 0;
+    let delay = 400;
+
+    while (attempt < maxRetries) {
+      attempt++;
+      try {
+        const url = `${BASE_URL}${path}`;
+        const response = await fetch(url, {
+          signal,
+          headers: { 'Accept': 'application/json' },
+        });
+
+        if (response.ok) {
+          const json: ApiResponse<T> = await response.json();
+          if (json.code === 200 && json.data !== undefined) {
+            apiMemoryCache.set(path, { data: json.data, timestamp: Date.now() });
+            return json.data;
+          }
+          throw new Error(`API returned non-200 code: ${json.status || json.code}`);
+        }
+
+        // Only retry for 5xx errors (e.g. 500, 502, 503, 504) or rate limit 429
+        const isRetryable = response.status >= 500 || response.status === 429;
+        if (!isRetryable || attempt >= maxRetries) {
+          throw new Error(`API error ${response.status}: ${response.statusText} — ${url}`);
+        }
+
+        // Wait with exponential backoff before retrying
+        await new Promise((res) => setTimeout(res, delay));
+        delay = Math.min(delay * 2, 3000);
+      } catch (err: unknown) {
+        if ((err as Error).name === 'AbortError') throw err;
+        if (attempt >= maxRetries) {
+          throw err;
+        }
+        await new Promise((res) => setTimeout(res, delay));
+        delay = Math.min(delay * 2, 3000);
+      }
+    }
+    throw new Error(`Failed to fetch ${path} after ${maxRetries} attempts.`);
+  })();
+
+  inFlightRequests.set(path, exec);
+  try {
+    return await exec;
+  } finally {
+    inFlightRequests.delete(path);
+  }
 }
 
 /** Fetch the list of all 114 Surahs */
@@ -141,17 +193,51 @@ export async function fetchSurahTranslation(
   return apiFetch<Surah>(`/surah/${surahNumber}/${editionIdentifier}`, signal);
 }
 
-/** Fetch Arabic + translation together (two editions) */
+/** Fetch Arabic + translation together with resilient offline caching */
 export async function fetchSurahWithTranslation(
   surahNumber: number,
   editionIdentifier: string,
   signal?: AbortSignal,
 ): Promise<{ arabic: Surah; translation: Surah }> {
-  const [arabic, translation] = await Promise.all([
-    fetchSurahArabic(surahNumber, signal),
-    fetchSurahTranslation(surahNumber, editionIdentifier, signal),
-  ]);
-  return { arabic, translation };
+  try {
+    const [arabic, translation] = await Promise.all([
+      fetchSurahArabic(surahNumber, signal),
+      fetchSurahTranslation(surahNumber, editionIdentifier, signal),
+    ]);
+    // Cache the verified Arabic text locally for offline access
+    cacheSurah(surahNumber, arabic).catch(() => {});
+    return { arabic, translation };
+  } catch (err: unknown) {
+    // If network or server error (e.g. 503), check local IndexedDB cache
+    try {
+      const cached = await getCachedSurah(surahNumber);
+      if (cached && typeof cached === 'object' && 'ayahs' in (cached as Record<string, unknown>)) {
+        const cachedArabic = cached as Surah;
+        return {
+          arabic: cachedArabic,
+          translation: {
+            ...cachedArabic,
+            edition: {
+              identifier: editionIdentifier,
+              language: 'en',
+              name: 'Cached Offline',
+              englishName: 'Offline Text',
+              format: 'text',
+              type: 'translation',
+              direction: 'ltr',
+            },
+            ayahs: cachedArabic.ayahs.map((a) => ({
+              ...a,
+              text: '(Translation not cached offline. Reconnect to internet to view).',
+            })),
+          },
+        };
+      }
+    } catch {
+      // Continue to throw original error if cache is unavailable
+    }
+    throw err;
+  }
 }
 
 /** Fetch a single ayah in Arabic + audio */
@@ -190,14 +276,15 @@ export async function fetchJuzWithTranslation(
   return { arabic, translation };
 }
 
-/** Search the Quran in a given edition with 404 resilience and auto-language detection */
+/** Search the Quran with 404 resilience, minimum length guard, and in-memory caching */
 export async function searchQuran(
   query: string,
   edition: string = DEFAULT_TRANSLATION_EN,
   signal?: AbortSignal,
 ): Promise<SearchResult> {
   const clean = query.trim();
-  if (!clean) {
+  // Avoid sending single character or empty queries which guaranteed 404
+  if (!clean || clean.length < 2) {
     return { count: 0, matches: [] };
   }
 
@@ -206,6 +293,12 @@ export async function searchQuran(
   let targetEdition = edition;
   if (isArabic && (edition.startsWith('en.') || !edition)) {
     targetEdition = ARABIC_EDITION;
+  }
+
+  const cacheKey = `search:${clean.toLowerCase()}:${targetEdition}`;
+  const cached = apiMemoryCache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data as SearchResult;
   }
 
   const encoded = encodeURIComponent(clean);
@@ -219,7 +312,9 @@ export async function searchQuran(
 
     // Al Quran Cloud returns 404 when no verses match the search term
     if (response.status === 404) {
-      return { count: 0, matches: [] };
+      const emptyRes: SearchResult = { count: 0, matches: [] };
+      apiMemoryCache.set(cacheKey, { data: emptyRes, timestamp: Date.now() });
+      return emptyRes;
     }
 
     if (!response.ok) {
@@ -227,13 +322,9 @@ export async function searchQuran(
     }
 
     const json = await response.json();
-    if (json.code === 200 && json.data) {
-      return json.data;
-    }
-    if (json.code === 404) {
-      return { count: 0, matches: [] };
-    }
-    return { count: 0, matches: [] };
+    const result: SearchResult = (json.code === 200 && json.data) ? json.data : { count: 0, matches: [] };
+    apiMemoryCache.set(cacheKey, { data: result, timestamp: Date.now() });
+    return result;
   } catch (err: unknown) {
     if ((err as Error).name === 'AbortError') throw err;
     if ((err as Error).message?.includes('404')) {

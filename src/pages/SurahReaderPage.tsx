@@ -109,6 +109,25 @@ export default function SurahReaderPage() {
     if (arabic) document.title = `${arabic.englishName} (${arabic.name}) — Noor Quran`;
   }, [arabic]);
 
+  // Scroll to targeted Ayah if URL has hash (e.g. #ayah-1)
+  useEffect(() => {
+    if (!loading && arabic) {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith('#ayah-')) {
+        const targetId = hash.slice(1);
+        const timer = setTimeout(() => {
+          const el = document.getElementById(targetId);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('ayah-target-highlight');
+            setTimeout(() => el.classList.remove('ayah-target-highlight'), 2500);
+          }
+        }, 200);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [loading, arabic]);
+
   const stopAudio = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
@@ -127,7 +146,7 @@ export default function SurahReaderPage() {
     };
   }, [stopAudio]);
 
-  // Play Ayah audio with Auto-Play forward chain
+  // Play Ayah audio with Auto-Play forward chain and dual-CDN fallback
   const playAyahByIndex = useCallback(async (index: number) => {
     if (!arabic || index < 0 || index >= arabic.ayahs.length) {
       setPlayingAyah(null);
@@ -166,6 +185,22 @@ export default function SurahReaderPage() {
     };
 
     audio.onerror = () => {
+      // If primary CDN fails, try Islamic Network CDN fallback
+      const fallbackUrl = `https://cdn.islamic.network/quran/audio/128/${settings.reciterIdentifier}/${targetAyah.number}.mp3`;
+      if (audio.src !== fallbackUrl) {
+        audio.src = fallbackUrl;
+        audio.play().catch(() => {
+          showToast('Audio temporarily unavailable. Continuing next verse…', 'error');
+          setAudioLoading(false);
+          if (autoPlayRef.current && index + 1 < arabic.ayahs.length) {
+            setTimeout(() => playAyahByIndexRef.current(index + 1), 1000);
+          } else {
+            setPlayingAyah(null);
+          }
+        });
+        return;
+      }
+
       showToast('Audio temporarily unavailable. Continuing next verse…', 'error');
       setAudioLoading(false);
       if (autoPlayRef.current && index + 1 < arabic.ayahs.length) {
@@ -221,7 +256,13 @@ export default function SurahReaderPage() {
   };
 
   if (loading) return <LoadingSpinner text={`Loading Surah ${num}…`} />;
-  if (error) return <ErrorState message={error} onRetry={load} />;
+  if (error) {
+    const is503 = error.includes('503') || error.includes('Service Unavailable');
+    const displayMsg = is503
+      ? 'The Quran API server is temporarily busy (503 Service Unavailable). Click Retry to reload.'
+      : error;
+    return <ErrorState message={displayMsg} onRetry={load} />;
+  }
   if (!arabic) return null;
 
   const showBismillahBanner = num !== 1 && num !== 9;

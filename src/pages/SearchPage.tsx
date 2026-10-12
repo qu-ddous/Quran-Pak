@@ -67,6 +67,7 @@ export default function SearchPage() {
   const [totalCount, setTotalCount] = useState(0);
 
   const debounceRef = useRef<number | undefined>(undefined);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     document.title = 'Search Holy Quran — Noor Quran';
@@ -141,6 +142,15 @@ export default function SearchPage() {
     if (!trimmed) {
       setResults(null);
       setError(null);
+      setLoading(false);
+      return;
+    }
+
+    // Require at least 2 characters to search API to prevent 404 console spam
+    if (trimmed.length < 2) {
+      setResults([]);
+      setTotalCount(0);
+      setLoading(false);
       return;
     }
 
@@ -153,14 +163,22 @@ export default function SearchPage() {
       return;
     }
 
+    // Abort previous ongoing search
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     setLoading(true);
     setError(null);
 
     try {
-      const data = await searchQuran(trimmed, edition);
+      const data = await searchQuran(trimmed, edition, controller.signal);
       setResults(data.matches || []);
       setTotalCount(data.count || (data.matches ? data.matches.length : 0));
     } catch (e: unknown) {
+      if ((e as Error).name === 'AbortError') return;
       console.warn('Search query error:', e);
       // Graceful fallback: If search returns no verses, set empty results rather than hard crash
       setResults([]);
@@ -172,6 +190,11 @@ export default function SearchPage() {
 
   useEffect(() => {
     doSearch();
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [doSearch]);
 
   const selectedEditionInfo = SEARCHABLE_EDITIONS.find((t) => t.identifier === edition) || SEARCHABLE_EDITIONS[0];

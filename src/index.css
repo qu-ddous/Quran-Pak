@@ -546,6 +546,26 @@ body {
   color: #143526;
 }
 
+.ayah-target-highlight {
+  animation: pulse-target-ayah 2.2s ease-out;
+  border-radius: 12px;
+}
+
+@keyframes pulse-target-ayah {
+  0% {
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
+    background-color: rgba(212, 175, 55, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 18px 4px rgba(212, 175, 55, 0.45);
+    background-color: rgba(212, 175, 55, 0.12);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+    background-color: transparent;
+  }
+}
+
 /* ─── Buttons & Controls ──────────────────────────────────────────────────── */
 .btn-primary {
   display: inline-flex;
