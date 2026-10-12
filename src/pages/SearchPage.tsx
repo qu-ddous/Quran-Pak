@@ -1,14 +1,29 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, ExternalLink, AlertCircle, Sparkles, BookOpen, ArrowRight, X } from 'lucide-react';
-import { searchQuran, AVAILABLE_TRANSLATIONS, DEFAULT_TRANSLATION_EN } from '../api/quranApi';
+import {
+  Search, ExternalLink, AlertCircle, Sparkles, BookOpen,
+  ArrowRight, X, Headphones, CheckCircle2, RotateCcw
+} from 'lucide-react';
+import {
+  searchQuran, SEARCHABLE_EDITIONS, DEFAULT_TRANSLATION_EN,
+  fetchSurahList
+} from '../api/quranApi';
 import { useSettings } from '../context/SettingsContext';
-import type { SearchMatch } from '../types/quran';
+import { useAudio } from '../context/AudioContext';
+import type { SearchMatch, SurahMeta } from '../types/quran';
 import { LoadingSpinner, EmptyState } from '../components/ui/SharedComponents';
+
+// Clean text for flexible transliteration comparisons
+function normalize(str: string): string {
+  return str
+    .toLowerCase()
+    .replace(/^(surah|surat|soorah|chapter|para|juz)\s+/i, '')
+    .replace(/[^a-z0-9]/gi, '');
+}
 
 // Parse "2:255" style references
 function parseSurahAyahRef(query: string): { surah: number; ayah: number } | null {
-  const match = query.trim().match(/^(\d{1,3}):(\d{1,3})$/);
+  const match = query.trim().match(/^(\d{1,3})\s*[:\s,-]\s*(\d{1,3})$/);
   if (!match) return null;
   const s = parseInt(match[1], 10);
   const a = parseInt(match[2], 10);
@@ -16,68 +31,150 @@ function parseSurahAyahRef(query: string): { surah: number; ayah: number } | nul
   return null;
 }
 
+// Famous passages and Quranic landmarks
+const FAMOUS_ALIASES: Record<string, { surah: number; ayah: number; title: string }> = {
+  'ayatulkursi': { surah: 2, ayah: 255, title: 'Ayatul Kursi (The Throne Verse)' },
+  'ayatalkursi': { surah: 2, ayah: 255, title: 'Ayatul Kursi (The Throne Verse)' },
+  'kursi': { surah: 2, ayah: 255, title: 'Ayatul Kursi (The Throne Verse)' },
+  'amanarrasul': { surah: 2, ayah: 285, title: 'Amanar Rasul (Last Verses of Al-Baqarah)' },
+  'amanarasul': { surah: 2, ayah: 285, title: 'Amanar Rasul (Last Verses of Al-Baqarah)' },
+};
+
 const SAMPLE_SEARCHES = [
   { label: 'Mercy (رحمة)', query: 'mercy' },
   { label: 'Patience (صبر)', query: 'patience' },
   { label: 'Paradise (جنة)', query: 'gardens' },
   { label: 'Light (نور)', query: 'light' },
-  { label: 'Ayatul Kursi', query: '2:255' },
-  { label: 'Surah Yaseen', query: '36:1' },
+  { label: 'Ayatul Kursi', query: 'Ayatul Kursi' },
+  { label: 'Surah Yaseen', query: 'Yaseen' },
+  { label: 'Surah Mulk', query: 'Mulk' },
+  { label: 'Surah Kahf', query: 'Kahf' },
 ];
 
 export default function SearchPage() {
   const { settings } = useSettings();
+  const { playSurah } = useAudio();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') ?? '';
+
   const [query, setQuery] = useState(initialQuery);
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
   const [edition, setEdition] = useState(settings.translationEdition || DEFAULT_TRANSLATION_EN);
+  const [allSurahs, setAllSurahs] = useState<SurahMeta[]>([]);
   const [results, setResults] = useState<SearchMatch[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState(0);
+
   const debounceRef = useRef<number | undefined>(undefined);
 
-  useEffect(() => { document.title = 'Search Holy Quran — Noor Quran'; }, []);
+  useEffect(() => {
+    document.title = 'Search Holy Quran — Noor Quran';
+    fetchSurahList().then(setAllSurahs).catch(() => {});
+  }, []);
 
-  // Debounce input
+  // Sync debounced input
   useEffect(() => {
     clearTimeout(debounceRef.current);
     debounceRef.current = window.setTimeout(() => {
       setDebouncedQuery(query);
-      if (query) setSearchParams({ q: query });
-    }, 400);
+      if (query.trim()) {
+        setSearchParams({ q: query.trim() });
+      } else {
+        setSearchParams({});
+      }
+    }, 350);
     return () => clearTimeout(debounceRef.current);
   }, [query, setSearchParams]);
 
-  const doSearch = useCallback(async () => {
-    if (!debouncedQuery.trim()) { setResults(null); return; }
+  // Check for direct reference (e.g. 2:255) or famous alias (e.g. Ayatul Kursi)
+  const directRef = useMemo(() => {
+    if (!debouncedQuery.trim()) return null;
+    const direct = parseSurahAyahRef(debouncedQuery);
+    if (direct) {
+      return { surah: direct.surah, ayah: direct.ayah, title: `Surah ${direct.surah}, Verse ${direct.ayah}` };
+    }
+    const normalizedKey = normalize(debouncedQuery);
+    if (FAMOUS_ALIASES[normalizedKey]) {
+      return FAMOUS_ALIASES[normalizedKey];
+    }
+    return null;
+  }, [debouncedQuery]);
 
-    const ref = parseSurahAyahRef(debouncedQuery);
-    if (ref) {
+  // Filter Surahs locally by name, transliteration, translation, or chapter number
+  const matchingSurahs = useMemo(() => {
+    const q = debouncedQuery.trim();
+    if (!q || allSurahs.length === 0) return [];
+
+    const normQ = normalize(q);
+    const numQ = parseInt(q, 10);
+
+    return allSurahs.filter((s) => {
+      // Direct number match (e.g. searching "36" matches Surah 36)
+      if (!isNaN(numQ) && s.number === numQ) return true;
+
+      const normName = normalize(s.englishName);
+      const normTrans = normalize(s.englishNameTranslation);
+
+      // Exact or partial name match
+      if (normName.includes(normQ) || normQ.includes(normName)) return true;
+      if (normTrans.includes(normQ)) return true;
+
+      // Arabic text match
+      if (s.name.includes(q)) return true;
+
+      // Common transliteration phonetics
+      if (normQ.includes('yaseen') && normName.includes('yasin')) return true;
+      if (normQ.includes('yasin') && normName.includes('yasin')) return true;
+      if (normQ.includes('rehman') && normName.includes('rahman')) return true;
+      if (normQ.includes('fatiha') && normName.includes('fatihah')) return true;
+      if (normQ.includes('baqara') && normName.includes('baqarah')) return true;
+      if (normQ.includes('waqia') && normName.includes('waqiah')) return true;
+
+      return false;
+    });
+  }, [debouncedQuery, allSurahs]);
+
+  // Main search function
+  const doSearch = useCallback(async () => {
+    const trimmed = debouncedQuery.trim();
+    if (!trimmed) {
+      setResults(null);
+      setError(null);
+      return;
+    }
+
+    // If query is an exact number (1-114), prioritize showing the matched Surah
+    const parsedNum = parseInt(trimmed, 10);
+    if (!isNaN(parsedNum) && parsedNum >= 1 && parsedNum <= 114 && trimmed === parsedNum.toString()) {
       setResults([]);
       setTotalCount(0);
+      setLoading(false);
       return;
     }
 
     setLoading(true);
     setError(null);
+
     try {
-      const data = await searchQuran(debouncedQuery, edition);
-      setResults(data.matches);
-      setTotalCount(data.count);
+      const data = await searchQuran(trimmed, edition);
+      setResults(data.matches || []);
+      setTotalCount(data.count || (data.matches ? data.matches.length : 0));
     } catch (e: unknown) {
-      setError((e as Error).message ?? 'Search failed. Please try again.');
-      setResults(null);
+      console.warn('Search query error:', e);
+      // Graceful fallback: If search returns no verses, set empty results rather than hard crash
+      setResults([]);
+      setTotalCount(0);
     } finally {
       setLoading(false);
     }
   }, [debouncedQuery, edition]);
 
-  useEffect(() => { doSearch(); }, [doSearch]);
+  useEffect(() => {
+    doSearch();
+  }, [doSearch]);
 
-  const directRef = parseSurahAyahRef(debouncedQuery);
-  const translationInfo = AVAILABLE_TRANSLATIONS.find(t => t.identifier === edition);
+  const selectedEditionInfo = SEARCHABLE_EDITIONS.find((t) => t.identifier === edition) || SEARCHABLE_EDITIONS[0];
 
   return (
     <div className="quran-page-container" style={{ paddingBottom: 100 }}>
@@ -109,11 +206,9 @@ export default function SearchPage() {
           <p style={{
             fontSize: '1rem',
             lineHeight: 1.6,
-            color: 'var(--color-text)',
-            opacity: 0.9,
             marginBottom: 20,
           }}>
-            Search through Arabic verses, classical English translations, and Urdu commentaries across all 6,236 Ayahs.
+            Search through Arabic verses, chapter names, classical English translations, and Urdu commentaries across all 6,236 Ayahs.
           </p>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
@@ -129,7 +224,7 @@ export default function SearchPage() {
               fontSize: '0.85rem',
               color: 'var(--color-brand)',
             }}>
-              <BookOpen size={14} className="shiny-icon" /> 6,236 Searchable Ayahs
+              <BookOpen size={14} className="shiny-icon" /> 114 Surahs & 6,236 Ayahs
             </span>
             <span style={{
               display: 'inline-flex',
@@ -138,12 +233,12 @@ export default function SearchPage() {
               padding: '6px 14px',
               borderRadius: 9999,
               background: 'rgba(45, 106, 79, 0.16)',
-              border: '1.5px solid var(--color-primary-300)',
+              border: '1.5px solid var(--color-border-gold)',
               fontWeight: 800,
               fontSize: '0.85rem',
               color: 'var(--color-brand)',
             }}>
-              <Sparkles size={14} className="shiny-icon" /> Multilingual Support
+              <Sparkles size={14} className="shiny-icon" /> Smart Chapter & Verse Detection
             </span>
           </div>
         </div>
@@ -159,7 +254,7 @@ export default function SearchPage() {
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search words, topics, or references (e.g. mercy, patience, 2:255)…"
+              placeholder="Search chapters (e.g. Yaseen, Mulk), words (e.g. mercy), or verse (e.g. 2:255)…"
               autoFocus
               style={{
                 width: '100%',
@@ -185,13 +280,14 @@ export default function SearchPage() {
                   color: 'var(--color-text-muted)',
                   cursor: 'pointer',
                 }}
+                title="Clear search"
               >
                 <X size={16} />
               </button>
             )}
           </div>
 
-          {/* Translation Edition Selector */}
+          {/* Search Edition / Translation Selector */}
           <select
             value={edition}
             onChange={(e) => setEdition(e.target.value)}
@@ -207,7 +303,7 @@ export default function SearchPage() {
               outline: 'none',
             }}
           >
-            {AVAILABLE_TRANSLATIONS.map((t) => (
+            {SEARCHABLE_EDITIONS.map((t) => (
               <option key={t.identifier} value={t.identifier}>
                 {t.englishName} ({t.language.toUpperCase()})
               </option>
@@ -225,8 +321,8 @@ export default function SearchPage() {
               key={s.label}
               onClick={() => setQuery(s.query)}
               style={{
-                background: query === s.query ? 'var(--color-brand)' : 'var(--color-cream-100)',
-                color: query === s.query ? '#ffffff' : 'var(--color-brand)',
+                background: query.toLowerCase() === s.query.toLowerCase() ? 'var(--color-brand)' : 'var(--color-cream-100)',
+                color: query.toLowerCase() === s.query.toLowerCase() ? '#ffffff' : 'var(--color-brand)',
                 border: '1px solid var(--color-border)',
                 borderRadius: 9999,
                 padding: '4px 12px',
@@ -242,8 +338,8 @@ export default function SearchPage() {
         </div>
       </div>
 
-      {/* ─── Direct Reference Match Card ─── */}
-      {directRef && debouncedQuery && (
+      {/* ─── Direct Ayah Reference or Famous Landmark Match Card ─── */}
+      {directRef && (
         <div
           style={{
             padding: '24px 28px',
@@ -261,14 +357,14 @@ export default function SearchPage() {
           }}
         >
           <div>
-            <div style={{ fontSize: '0.8rem', color: '#fef08a', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
-              Direct Ayah Jump
+            <div style={{ fontSize: '0.8rem', color: '#fef08a', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <CheckCircle2 size={16} /> Direct Passage Match
             </div>
             <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 800 }}>
-              Surah {directRef.surah}, Ayah {directRef.ayah}
+              {directRef.title}
             </div>
             <div style={{ fontSize: '0.9rem', color: '#bce5cf', marginTop: 4 }}>
-              Instantly open and recite this verse in full reader mode.
+              Surah {directRef.surah}, Ayah {directRef.ayah} — Open directly in full reader mode with word-by-word recitations.
             </div>
           </div>
 
@@ -286,96 +382,231 @@ export default function SearchPage() {
               textDecoration: 'none',
             }}
           >
-            <span>Open Ayah</span>
+            <span>Open in Reader</span>
             <ExternalLink size={16} />
           </Link>
         </div>
       )}
 
-      {/* ─── Results / State Indicators ─── */}
-      {loading && <LoadingSpinner text="Searching through the Holy Quran…" />}
+      {/* ─── Matching Surahs (Chapters) Section ─── */}
+      {matchingSurahs.length > 0 && (
+        <div style={{ marginBottom: 32 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+            <BookOpen size={18} className="shiny-icon text-gold" />
+            <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--color-brand)', margin: 0 }}>
+              Matching Chapters ({matchingSurahs.length})
+            </h2>
+          </div>
 
-      {error && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 18, background: '#fff5f5', border: '1.5px solid #fed7d7', borderRadius: 14, marginBottom: 24 }}>
-          <AlertCircle size={20} style={{ color: '#c0392b', flexShrink: 0 }} />
-          <span style={{ fontSize: '0.92rem', color: '#c0392b', fontWeight: 600 }}>{error}</span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))', gap: 14 }}>
+            {matchingSurahs.map((s) => (
+              <div
+                key={s.number}
+                className="card"
+                style={{
+                  padding: '18px 20px',
+                  borderRadius: 16,
+                  border: '1.5px solid var(--color-border-gold)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 12,
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                  <div
+                    style={{
+                      width: 42,
+                      height: 42,
+                      borderRadius: 12,
+                      background: 'var(--color-gold-500)',
+                      color: '#143526',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 800,
+                      fontSize: '0.9rem',
+                      flexShrink: 0,
+                    }}
+                  >
+                    #{s.number}
+                  </div>
+
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.98rem', color: 'var(--color-brand)' }}>
+                      Surah {s.englishName}
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>
+                      "{s.englishNameTranslation}" • {s.numberOfAyahs} Ayahs
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                  <button
+                    type="button"
+                    onClick={() => playSurah(s.number)}
+                    className="btn-ghost"
+                    style={{
+                      padding: '7px 10px',
+                      borderRadius: 10,
+                      background: 'rgba(212, 175, 55, 0.12)',
+                      border: '1px solid var(--color-border-gold)',
+                      color: 'var(--color-brand)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      fontSize: '0.76rem',
+                      fontWeight: 700,
+                    }}
+                    title={`Listen to Surah ${s.englishName}`}
+                  >
+                    <Headphones size={13} className="shiny-icon" />
+                    <span>Listen</span>
+                  </button>
+
+                  <Link
+                    to={`/surah/${s.number}`}
+                    style={{
+                      padding: '7px 12px',
+                      borderRadius: 10,
+                      background: 'var(--color-brand)',
+                      color: '#ffffff',
+                      textDecoration: 'none',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                    }}
+                  >
+                    <span>Read</span>
+                    <ArrowRight size={13} />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
+      {/* ─── State Indicators ─── */}
+      {loading && <LoadingSpinner text="Searching through the Holy Quran verses…" />}
+
+      {error && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 18, background: '#fff5f5', border: '1.5px solid #fed7d7', borderRadius: 14, marginBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <AlertCircle size={20} style={{ color: '#c0392b', flexShrink: 0 }} />
+            <span style={{ fontSize: '0.92rem', color: '#c0392b', fontWeight: 600 }}>{error}</span>
+          </div>
+          <button
+            onClick={() => doSearch()}
+            style={{
+              padding: '6px 14px',
+              borderRadius: 8,
+              background: '#c0392b',
+              color: '#ffffff',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: 700,
+              fontSize: '0.8rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+            }}
+          >
+            <RotateCcw size={14} /> Retry
+          </button>
+        </div>
+      )}
+
+      {/* Initial Landing State */}
       {!loading && !error && results === null && !debouncedQuery && (
         <EmptyState
           title="Begin Your Quran Search"
-          message="Enter a search term above, choose a translation, or tap one of the suggested topics to explore verses."
+          message="Enter a search term above, type a Surah name (e.g. Yaseen, Mulk), or tap one of the suggested topics."
           icon={<Search size={44} style={{ color: 'var(--color-gold-500)', opacity: 0.6 }} />}
         />
       )}
 
-      {!loading && !error && results && !directRef && (
+      {/* ─── Matching Verses Results List ─── */}
+      {!loading && !error && results && results.length > 0 && (
         <div>
-          {/* Matches Counter */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--color-text)' }}>
-              Found <span style={{ color: 'var(--color-accent)' }}>{totalCount}</span> {totalCount === 1 ? 'verse' : 'verses'} matching "{debouncedQuery}"
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+            <div style={{ fontWeight: 800, fontSize: '1.15rem', color: 'var(--color-brand)', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Sparkles size={18} className="shiny-icon text-gold" />
+              Found <span style={{ color: 'var(--color-gold-600)' }}>{totalCount}</span> {totalCount === 1 ? 'verse' : 'verses'} matching "{debouncedQuery}"
             </div>
-            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-              in {translationInfo?.name}
+            <span style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
+              in {selectedEditionInfo?.name}
             </span>
           </div>
 
-          {results.length === 0 ? (
-            <EmptyState
-              title="No verses found"
-              message={`No exact matches found for "${debouncedQuery}" in ${translationInfo?.name}. Try alternative keywords or search in a different translation edition.`}
-            />
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {results.map((match) => (
-                <div
-                  key={`${match.surah.number}:${match.numberInSurah}`}
-                  className="card"
-                  style={{
-                    padding: '22px 26px',
-                    borderRadius: 18,
-                    border: '1.5px solid var(--color-border)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.02)',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div className="icon-badge-gold" style={{ width: 34, height: 34, borderRadius: '50%', fontWeight: 800, fontSize: '0.82rem' }}>
-                        {match.numberInSurah}
-                      </div>
-                      <span style={{ fontWeight: 800, color: 'var(--color-brand)', fontSize: '0.95rem' }}>
-                        Surah {match.surah.englishName} ({match.surah.number}:{match.numberInSurah})
-                      </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {results.map((match) => (
+              <div
+                key={`${match.surah.number}:${match.numberInSurah}`}
+                className="card"
+                style={{
+                  padding: '22px 26px',
+                  borderRadius: 18,
+                  border: '1.5px solid var(--color-border)',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.02)',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div className="icon-badge-gold" style={{ width: 34, height: 34, borderRadius: '50%', fontWeight: 800, fontSize: '0.82rem' }}>
+                      {match.numberInSurah}
                     </div>
-
-                    <Link
-                      to={`/surah/${match.surah.number}#ayah-${match.numberInSurah}`}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 6,
-                        color: 'var(--color-accent)',
-                        fontWeight: 700,
-                        fontSize: '0.85rem',
-                        textDecoration: 'none',
-                      }}
-                    >
-                      <span>Read in Context</span>
-                      <ArrowRight size={15} />
-                    </Link>
+                    <span style={{ fontWeight: 800, color: 'var(--color-brand)', fontSize: '0.98rem' }}>
+                      Surah {match.surah.englishName} ({match.surah.number}:{match.numberInSurah})
+                    </span>
                   </div>
 
-                  <p style={{ margin: 0, fontSize: '1rem', lineHeight: 1.7, color: 'var(--color-text)' }}>
-                    {match.text}
-                  </p>
+                  <Link
+                    to={`/surah/${match.surah.number}#ayah-${match.numberInSurah}`}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      color: 'var(--color-gold-600)',
+                      fontWeight: 700,
+                      fontSize: '0.86rem',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span>Read in Context</span>
+                    <ArrowRight size={15} />
+                  </Link>
                 </div>
-              ))}
-            </div>
-          )}
+
+                <p style={{
+                  margin: 0,
+                  fontSize: '1.02rem',
+                  lineHeight: 1.7,
+                  color: 'var(--color-text)',
+                  fontFamily: match.edition?.format === 'text' && match.edition?.language === 'ar' ? "'Noto Naskh Arabic', serif" : 'inherit',
+                  direction: match.edition?.direction === 'rtl' ? 'rtl' : 'ltr',
+                }}>
+                  {match.text}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
+      )}
+
+      {/* ─── No Results State ─── */}
+      {!loading && !error && debouncedQuery && matchingSurahs.length === 0 && !directRef && results && results.length === 0 && (
+        <EmptyState
+          title={`No results found for "${debouncedQuery}"`}
+          message={`We couldn't find any chapters or verses matching "${debouncedQuery}" in ${selectedEditionInfo?.name}. Try alternative keywords, search in Arabic script, or switch the translation edition.`}
+          icon={<Compass size={44} style={{ color: 'var(--color-gold-500)', opacity: 0.6 }} />}
+        />
       )}
     </div>
   );

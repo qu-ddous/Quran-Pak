@@ -83,6 +83,19 @@ export const AVAILABLE_TRANSLATIONS: Edition[] = [
   },
 ];
 
+export const SEARCHABLE_EDITIONS: Edition[] = [
+  {
+    identifier: ARABIC_EDITION,
+    language: 'ar',
+    name: 'القرآن الكريم (Uthmani Text)',
+    englishName: 'Arabic (Uthmani Original)',
+    format: 'text',
+    type: 'quran',
+    direction: 'rtl',
+  },
+  ...AVAILABLE_TRANSLATIONS,
+];
+
 /** Fetch with error handling and timeout */
 async function apiFetch<T>(path: string, signal?: AbortSignal): Promise<T> {
   const url = `${BASE_URL}${path}`;
