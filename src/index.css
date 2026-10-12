@@ -275,27 +275,17 @@ body {
 
 .hero-text-container {
   max-width: 640px;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  padding: 36px 36px;
-  border-radius: 28px;
-  border: 1.5px solid rgba(212, 175, 55, 0.45);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12), 0 0 24px rgba(212, 175, 55, 0.18);
+  background: transparent;
+  padding: 0;
 }
 
 .dark .hero-text-container {
-  background: rgba(10, 24, 18, 0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1.5px solid rgba(212, 175, 55, 0.5);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 24px rgba(212, 175, 55, 0.2);
+  background: transparent;
 }
 
 @media (max-width: 768px) {
   .hero-text-container {
-    padding: 24px 20px;
-    border-radius: 20px;
+    padding: 0;
   }
 }
 
@@ -1431,6 +1421,58 @@ body {
 
   .listen-surah-english {
     font-size: 1.25rem !important;
+  }
+}
+
+/* ─── Professional Islamic Footer Styles ─────────────────────────────────── */
+.site-footer {
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.footer-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  padding: 3px 0;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.footer-link:hover {
+  color: var(--color-brand);
+  transform: translateX(4px);
+}
+
+.dark .footer-link:hover {
+  color: #fef08a;
+}
+
+.footer-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--color-brand);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  transition: all 0.2s ease;
+}
+
+.dark .footer-pill {
+  color: #fef08a;
+}
+
+@media (max-width: 768px) {
+  .site-footer {
+    padding-bottom: 84px !important;
+  }
+  .sub-footer-bar {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 12px !important;
   }
 }
 
