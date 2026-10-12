@@ -177,14 +177,57 @@ export async function fetchJuzWithTranslation(
   return { arabic, translation };
 }
 
-/** Search the Quran in a given edition */
+/** Search the Quran in a given edition with 404 resilience and auto-language detection */
 export async function searchQuran(
   query: string,
   edition: string = DEFAULT_TRANSLATION_EN,
   signal?: AbortSignal,
 ): Promise<SearchResult> {
-  const encoded = encodeURIComponent(query.trim());
-  return apiFetch<SearchResult>(`/search/${encoded}/all/${edition}`, signal);
+  const clean = query.trim();
+  if (!clean) {
+    return { count: 0, matches: [] };
+  }
+
+  // Detect if query contains Arabic script
+  const isArabic = /[\u0600-\u06FF]/.test(clean);
+  let targetEdition = edition;
+  if (isArabic && (edition.startsWith('en.') || !edition)) {
+    targetEdition = ARABIC_EDITION;
+  }
+
+  const encoded = encodeURIComponent(clean);
+  const url = `${BASE_URL}/search/${encoded}/all/${targetEdition}`;
+
+  try {
+    const response = await fetch(url, {
+      signal,
+      headers: { 'Accept': 'application/json' },
+    });
+
+    // Al Quran Cloud returns 404 when no verses match the search term
+    if (response.status === 404) {
+      return { count: 0, matches: [] };
+    }
+
+    if (!response.ok) {
+      throw new Error(`Search request failed with status ${response.status}`);
+    }
+
+    const json = await response.json();
+    if (json.code === 200 && json.data) {
+      return json.data;
+    }
+    if (json.code === 404) {
+      return { count: 0, matches: [] };
+    }
+    return { count: 0, matches: [] };
+  } catch (err: unknown) {
+    if ((err as Error).name === 'AbortError') throw err;
+    if ((err as Error).message?.includes('404')) {
+      return { count: 0, matches: [] };
+    }
+    throw err;
+  }
 }
 
 /** Fetch list of available editions from the API */

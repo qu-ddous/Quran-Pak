@@ -1,147 +1,77 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Play, Pause, SkipBack, SkipForward, Repeat, Volume2, Sparkles,
   Headphones, Search, BookOpen, VolumeX,
 } from 'lucide-react';
-import { fetchSurahList, buildSurahAudioUrl } from '../api/quranApi';
 import { KNOWN_RECITERS } from '../types/quran';
 import { useSettings } from '../context/SettingsContext';
-import type { SurahMeta } from '../types/quran';
+import { useAudio } from '../context/AudioContext';
 import { LoadingSpinner } from '../components/ui/SharedComponents';
 
 export default function ListenPage() {
   const { settings, updateSetting } = useSettings();
-  const [surahs, setSurahs] = useState<SurahMeta[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedSurah, setSelectedSurah] = useState<number>(1);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [isLooping, setIsLooping] = useState(false);
-  const [autoPlayNext, setAutoPlayNext] = useState(true);
-  const [audioError, setAudioError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [volume, setVolume] = useState(1);
-  const [isMuted, setIsMuted] = useState(false);
+  const {
+    currentTrack,
+    isPlaying,
+    currentTime,
+    duration,
+    volume,
+    isMuted,
+    isLooping,
+    autoPlayNext,
+    audioError,
+    surahs,
+    loadingSurahs,
+    playSurah,
+    pauseAudio,
+    resumeAudio,
+    seek,
+    setVolume,
+    toggleMute,
+    toggleLoop,
+    setAutoPlayNext,
+  } = useAudio();
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const playAudioForSurahRef = useRef<(surahNum: number) => void>(() => {});
+  const [selectedSurah, setSelectedSurah] = useState<number>(() => {
+    return currentTrack ? currentTrack.surahNumber : 1;
+  });
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     document.title = 'Listen to Holy Quran — Noor Quran Audio Sanctuary';
-    fetchSurahList().then(setSurahs).finally(() => setLoading(false));
   }, []);
 
-  const playAudioForSurah = useCallback((surahNum: number) => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
-
-    const audioUrl = buildSurahAudioUrl(surahNum, settings.reciterIdentifier);
-    const audio = new Audio(audioUrl);
-    audioRef.current = audio;
-    audio.loop = isLooping;
-    audio.volume = isMuted ? 0 : volume;
-
-    audio.ontimeupdate = () => setCurrentTime(audio.currentTime);
-    audio.ondurationchange = () => setDuration(audio.duration);
-
-    audio.onended = () => {
-      if (isLooping) return;
-      if (autoPlayNext && surahNum < 114) {
-        setSelectedSurah(surahNum + 1);
-        playAudioForSurahRef.current(surahNum + 1);
-      } else {
-        setIsPlaying(false);
-      }
-    };
-
-    audio.onerror = () => {
-      setAudioError('Audio unavailable for this recitation. Check your internet connection or switch reciter.');
-      setIsPlaying(false);
-    };
-
-    audio.play().then(() => {
-      setIsPlaying(true);
-      setAudioError(null);
-    }).catch(() => {
-      setAudioError('Could not auto-start audio. Tap Play to begin recitation.');
-      setIsPlaying(false);
-    });
-  }, [settings.reciterIdentifier, isLooping, autoPlayNext, volume, isMuted]);
-
+  // Sync selectedSurah when currentTrack changes
   useEffect(() => {
-    playAudioForSurahRef.current = playAudioForSurah;
-  }, [playAudioForSurah]);
-
-  const playAudio = () => {
-    if (audioRef.current && audioRef.current.src) {
-      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
-    } else {
-      playAudioForSurah(selectedSurah);
+    if (currentTrack) {
+      setSelectedSurah(currentTrack.surahNumber);
     }
-  };
-
-  const pauseAudio = () => {
-    audioRef.current?.pause();
-    setIsPlaying(false);
-  };
+  }, [currentTrack]);
 
   const loadNewSurah = (surahNum: number, startPlaying = false) => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
-    setIsPlaying(false);
-    setCurrentTime(0);
-    setDuration(0);
-    setAudioError(null);
     setSelectedSurah(surahNum);
-
     if (startPlaying) {
-      setTimeout(() => playAudioForSurah(surahNum), 100);
+      playSurah(surahNum);
     }
   };
 
-  const seek = (val: number) => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = val;
-      setCurrentTime(val);
-    }
-  };
-
-  const handleVolumeChange = (v: number) => {
-    setVolume(v);
-    setIsMuted(false);
-    if (audioRef.current) audioRef.current.volume = v;
-  };
-
-  const toggleMute = () => {
-    if (isMuted) {
-      setIsMuted(false);
-      if (audioRef.current) audioRef.current.volume = volume;
+  const playAudio = () => {
+    if (currentTrack && currentTrack.surahNumber === selectedSurah) {
+      resumeAudio();
     } else {
-      setIsMuted(true);
-      if (audioRef.current) audioRef.current.volume = 0;
+      playSurah(selectedSurah);
     }
   };
 
   const formatTime = (t: number) => {
-    if (!isFinite(t)) return '0:00';
+    if (!isFinite(t) || isNaN(t)) return '0:00';
     const m = Math.floor(t / 60);
     const s = Math.floor(t % 60);
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  const toggleLoop = () => {
-    const newVal = !isLooping;
-    setIsLooping(newVal);
-    if (audioRef.current) audioRef.current.loop = newVal;
-  };
-
-  const selectedSurahMeta = surahs.find(s => s.number === selectedSurah);
+  const selectedSurahMeta = surahs.find((s) => s.number === selectedSurah);
 
   const filteredSurahs = surahs.filter((s) => {
     if (!searchQuery.trim()) return true;
@@ -184,8 +114,6 @@ export default function ListenPage() {
           <p style={{
             fontSize: '1rem',
             lineHeight: 1.6,
-            color: 'var(--color-text)',
-            opacity: 0.9,
             marginBottom: 20,
           }}>
             Experience continuous high-definition full-chapter recitations streamed via Islamic Network CDN, chanted by the world's most revered Qaris.
@@ -213,20 +141,21 @@ export default function ListenPage() {
               padding: '6px 14px',
               borderRadius: 9999,
               background: 'rgba(45, 106, 79, 0.16)',
-              border: '1.5px solid var(--color-primary-300)',
+              border: '1.5px solid var(--color-border-gold)',
               fontWeight: 800,
               fontSize: '0.85rem',
               color: 'var(--color-brand)',
             }}>
-              <Sparkles size={15} className="shiny-icon" /> 4 Master Reciters
+              <Sparkles size={15} className="shiny-icon" /> Auto Chapter Advance
             </span>
           </div>
         </div>
       </div>
 
-      {/* ─── 2-Column Audio Studio Console ─── */}
-      <div className="listen-grid">
-        {/* Left Column: Surah Playlist with Filter */}
+      {/* ─── Two-Column Interactive Studio Layout ─── */}
+      <div className="listen-layout-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 28, alignItems: 'start' }}>
+
+        {/* Left Column: Playlist */}
         <div className="card" style={{ padding: '24px', borderRadius: 20, border: '1.5px solid var(--color-border-gold)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <h2 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0, color: 'var(--color-brand)', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -259,16 +188,17 @@ export default function ListenPage() {
           </div>
 
           {/* Scrollable list */}
-          {loading ? (
+          {loadingSurahs ? (
             <LoadingSpinner text="Loading playlist…" />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 580, overflowY: 'auto', paddingRight: 6 }}>
               {filteredSurahs.map((s) => {
                 const isSelected = s.number === selectedSurah;
+                const isThisPlaying = isPlaying && currentTrack?.surahNumber === s.number;
                 return (
                   <button
                     key={s.number}
-                    onClick={() => loadNewSurah(s.number, isPlaying)}
+                    onClick={() => loadNewSurah(s.number, true)}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -301,7 +231,7 @@ export default function ListenPage() {
                           flexShrink: 0,
                         }}
                       >
-                        {isSelected && isPlaying ? (
+                        {isThisPlaying ? (
                           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 16 }}>
                             <span className="eq-bar eq-bar-1" style={{ background: '#143526' }} />
                             <span className="eq-bar eq-bar-2" style={{ background: '#143526' }} />
@@ -393,9 +323,10 @@ export default function ListenPage() {
             <select
               value={settings.reciterIdentifier}
               onChange={(e) => {
-                updateSetting('reciterIdentifier', e.target.value);
+                const newReciter = e.target.value;
+                updateSetting('reciterIdentifier', newReciter);
                 if (isPlaying) {
-                  setTimeout(() => playAudioForSurah(selectedSurah), 100);
+                  playSurah(selectedSurah, newReciter);
                 }
               }}
               style={{
@@ -544,7 +475,7 @@ export default function ListenPage() {
               max={1}
               step={0.05}
               value={isMuted ? 0 : volume}
-              onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+              onChange={(e) => setVolume(parseFloat(e.target.value))}
               style={{ width: 120, accentColor: 'var(--color-gold-500)', cursor: 'pointer' }}
             />
           </div>

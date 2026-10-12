@@ -1,9 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { SettingsProvider } from './context/SettingsContext';
 import { ToastProvider } from './context/ToastContext';
+import { AudioProvider } from './context/AudioContext';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import MobileBottomNav from './components/layout/MobileBottomNav';
+import GlobalMiniPlayer from './components/layout/GlobalMiniPlayer';
 
 // Pages (lazy-loaded)
 import { lazy, Suspense } from 'react';
@@ -38,35 +40,38 @@ export default function App() {
   return (
     <BrowserRouter>
       <SettingsProvider>
-        <ToastProvider>
-          <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--color-bg)' }}>
-            <Header />
-            <main id="main-content" tabIndex={-1} style={{ flex: 1 }}>
-              <Suspense fallback={<LoadingSpinner text="Loading page…" />}>
-                <Routes>
-                  <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
-                  <Route path="/quran" element={<PageWrapper><QuranBrowserPage /></PageWrapper>} />
-                  <Route path="/surah/:surahNumber" element={<PageWrapper><SurahReaderPage /></PageWrapper>} />
-                  <Route path="/juz" element={<PageWrapper><JuzBrowserPage /></PageWrapper>} />
-                  <Route path="/juz/:juzNumber" element={<PageWrapper><JuzReaderPage /></PageWrapper>} />
-                  <Route path="/search" element={<PageWrapper><SearchPage /></PageWrapper>} />
-                  <Route path="/listen" element={<PageWrapper><ListenPage /></PageWrapper>} />
-                  <Route path="/bookmarks" element={<PageWrapper><BookmarksPage /></PageWrapper>} />
-                  <Route path="/notes" element={<PageWrapper><NotesPage /></PageWrapper>} />
-                  <Route path="/progress" element={<PageWrapper><ProgressPage /></PageWrapper>} />
-                  <Route path="/downloads" element={<PageWrapper><DownloadsPage /></PageWrapper>} />
-                  <Route path="/settings" element={<PageWrapper><SettingsPage /></PageWrapper>} />
-                  <Route path="/sources" element={<PageWrapper><SourcesPage /></PageWrapper>} />
-                  <Route path="/about" element={<PageWrapper><AboutPage /></PageWrapper>} />
-                  <Route path="/privacy" element={<PageWrapper><PrivacyPage /></PageWrapper>} />
-                  <Route path="*" element={<PageWrapper><NotFoundPage /></PageWrapper>} />
-                </Routes>
-              </Suspense>
-            </main>
-            <Footer />
-            <MobileBottomNav />
-          </div>
-        </ToastProvider>
+        <AudioProvider>
+          <ToastProvider>
+            <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--color-bg)' }}>
+              <Header />
+              <main id="main-content" tabIndex={-1} style={{ flex: 1 }}>
+                <Suspense fallback={<LoadingSpinner text="Loading page…" />}>
+                  <Routes>
+                    <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
+                    <Route path="/quran" element={<PageWrapper><QuranBrowserPage /></PageWrapper>} />
+                    <Route path="/surah/:surahNumber" element={<PageWrapper><SurahReaderPage /></PageWrapper>} />
+                    <Route path="/juz" element={<PageWrapper><JuzBrowserPage /></PageWrapper>} />
+                    <Route path="/juz/:juzNumber" element={<PageWrapper><JuzReaderPage /></PageWrapper>} />
+                    <Route path="/search" element={<PageWrapper><SearchPage /></PageWrapper>} />
+                    <Route path="/listen" element={<PageWrapper><ListenPage /></PageWrapper>} />
+                    <Route path="/bookmarks" element={<PageWrapper><BookmarksPage /></PageWrapper>} />
+                    <Route path="/notes" element={<PageWrapper><NotesPage /></PageWrapper>} />
+                    <Route path="/progress" element={<PageWrapper><ProgressPage /></PageWrapper>} />
+                    <Route path="/downloads" element={<PageWrapper><DownloadsPage /></PageWrapper>} />
+                    <Route path="/settings" element={<PageWrapper><SettingsPage /></PageWrapper>} />
+                    <Route path="/sources" element={<PageWrapper><SourcesPage /></PageWrapper>} />
+                    <Route path="/about" element={<PageWrapper><AboutPage /></PageWrapper>} />
+                    <Route path="/privacy" element={<PageWrapper><PrivacyPage /></PageWrapper>} />
+                    <Route path="*" element={<PageWrapper><NotFoundPage /></PageWrapper>} />
+                  </Routes>
+                </Suspense>
+              </main>
+              <Footer />
+              <GlobalMiniPlayer />
+              <MobileBottomNav />
+            </div>
+          </ToastProvider>
+        </AudioProvider>
       </SettingsProvider>
     </BrowserRouter>
   );

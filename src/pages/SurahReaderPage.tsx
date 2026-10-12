@@ -109,12 +109,33 @@ export default function SurahReaderPage() {
     if (arabic) document.title = `${arabic.englishName} (${arabic.name}) — Noor Quran`;
   }, [arabic]);
 
+  const stopAudio = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    setPlayingAyah(null);
+  }, []);
+
+  // Listen for global audio start to pause reader audio
+  useEffect(() => {
+    const handleGlobalAudioStarted = () => {
+      stopAudio();
+    };
+    window.addEventListener('quran-global-audio-started', handleGlobalAudioStarted);
+    return () => {
+      window.removeEventListener('quran-global-audio-started', handleGlobalAudioStarted);
+    };
+  }, [stopAudio]);
+
   // Play Ayah audio with Auto-Play forward chain
   const playAyahByIndex = useCallback(async (index: number) => {
     if (!arabic || index < 0 || index >= arabic.ayahs.length) {
       setPlayingAyah(null);
       return;
     }
+
+    // Stop any other audio (e.g. from ListenPage full Surah recitation)
+    window.dispatchEvent(new CustomEvent('quran-stop-global-audio'));
 
     const targetAyah = arabic.ayahs[index];
     const audioUrl = buildAudioUrl(targetAyah.number, settings.reciterIdentifier, num, targetAyah.numberInSurah);
@@ -163,18 +184,11 @@ export default function SurahReaderPage() {
       setPlayingAyah(null);
       setAudioLoading(false);
     }
-  }, [arabic, settings.reciterIdentifier, showToast]);
+  }, [arabic, num, settings.reciterIdentifier, showToast]);
 
   useEffect(() => {
     playAyahByIndexRef.current = playAyahByIndex;
   }, [playAyahByIndex]);
-
-  const stopAudio = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
-    setPlayingAyah(null);
-  };
 
   const toggleBookmark = async (ayah: Ayah) => {
     const id = `${num}:${ayah.numberInSurah}`;

@@ -255,6 +255,22 @@ export default function HomePage() {
   useEffect(() => {
     document.title = 'Noor Quran — A calm space to reconnect with the Quran';
     getLastRead().then(setLastRead);
+
+    const handleGlobalAudioStarted = () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+      setIsPlaying(false);
+    };
+
+    window.addEventListener('quran-global-audio-started', handleGlobalAudioStarted);
+
+    return () => {
+      window.removeEventListener('quran-global-audio-started', handleGlobalAudioStarted);
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
   }, []);
 
   // Sync audio reciter source
@@ -275,6 +291,8 @@ export default function HomePage() {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
+      // Stop any other audio before starting home preview
+      window.dispatchEvent(new CustomEvent('quran-stop-global-audio'));
       audioRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
     }
   };
