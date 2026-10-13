@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   ArrowLeft, Search, ChevronLeft, ChevronRight,
-  Maximize2, Minimize2
+  Maximize2, Minimize2, UserCheck, BookMarked, BookOpen, Layers
 } from 'lucide-react';
 import { getBookById } from '../db/booksDb';
 import type { IslamicBook } from '../types/books';
@@ -18,6 +18,7 @@ export default function BookReaderPage() {
 
   // Reading Preferences
   const [viewMode, setViewMode] = useState<'page' | 'continuous'>('page');
+  const [paperTheme, setPaperTheme] = useState<'register' | 'book'>('register');
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [arabicFontSize, setArabicFontSize] = useState(26);
   const [showTransliteration, setShowTransliteration] = useState(true);
@@ -31,7 +32,7 @@ export default function BookReaderPage() {
     const found = getBookById(bookId);
     if (found) {
       setBook(found);
-      document.title = `${found.title} — Noor Quran`;
+      document.title = `${found.titleEnglish || found.title} — Noor Quran`;
     } else {
       navigate('/books');
     }
@@ -63,6 +64,8 @@ export default function BookReaderPage() {
     const q = inBookQuery.toLowerCase().trim();
     return currentChapter.items.filter((it) =>
       it.title.toLowerCase().includes(q) ||
+      (it.titleEnglish && it.titleEnglish.toLowerCase().includes(q)) ||
+      (it.titleUrdu && it.titleUrdu.includes(q)) ||
       it.arabicText.includes(q) ||
       it.translationUrdu.includes(q) ||
       it.translationEnglish.toLowerCase().includes(q)
@@ -139,73 +142,230 @@ export default function BookReaderPage() {
           }}
         >
           <ArrowLeft size={16} />
-          <span>کتب لائبریری (All Books)</span>
+          <span>کتب لائبریری (All Books Library)</span>
         </Link>
 
-        <span
-          style={{
-            padding: '3px 10px',
-            borderRadius: 14,
-            fontSize: '0.74rem',
-            fontWeight: 700,
-            background: 'var(--color-gold-soft)',
-            color: 'var(--color-gold-700)',
-          }}
-        >
-          {book.categoryLabel}
-        </span>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <span
+            style={{
+              padding: '3px 10px',
+              borderRadius: 14,
+              fontSize: '0.74rem',
+              fontWeight: 700,
+              background: 'var(--color-gold-soft)',
+              color: 'var(--color-gold-700)',
+            }}
+          >
+            {book.categoryLabel}
+          </span>
+          {paperTheme === 'register' && (
+            <span
+              style={{
+                padding: '3px 10px',
+                borderRadius: 14,
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                background: 'rgba(239, 68, 68, 0.12)',
+                color: '#dc2626',
+                border: '1px solid rgba(239, 68, 68, 0.25)',
+              }}
+            >
+              📒 رجسٹر موڈ (Lined Register)
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* ─── Book Header Card ────────────────────────────────────────────────── */}
+      {/* ─── Book Header Showcase Card (Trilingual Titles & Real Author) ───────── */}
       <section
         style={{
-          borderRadius: 22,
-          padding: '24px 28px',
+          borderRadius: 24,
+          padding: '26px 28px',
           background: book.coverGradient,
           color: '#ffffff',
-          marginBottom: 24,
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+          marginBottom: 20,
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.18)',
           position: 'relative',
           overflow: 'hidden',
+          border: '1.5px solid rgba(255, 255, 255, 0.2)',
         }}
       >
+        {/* Subtle decorative lined register overlay texture */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: 0.08,
+            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.4) 20px, rgba(255,255,255,0.4) 21px)',
+            pointerEvents: 'none',
+          }}
+        />
+
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: 14 }}>
-            <div>
-              <h1
+          {/* Trilingual Title Grid: English, Urdu, and Arabic clearly presented */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: 16,
+              marginBottom: 16,
+            }}
+          >
+            {/* 1. English Book Title Box */}
+            <div
+              style={{
+                padding: '12px 16px',
+                borderRadius: 14,
+                background: 'rgba(0, 0, 0, 0.25)',
+                border: '1px solid rgba(255, 255, 255, 0.22)',
+                backdropFilter: 'blur(6px)',
+              }}
+            >
+              <div
                 style={{
-                  margin: '0 0 6px',
-                  fontSize: 'clamp(1.4rem, 2.5vw, 1.85rem)',
+                  fontSize: '0.72rem',
                   fontWeight: 800,
+                  color: 'var(--color-accent)',
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                  marginBottom: 4,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 5,
                 }}
               >
-                {book.title}
+                <span>🇬🇧 English Title (انگریزی نام):</span>
+              </div>
+              <h1
+                style={{
+                  margin: 0,
+                  fontSize: 'clamp(1.2rem, 2.2vw, 1.55rem)',
+                  fontWeight: 800,
+                  lineHeight: 1.3,
+                  color: '#ffffff',
+                }}
+              >
+                {book.titleEnglish || book.title}
               </h1>
-              <div style={{ fontSize: '0.85rem', opacity: 0.9, marginBottom: 8 }}>
-                {book.author} • {book.readTime}
+            </div>
+
+            {/* 2. Urdu Book Title Box */}
+            <div
+              style={{
+                padding: '12px 16px',
+                borderRadius: 14,
+                background: 'rgba(212, 175, 55, 0.18)',
+                border: '1px solid rgba(212, 175, 55, 0.4)',
+                direction: 'rtl',
+                textAlign: 'right',
+                backdropFilter: 'blur(6px)',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '0.74rem',
+                  fontWeight: 800,
+                  color: 'var(--color-accent)',
+                  marginBottom: 4,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  justifyContent: 'flex-start',
+                }}
+              >
+                <span>🇵🇰 اردو عنوان (Urdu Title):</span>
+              </div>
+              <div
+                style={{
+                  fontSize: 'clamp(1.2rem, 2.3vw, 1.6rem)',
+                  fontWeight: 700,
+                  fontFamily: "'Noto Nastaliq Urdu', 'Urdu Typesetting', serif",
+                  lineHeight: 1.55,
+                  color: '#ffffff',
+                }}
+              >
+                {book.titleUrdu || book.title}
               </div>
             </div>
 
+            {/* 3. Arabic Book Title Box */}
             <div
-              className="arabic-text"
               style={{
-                fontSize: '1.6rem',
-                color: 'var(--color-accent)',
-                fontWeight: 700,
+                padding: '12px 16px',
+                borderRadius: 14,
+                background: 'rgba(0, 0, 0, 0.28)',
+                border: '1px solid rgba(255, 255, 255, 0.22)',
                 direction: 'rtl',
-                textAlign: 'left',
+                textAlign: 'right',
+                backdropFilter: 'blur(6px)',
               }}
             >
-              {book.arabicTitle}
+              <div
+                style={{
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  color: 'var(--color-accent)',
+                  marginBottom: 4,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  justifyContent: 'flex-start',
+                }}
+              >
+                <span>🇸🇦 العنوان بالعربية (Arabic Title):</span>
+              </div>
+              <div
+                className="arabic-text"
+                style={{
+                  fontSize: '1.45rem',
+                  fontWeight: 700,
+                  color: 'var(--color-accent)',
+                  lineHeight: 1.35,
+                }}
+              >
+                {book.titleArabic || book.arabicTitle}
+              </div>
             </div>
           </div>
 
+          {/* Authentic Scholar & Book Provenance Panel */}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+              padding: '10px 16px',
+              borderRadius: 12,
+              background: 'rgba(0, 0, 0, 0.3)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              fontSize: '0.84rem',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <UserCheck size={16} style={{ color: 'var(--color-accent)' }} />
+              <span style={{ fontWeight: 700 }}>
+                تصنیف و تحقیق: {book.author} ({book.authorEnglish})
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, opacity: 0.9 }}>
+              {book.publishedEra && (
+                <span>📜 {book.publishedEra}</span>
+              )}
+              <span>⏱️ مطالعہ: {book.readTime}</span>
+              <span>📄 {book.totalItems} صفحات و اسباق</span>
+            </div>
+          </div>
+
+          {/* Book Summary / Description */}
           <p
             style={{
-              margin: '8px 0 0',
+              margin: '12px 0 0',
               fontSize: '0.88rem',
-              color: 'rgba(255, 255, 255, 0.88)',
-              maxWidth: 760,
+              color: 'rgba(255, 255, 255, 0.9)',
+              maxWidth: 820,
               lineHeight: 1.55,
             }}
           >
@@ -213,6 +373,142 @@ export default function BookReaderPage() {
           </p>
         </div>
       </section>
+
+      {/* ─── Authentic Ruled Register Ledger Header Plate ────────────────────── */}
+      {paperTheme === 'register' && (
+        <div
+          style={{
+            borderRadius: 18,
+            background: 'var(--color-surface)',
+            border: '2px solid var(--color-border)',
+            borderLeft: '6px solid #ef4444', // Classic red vertical margin line
+            padding: '16px 20px',
+            marginBottom: 20,
+            position: 'relative',
+            boxShadow: '0 4px 18px rgba(0, 0, 0, 0.04)',
+            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(148, 163, 184, 0.14) 28px, rgba(148, 163, 184, 0.14) 29px)',
+          }}
+        >
+          {/* Top Spiral Punch Hole simulation */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingBottom: 10,
+              marginBottom: 12,
+              borderBottom: '1.5px dashed rgba(239, 68, 68, 0.35)',
+            }}
+          >
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              {[1, 2, 3, 4, 5, 6].map((hole) => (
+                <div
+                  key={hole}
+                  style={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: '50%',
+                    background: 'var(--color-bg)',
+                    border: '1.5px solid rgba(100, 116, 139, 0.4)',
+                    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.25)',
+                  }}
+                />
+              ))}
+              <span
+                style={{
+                  fontSize: '0.74rem',
+                  fontWeight: 800,
+                  color: 'var(--color-gold-700)',
+                  letterSpacing: '0.06em',
+                  marginLeft: 6,
+                }}
+              >
+                📓 رجسٹرِ اسلامی کتب و ادعیہ • ISLAMIC NOTEBOOK REGISTER
+              </span>
+            </div>
+
+            <div
+              className="arabic-text"
+              style={{
+                fontSize: '0.95rem',
+                color: 'var(--color-brand)',
+                fontWeight: 700,
+              }}
+            >
+              بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+            </div>
+          </div>
+
+          {/* Register Ledger Info: Date, Subject, Page No */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: 10,
+              fontSize: '0.82rem',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                background: 'var(--color-bg)',
+                padding: '6px 12px',
+                borderRadius: 8,
+                border: '1px solid var(--color-border)',
+              }}
+            >
+              <span style={{ color: '#ef4444', fontWeight: 800 }}>DATE / تاریخ:</span>
+              <span style={{ fontWeight: 700, color: 'var(--color-text)' }}>
+                1448ھ (مطابق 2026ء)
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                background: 'var(--color-bg)',
+                padding: '6px 12px',
+                borderRadius: 8,
+                border: '1px solid var(--color-border)',
+              }}
+            >
+              <span style={{ color: 'var(--color-brand)', fontWeight: 800 }}>SUBJECT / عنوان:</span>
+              <span
+                style={{
+                  fontWeight: 700,
+                  color: 'var(--color-text)',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                {book.titleEnglish || book.title}
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                background: 'var(--color-bg)',
+                padding: '6px 12px',
+                borderRadius: 8,
+                border: '1px solid var(--color-border)',
+              }}
+            >
+              <span style={{ color: 'var(--color-gold-700)', fontWeight: 800 }}>PAGE / صفحہ:</span>
+              <span style={{ fontWeight: 800, color: 'var(--color-brand)' }}>
+                صفحہ {currentPageIndex + 1} از {totalPages}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ─── Reading Control Toolbar ─────────────────────────────────────────── */}
       <div

@@ -46,6 +46,9 @@ export function addCustomBook(input: UserCustomBookInput): IslamicBook {
   const bookItems: BookItem[] = input.items.map((it, idx) => ({
     id: `${newId}-item-${idx + 1}`,
     title: it.title,
+    titleEnglish: it.titleEnglish || it.title,
+    titleUrdu: it.titleUrdu || it.title,
+    titleArabic: it.titleArabic || '',
     arabicText: it.arabicText,
     transliteration: it.transliteration || '',
     translationUrdu: it.translationUrdu,
@@ -53,14 +56,19 @@ export function addCustomBook(input: UserCustomBookInput): IslamicBook {
     reference: it.reference || 'Custom Collection',
     benefits: it.benefits || '',
     repeatCount: it.repeatCount || 1,
+    pageNumber: idx + 1,
     tags: ['custom', input.category],
   }));
 
   const newBook: IslamicBook = {
     id: newId,
     title: input.title,
-    arabicTitle: input.arabicTitle || 'كِتَابٌ إِسْلَامِيٌّ',
+    titleEnglish: input.titleEnglish || input.title,
+    titleUrdu: input.titleUrdu || input.title,
+    titleArabic: input.titleArabic || input.arabicTitle || 'كِتَابٌ إِسْلَامِيٌّ',
     author: input.author || 'User Contribution',
+    authorEnglish: input.authorEnglish || input.author || 'User Contributed Book',
+    publishedEra: 'صارف کی شامل کردہ کتاب (User Book)',
     category: input.category,
     categoryLabel: input.category === 'namaz' ? 'نماز • Salah' :
                    input.category === 'kalima' ? 'کلمے • Kalimas' :

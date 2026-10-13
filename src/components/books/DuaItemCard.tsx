@@ -15,9 +15,10 @@ interface DuaItemCardProps {
   showTransliteration?: boolean;
   showUrdu?: boolean;
   showEnglish?: boolean;
+  paperTheme?: 'register' | 'book';
 }
 
-export const DuaItemCard: React.FC<DuaItemCardProps> = ({
+export const DuaItemCard = ({
   item,
   bookId,
   bookTitle,
@@ -25,7 +26,8 @@ export const DuaItemCard: React.FC<DuaItemCardProps> = ({
   showTransliteration = true,
   showUrdu = true,
   showEnglish = true,
-}) => {
+  paperTheme = 'register',
+}: DuaItemCardProps) => {
   const { showToast } = useToast();
   const [copied, setCopied] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -55,7 +57,7 @@ export const DuaItemCard: React.FC<DuaItemCardProps> = ({
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(item.arabicText);
     utterance.lang = 'ar-SA';
-    utterance.rate = 0.85; // Slightly slower for clear Tajweed
+    utterance.rate = 0.85;
 
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
@@ -69,7 +71,7 @@ export const DuaItemCard: React.FC<DuaItemCardProps> = ({
 
   // Copy Dua
   const handleCopy = () => {
-    const textToCopy = `📖 ${item.title}\n\n${item.arabicText}\n\nاردو ترجمہ:\n${item.translationUrdu}\n\nEnglish Translation:\n${item.translationEnglish}\n\nحوالہ: ${item.reference || bookTitle}\n\n— Noor Quran (نور القرآن)`;
+    const textToCopy = `📖 ${item.titleEnglish || item.title}\n${item.titleUrdu || ''}\n\n${item.arabicText}\n\nاردو ترجمہ:\n${item.translationUrdu}\n\nEnglish Translation:\n${item.translationEnglish}\n\nحوالہ: ${item.reference || bookTitle}\n\n— Noor Quran (نور القرآن)`;
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     showToast('دعا کا متن اور ترجمہ کاپی ہو گیا • Copied', 'success');
@@ -101,9 +103,9 @@ export const DuaItemCard: React.FC<DuaItemCardProps> = ({
     setCurrentCount(0);
   };
 
-  // Share via Web Share API
+  // Share
   const handleShare = () => {
-    const text = `${item.title}\n\n${item.arabicText}\n\n${item.translationUrdu}`;
+    const text = `${item.titleEnglish || item.title}\n\n${item.arabicText}\n\n${item.translationUrdu}`;
     if (navigator.share) {
       navigator.share({
         title: item.title,
@@ -115,57 +117,139 @@ export const DuaItemCard: React.FC<DuaItemCardProps> = ({
     }
   };
 
+  const isRegister = paperTheme === 'register';
+
   return (
     <div
       id={`item-${item.id}`}
-      className="card"
       style={{
         borderRadius: 20,
-        padding: '24px 26px',
-        marginBottom: 20,
-        border: '1.5px solid var(--color-border)',
-        background: 'var(--color-surface)',
-        boxShadow: '0 4px 18px rgba(0, 0, 0, 0.03)',
+        padding: isRegister ? '26px 28px 24px 34px' : '24px 26px',
+        marginBottom: 24,
         position: 'relative',
-        transition: 'border-color 0.2s ease',
+        background: isRegister ? 'var(--color-surface)' : 'var(--color-surface)',
+        // Faint horizontal register ruled lines when in register mode
+        backgroundImage: isRegister
+          ? 'repeating-linear-gradient(transparent, transparent 35px, rgba(148, 163, 184, 0.18) 35px, rgba(148, 163, 184, 0.18) 36px)'
+          : 'none',
+        // Red margin line on the left like a real register notebook
+        borderLeft: isRegister ? '4px solid #ef4444' : '1.5px solid var(--color-border)',
+        borderTop: '1.5px solid var(--color-border)',
+        borderRight: '1.5px solid var(--color-border)',
+        borderBottom: '1.5px solid var(--color-border)',
+        boxShadow: isRegister
+          ? '0 6px 25px rgba(0, 0, 0, 0.05), inset 3px 0 0 rgba(239, 68, 68, 0.3)'
+          : '0 4px 18px rgba(0, 0, 0, 0.03)',
+        transition: 'all 0.2s ease',
+        overflow: 'hidden',
       }}
     >
-      {/* Top Header: Title & Action Buttons */}
+      {/* Real Register Notebook Top Header Bar */}
+      {isRegister && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 16,
+            paddingBottom: 10,
+            borderBottom: '1.5px solid rgba(239, 68, 68, 0.35)',
+            fontSize: '0.78rem',
+            color: 'var(--color-text-muted)',
+            fontFamily: 'monospace',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ color: '#ef4444', fontWeight: 800 }}>●</span>
+            <span style={{ fontWeight: 700, color: 'var(--color-text)' }}>
+              صفحہ / Page: {item.pageNumber || 1}
+            </span>
+          </div>
+
+          <div
+            className="arabic-text"
+            style={{
+              fontSize: '0.9rem',
+              color: 'var(--color-accent)',
+              fontWeight: 700,
+              lineHeight: 1,
+            }}
+          >
+            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+          </div>
+
+          <div style={{ color: 'var(--color-gold-700)', fontWeight: 700 }}>
+            {item.reference ? `حوالہ: ${item.reference}` : 'مستند و مسنون'}
+          </div>
+        </div>
+      )}
+
+      {/* ─── Tri-Lingual Titles Header Box ─── */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-start',
-          gap: 12,
+          gap: 14,
           marginBottom: 16,
           borderBottom: '1px solid var(--color-border)',
           paddingBottom: 14,
         }}
       >
-        <div>
-          <h3
-            style={{
-              margin: '0 0 4px',
-              fontSize: '1.15rem',
-              fontWeight: 700,
-              color: 'var(--color-brand)',
-              lineHeight: 1.35,
-            }}
-          >
-            {item.title}
-          </h3>
-          {item.arabicTitle && (
-            <div
-              className="arabic-text"
+        <div style={{ flex: 1 }}>
+          {/* 1. English Title */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, padding: '2px 6px', borderRadius: 6, background: 'var(--color-gold-soft)', color: 'var(--color-brand)' }}>
+              🇬🇧 English
+            </span>
+            <h3
               style={{
-                fontSize: '0.95rem',
-                color: 'var(--color-gold-600)',
-                fontWeight: 600,
-                textAlign: 'left',
-                direction: 'rtl',
+                margin: 0,
+                fontSize: '1.08rem',
+                fontWeight: 800,
+                color: 'var(--color-brand)',
+                lineHeight: 1.35,
               }}
             >
-              {item.arabicTitle}
+              {item.titleEnglish || item.title}
+            </h3>
+          </div>
+
+          {/* 2. Urdu Title */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, direction: 'rtl', textAlign: 'right' }}>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, padding: '2px 6px', borderRadius: 6, background: 'rgba(27, 67, 50, 0.1)', color: 'var(--color-brand)' }}>
+              🇵🇰 اردو
+            </span>
+            <span
+              style={{
+                fontSize: '1.05rem',
+                fontWeight: 700,
+                color: 'var(--color-text)',
+                lineHeight: 1.4,
+                fontFamily: "'Noto Nastaliq Urdu', 'Urdu Typesetting', serif",
+              }}
+            >
+              {item.titleUrdu || item.title}
+            </span>
+          </div>
+
+          {/* 3. Arabic Title (if present) */}
+          {item.titleArabic && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, direction: 'rtl', textAlign: 'right' }}>
+              <span style={{ fontSize: '0.68rem', fontWeight: 800, padding: '2px 6px', borderRadius: 6, background: 'rgba(212, 175, 55, 0.15)', color: 'var(--color-gold-700)' }}>
+                🇸🇦 العربية
+              </span>
+              <span
+                className="arabic-text"
+                style={{
+                  fontSize: '0.98rem',
+                  fontWeight: 700,
+                  color: 'var(--color-gold-600)',
+                  lineHeight: 1.2,
+                }}
+              >
+                {item.titleArabic}
+              </span>
             </div>
           )}
         </div>
@@ -176,7 +260,7 @@ export const DuaItemCard: React.FC<DuaItemCardProps> = ({
           <button
             onClick={handleToggleAudio}
             aria-label={isSpeaking ? 'Stop Arabic audio' : 'Listen Arabic pronunciation'}
-            title={isSpeaking ? 'Stop audio' : 'سماعت فرمائیں'}
+            title={isSpeaking ? 'Stop audio' : 'سماعت فرمائیں (Listen Audio)'}
             style={{
               background: isSpeaking ? 'var(--color-gold-soft)' : 'transparent',
               border: '1px solid var(--color-border)',
@@ -197,7 +281,7 @@ export const DuaItemCard: React.FC<DuaItemCardProps> = ({
           <button
             onClick={handleCopy}
             aria-label="Copy Dua text"
-            title="کاپی کریں"
+            title="کاپی کریں (Copy)"
             style={{
               background: 'transparent',
               border: '1px solid var(--color-border)',
@@ -258,28 +342,29 @@ export const DuaItemCard: React.FC<DuaItemCardProps> = ({
         </div>
       </div>
 
-      {/* Arabic Script */}
+      {/* ─── Arabic Sacred Text Box ─── */}
       <div
         className="arabic-text select-all"
         style={{
           fontSize: `${arabicFontSize}px`,
-          lineHeight: 2.25,
+          lineHeight: 2.3,
           color: 'var(--color-text)',
           textAlign: 'right',
           direction: 'rtl',
-          padding: '12px 14px',
-          background: 'var(--color-bg)',
-          borderRadius: 14,
+          padding: '14px 18px',
+          background: isRegister ? 'rgba(255, 255, 255, 0.7)' : 'var(--color-bg)',
+          borderRadius: 16,
           marginBottom: 16,
-          border: '1px solid var(--color-border-gold)',
+          border: '1.5px solid var(--color-border-gold)',
           letterSpacing: '0.01em',
           wordBreak: 'break-word',
+          boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.03)',
         }}
       >
         {item.arabicText}
       </div>
 
-      {/* Transliteration */}
+      {/* ─── Transliteration (Pronunciation) ─── */}
       {showTransliteration && item.transliteration && (
         <div
           style={{
@@ -287,45 +372,50 @@ export const DuaItemCard: React.FC<DuaItemCardProps> = ({
             fontStyle: 'italic',
             color: 'var(--color-text-muted)',
             marginBottom: 14,
-            padding: '6px 12px',
-            background: 'rgba(212, 175, 55, 0.05)',
+            padding: '8px 14px',
+            background: 'rgba(212, 175, 55, 0.06)',
             borderLeft: '3px solid var(--color-accent)',
-            borderRadius: '0 8px 8px 0',
-            lineHeight: 1.5,
+            borderRadius: '0 10px 10px 0',
+            lineHeight: 1.55,
           }}
         >
-          <strong style={{ fontStyle: 'normal', fontSize: '0.8rem', color: 'var(--color-gold-700)', display: 'block', marginBottom: 2 }}>
-            تلفظ / Pronunciation:
+          <strong style={{ fontStyle: 'normal', fontSize: '0.78rem', color: 'var(--color-gold-700)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 2 }}>
+            تلفظ و ادائیگی / Pronunciation:
           </strong>
           {item.transliteration}
         </div>
       )}
 
-      {/* Urdu Translation */}
+      {/* ─── Urdu Translation ─── */}
       {showUrdu && item.translationUrdu && (
         <div
           style={{
             fontSize: '1.08rem',
-            lineHeight: 2,
+            lineHeight: 2.05,
             color: 'var(--color-text)',
             textAlign: 'right',
             direction: 'rtl',
             marginBottom: 14,
-            padding: '10px 14px',
-            borderRadius: 10,
-            background: 'var(--color-surface)',
-            borderRight: '3px solid var(--color-brand)',
+            padding: '12px 16px',
+            borderRadius: 12,
+            background: isRegister ? 'rgba(255, 255, 255, 0.85)' : 'var(--color-surface)',
+            borderRight: '3.5px solid var(--color-brand)',
+            borderTop: '1px solid var(--color-border)',
+            borderBottom: '1px solid var(--color-border)',
+            borderLeft: '1px solid var(--color-border)',
             fontFamily: "'Noto Nastaliq Urdu', 'Urdu Typesetting', system-ui, serif",
           }}
         >
-          <strong style={{ fontSize: '0.85rem', color: 'var(--color-brand)', display: 'block', marginBottom: 4 }}>
-            اردو ترجمہ:
-          </strong>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: 'var(--color-gold-soft)', color: 'var(--color-brand)' }}>
+              اردو ترجمہ و مفہوم
+            </span>
+          </div>
           {item.translationUrdu}
         </div>
       )}
 
-      {/* English Translation */}
+      {/* ─── English Translation ─── */}
       {showEnglish && item.translationEnglish && (
         <div
           style={{
@@ -333,19 +423,25 @@ export const DuaItemCard: React.FC<DuaItemCardProps> = ({
             lineHeight: 1.6,
             color: 'var(--color-text)',
             marginBottom: 16,
-            padding: '8px 12px',
-            borderRadius: 10,
-            background: 'var(--color-bg)',
+            padding: '10px 14px',
+            borderRadius: 12,
+            background: isRegister ? 'rgba(255, 255, 255, 0.85)' : 'var(--color-bg)',
+            borderLeft: '3.5px solid #3b82f6',
+            borderTop: '1px solid var(--color-border)',
+            borderBottom: '1px solid var(--color-border)',
+            borderRight: '1px solid var(--color-border)',
           }}
         >
-          <strong style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 3 }}>
-            English Translation:
-          </strong>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+            <span style={{ fontSize: '0.72rem', fontWeight: 800, padding: '2px 6px', borderRadius: 6, background: 'rgba(59, 130, 246, 0.1)', color: '#2563eb' }}>
+              English Meaning & Translation
+            </span>
+          </div>
           {item.translationEnglish}
         </div>
       )}
 
-      {/* Reference & Benefits Badges */}
+      {/* ─── Reference & Benefits & Tasbeeh Toolbar ─── */}
       <div
         style={{
           display: 'flex',
@@ -353,7 +449,7 @@ export const DuaItemCard: React.FC<DuaItemCardProps> = ({
           gap: 10,
           alignItems: 'center',
           justifyContent: 'space-between',
-          borderTop: '1px solid var(--color-border)',
+          borderTop: '1px dashed var(--color-border)',
           paddingTop: 12,
           fontSize: '0.8rem',
         }}
@@ -365,16 +461,16 @@ export const DuaItemCard: React.FC<DuaItemCardProps> = ({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 5,
-                padding: '3px 9px',
+                padding: '4px 10px',
                 borderRadius: 8,
                 background: 'var(--color-gold-soft)',
                 color: 'var(--color-gold-700)',
-                fontWeight: 600,
-                fontSize: '0.75rem',
+                fontWeight: 700,
+                fontSize: '0.76rem',
               }}
             >
               <BookOpen size={12} />
-              {item.reference}
+              حوالہ: {item.reference}
             </span>
           )}
 
@@ -384,12 +480,12 @@ export const DuaItemCard: React.FC<DuaItemCardProps> = ({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 5,
-                padding: '3px 9px',
+                padding: '4px 10px',
                 borderRadius: 8,
                 background: 'rgba(27, 67, 50, 0.08)',
                 color: 'var(--color-brand)',
-                fontWeight: 600,
-                fontSize: '0.75rem',
+                fontWeight: 700,
+                fontSize: '0.76rem',
               }}
             >
               <Sparkles size={12} />
@@ -406,23 +502,24 @@ export const DuaItemCard: React.FC<DuaItemCardProps> = ({
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              padding: '6px 12px',
+              padding: '6px 14px',
               borderRadius: 24,
               background: currentCount >= targetCount ? 'var(--color-primary-100)' : 'var(--color-gold-soft)',
               border: `1.5px solid ${currentCount >= targetCount ? 'var(--color-brand)' : 'var(--color-border-gold)'}`,
               cursor: 'pointer',
               userSelect: 'none',
               transition: 'all 0.15s ease',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
             }}
             title="تعداد گننے کے لیے کلک کریں (Tap to Count)"
           >
-            <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--color-brand)' }}>
+            <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--color-brand)' }}>
               تسبیح کاؤنٹر:
             </span>
             <span
               style={{
-                fontSize: '0.92rem',
-                fontWeight: 800,
+                fontSize: '0.94rem',
+                fontWeight: 900,
                 color: currentCount >= targetCount ? 'var(--color-brand)' : 'var(--color-gold-700)',
               }}
             >
