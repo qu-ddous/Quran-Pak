@@ -282,65 +282,94 @@ export default function IslamicBooksPage() {
               </div>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: 14 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
               {searchResults.map(({ book, chapter, item }) => (
                 <div
                   key={item.id}
                   className="card"
                   style={{
-                    padding: '16px 18px',
-                    borderRadius: 14,
-                    border: '1px solid var(--color-border)',
-                    background: 'var(--color-bg)',
+                    padding: '18px 20px',
+                    borderRadius: 16,
+                    border: '1.5px solid var(--color-border)',
+                    borderLeft: '4px solid #ef4444', // Notebook register red line
+                    background: 'var(--color-surface)',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
                   }}
                 >
                   <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                      <span
-                        style={{
-                          fontSize: '0.72rem',
-                          fontWeight: 700,
-                          padding: '2px 8px',
-                          borderRadius: 6,
-                          background: 'var(--color-gold-soft)',
-                          color: 'var(--color-gold-700)',
-                        }}
-                      >
-                        {book.title.split(' ')[0]}
-                      </span>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                        {item.reference || chapter.title}
-                      </span>
+                    {/* Source Book Attribution with Trilingual info */}
+                    <div
+                      style={{
+                        padding: '6px 10px',
+                        borderRadius: 8,
+                        background: 'var(--color-bg)',
+                        border: '1px solid var(--color-border)',
+                        marginBottom: 10,
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+                        <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--color-brand)' }}>
+                          📖 {book.titleEnglish || book.title}
+                        </span>
+                        <span style={{ fontSize: '0.72rem', color: 'var(--color-gold-700)', fontWeight: 700 }}>
+                          {item.reference || chapter.title}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', direction: 'rtl', textAlign: 'right' }}>
+                        {book.titleUrdu || book.title} • <span style={{ color: 'var(--color-brand)' }}>مصنف: {book.author}</span>
+                      </div>
                     </div>
 
-                    <h4 style={{ margin: '0 0 6px', fontSize: '0.98rem', fontWeight: 700, color: 'var(--color-brand)' }}>
-                      {item.title}
-                    </h4>
+                    {/* Trilingual Item Titles */}
+                    <div style={{ marginBottom: 10 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
+                        <span style={{ fontSize: '0.65rem', fontWeight: 800, padding: '1px 5px', borderRadius: 4, background: 'var(--color-gold-soft)', color: 'var(--color-brand)' }}>
+                          🇬🇧 EN
+                        </span>
+                        <h4 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 800, color: 'var(--color-brand)' }}>
+                          {item.titleEnglish || item.title}
+                        </h4>
+                      </div>
 
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, direction: 'rtl', textAlign: 'right' }}>
+                        <span style={{ fontSize: '0.65rem', fontWeight: 800, padding: '1px 5px', borderRadius: 4, background: 'rgba(27, 67, 50, 0.1)', color: 'var(--color-brand)' }}>
+                          🇵🇰 اردو
+                        </span>
+                        <span style={{ fontSize: '0.96rem', fontWeight: 700, color: 'var(--color-text)', fontFamily: "'Noto Nastaliq Urdu', 'Urdu Typesetting', serif" }}>
+                          {item.titleUrdu || item.title}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Arabic Text Snippet */}
                     <div
                       className="arabic-text"
                       style={{
-                        fontSize: '1.05rem',
+                        fontSize: '1.15rem',
                         lineHeight: 1.8,
                         color: 'var(--color-text)',
-                        marginBottom: 6,
-                        maxHeight: 60,
+                        marginBottom: 8,
+                        maxHeight: 70,
                         overflow: 'hidden',
                         direction: 'rtl',
                         textAlign: 'right',
+                        padding: '6px 10px',
+                        borderRadius: 8,
+                        background: 'var(--color-bg)',
                       }}
                     >
                       {item.arabicText}
                     </div>
 
+                    {/* Urdu Translation Snippet */}
                     <p
                       style={{
-                        margin: 0,
+                        margin: '0 0 6px',
                         fontSize: '0.82rem',
-                        color: 'var(--color-text-muted)',
+                        color: 'var(--color-text)',
                         lineHeight: 1.5,
                         display: '-webkit-box',
                         WebkitLineClamp: 2,
@@ -352,26 +381,42 @@ export default function IslamicBooksPage() {
                     >
                       {item.translationUrdu}
                     </p>
+
+                    {/* English Translation Snippet */}
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: '0.78rem',
+                        color: 'var(--color-text-muted)',
+                        lineHeight: 1.45,
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {item.translationEnglish}
+                    </p>
                   </div>
 
                   <Link
                     to={`/books/${book.id}#item-${item.id}`}
                     className="btn-primary"
                     style={{
-                      marginTop: 12,
+                      marginTop: 14,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: 6,
-                      padding: '7px 12px',
-                      borderRadius: 8,
-                      fontSize: '0.8rem',
+                      padding: '8px 14px',
+                      borderRadius: 10,
+                      fontSize: '0.84rem',
                       fontWeight: 700,
                       textDecoration: 'none',
                     }}
                   >
-                    <span>دعا دیکھیں • Open in Reader</span>
-                    <ArrowRight size={13} />
+                    <span>📒 رجسٹر میں کھولیں • Open in Register</span>
+                    <ArrowRight size={14} />
                   </Link>
                 </div>
               ))}

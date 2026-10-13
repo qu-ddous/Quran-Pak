@@ -13,15 +13,20 @@ interface AddBookModalProps {
 export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps) => {
   const { showToast } = useToast();
 
-  const [title, setTitle] = useState('');
+  const [titleEnglish, setTitleEnglish] = useState('');
+  const [titleUrdu, setTitleUrdu] = useState('');
   const [arabicTitle, setArabicTitle] = useState('');
   const [author, setAuthor] = useState('');
+  const [authorEnglish, setAuthorEnglish] = useState('');
   const [category, setCategory] = useState<BookCategory>('duas');
   const [description, setDescription] = useState('');
 
   const [items, setItems] = useState<UserCustomBookInput['items']>([
     {
       title: '',
+      titleEnglish: '',
+      titleUrdu: '',
+      titleArabic: '',
       arabicText: '',
       transliteration: '',
       translationUrdu: '',
@@ -39,6 +44,9 @@ export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps
       ...prev,
       {
         title: '',
+        titleEnglish: '',
+        titleUrdu: '',
+        titleArabic: '',
         arabicText: '',
         transliteration: '',
         translationUrdu: '',
@@ -69,25 +77,42 @@ export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title.trim()) {
-      showToast('براہ کرم کتاب کا نام درج کریں (Please enter book title)', 'error');
+    const finalTitleEnglish = titleEnglish.trim();
+    const finalTitleUrdu = titleUrdu.trim();
+    const primaryTitle = finalTitleEnglish || finalTitleUrdu;
+
+    if (!primaryTitle) {
+      showToast('براہ کرم کتاب کا نام انگریزی یا اردو میں درج کریں (Please enter book title)', 'error');
       return;
     }
 
-    const validItems = items.filter((it) => it.title.trim() && it.arabicText.trim());
+    const validItems = items.filter((it) => (it.title.trim() || it.titleUrdu?.trim() || it.titleEnglish?.trim()) && it.arabicText.trim());
     if (validItems.length === 0) {
       showToast('کم از کم ایک دعا کا عنوان اور عربی متن درج کریں (Please provide at least one Dua)', 'error');
       return;
     }
 
+    // Normalise item titles so title, titleEnglish, and titleUrdu are all filled
+    const normalisedItems = validItems.map((it) => ({
+      ...it,
+      title: it.title.trim() || it.titleEnglish?.trim() || it.titleUrdu?.trim() || 'دعا',
+      titleEnglish: it.titleEnglish?.trim() || it.title.trim() || 'Dua',
+      titleUrdu: it.titleUrdu?.trim() || it.title.trim() || 'دعا',
+      titleArabic: it.titleArabic?.trim() || undefined,
+    }));
+
     try {
       addCustomBook({
-        title: title.trim(),
+        title: primaryTitle,
+        titleEnglish: finalTitleEnglish || finalTitleUrdu,
+        titleUrdu: finalTitleUrdu || finalTitleEnglish,
+        titleArabic: arabicTitle.trim() || undefined,
         arabicTitle: arabicTitle.trim() || undefined,
-        author: author.trim() || 'Custom Author',
+        author: author.trim() || 'اہلِ علم / مرتب',
+        authorEnglish: authorEnglish.trim() || author.trim() || 'Author / Compiler',
         category,
-        description: description.trim() || 'کتاب / دعاؤں کا مجموعہ',
-        items: validItems,
+        description: description.trim() || 'اسلامی کتاب و دعاؤں کا مجموعہ',
+        items: normalisedItems,
       });
 
       showToast('ماشاءاللہ! نئی کتاب کامیابی سے شامل کر دی گئی', 'success');
@@ -187,17 +212,18 @@ export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps
 
         {/* Modal Scrollable Body */}
         <form onSubmit={handleSubmit} style={{ overflowY: 'auto', padding: '24px', flex: 1 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, marginBottom: 18 }}>
+          {/* Book Info Section with 3 Distinct Language Titles */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 14, marginBottom: 16 }}>
+            {/* 1. English Title */}
             <div>
-              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: 6, color: 'var(--color-text)' }}>
-                کتاب کا نام (Book Title) *
+              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, marginBottom: 6, color: 'var(--color-brand)' }}>
+                🇬🇧 English Book Title (انگریزی نام) *
               </label>
               <input
                 type="text"
-                required
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. مسنون دعائیں از فلاں مصنف"
+                value={titleEnglish}
+                onChange={(e) => setTitleEnglish(e.target.value)}
+                placeholder="e.g. Daily Masnoon Duas Collection"
                 style={{
                   width: '100%',
                   padding: '10px 14px',
@@ -210,15 +236,40 @@ export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps
               />
             </div>
 
+            {/* 2. Urdu Title */}
             <div>
-              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: 6, color: 'var(--color-text)' }}>
-                عربی نام (Arabic Title)
+              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, marginBottom: 6, color: 'var(--color-gold-700)', direction: 'rtl', textAlign: 'right' }}>
+                🇵🇰 اردو عنوان (Urdu Title)
+              </label>
+              <input
+                type="text"
+                dir="rtl"
+                value={titleUrdu}
+                onChange={(e) => setTitleUrdu(e.target.value)}
+                placeholder="مثلاً: مسنون دعاؤں اور اذکار کا رجسٹر"
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  borderRadius: 10,
+                  border: '1.5px solid var(--color-border)',
+                  background: 'var(--color-bg)',
+                  color: 'var(--color-text)',
+                  fontSize: '0.95rem',
+                  fontFamily: "'Noto Nastaliq Urdu', 'Urdu Typesetting', serif",
+                }}
+              />
+            </div>
+
+            {/* 3. Arabic Title */}
+            <div>
+              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, marginBottom: 6, color: 'var(--color-accent)', direction: 'rtl', textAlign: 'right' }}>
+                🇸🇦 العنوان بالعربية (Arabic Title)
               </label>
               <input
                 type="text"
                 value={arabicTitle}
                 onChange={(e) => setArabicTitle(e.target.value)}
-                placeholder="e.g. أَدْعِيَةٌ مُخْتَارَةٌ"
+                placeholder="مثلاً: سِجِلُّ الأَدْعِيَةِ المَسْنُونَةِ"
                 dir="rtl"
                 className="arabic-text"
                 style={{
@@ -232,16 +283,19 @@ export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps
                 }}
               />
             </div>
+          </div>
 
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 14, marginBottom: 16 }}>
+            {/* Author in Urdu */}
             <div>
               <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: 6, color: 'var(--color-text)' }}>
-                مصنف / مرتب (Author / Compiler)
+                مصنف / مؤلف (Author in Urdu)
               </label>
               <input
                 type="text"
                 value={author}
                 onChange={(e) => setAuthor(e.target.value)}
-                placeholder="e.g. امام نووی / نام یا ادارہ"
+                placeholder="e.g. مولانا محمد یا آپ کا نام"
                 style={{
                   width: '100%',
                   padding: '10px 14px',
@@ -254,6 +308,29 @@ export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps
               />
             </div>
 
+            {/* Author in English */}
+            <div>
+              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: 6, color: 'var(--color-text)' }}>
+                Author Name in English
+              </label>
+              <input
+                type="text"
+                value={authorEnglish}
+                onChange={(e) => setAuthorEnglish(e.target.value)}
+                placeholder="e.g. Maulana Muhammad / Your Name"
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  borderRadius: 10,
+                  border: '1.5px solid var(--color-border)',
+                  background: 'var(--color-bg)',
+                  color: 'var(--color-text)',
+                  fontSize: '0.9rem',
+                }}
+              />
+            </div>
+
+            {/* Category */}
             <div>
               <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: 6, color: 'var(--color-text)' }}>
                 قسم / کیٹیگری (Category)
@@ -283,7 +360,7 @@ export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps
 
           <div style={{ marginBottom: 22 }}>
             <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: 6, color: 'var(--color-text)' }}>
-              کتاب کا مختصر تعارف (Description)
+              کتاب کا تعارف (Description)
             </label>
             <textarea
               rows={2}
@@ -344,13 +421,14 @@ export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps
                   padding: 16,
                   borderRadius: 14,
                   border: '1px solid var(--color-border)',
+                  borderLeft: '4px solid #ef4444', // Register notebook styling
                   marginBottom: 14,
                   position: 'relative',
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                   <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--color-gold-600)' }}>
-                    دعا #{idx + 1}
+                    صفحہ / دعا #{idx + 1}
                   </span>
                   {items.length > 1 && (
                     <button
@@ -370,13 +448,33 @@ export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps
                   )}
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 10, marginBottom: 10 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, marginBottom: 10 }}>
                   <input
                     type="text"
-                    required
-                    value={it.title}
-                    onChange={(e) => handleItemChange(idx, 'title', e.target.value)}
-                    placeholder="دعا کا عنوان (e.g. سفر کی دعا)"
+                    value={it.titleEnglish || ''}
+                    onChange={(e) => {
+                      handleItemChange(idx, 'titleEnglish', e.target.value);
+                      if (!it.title) handleItemChange(idx, 'title', e.target.value);
+                    }}
+                    placeholder="🇬🇧 English Title (e.g. Travel Dua)"
+                    style={{
+                      padding: '8px 12px',
+                      borderRadius: 8,
+                      border: '1px solid var(--color-border)',
+                      background: 'var(--color-surface)',
+                      color: 'var(--color-text)',
+                      fontSize: '0.86rem',
+                    }}
+                  />
+                  <input
+                    type="text"
+                    dir="rtl"
+                    value={it.titleUrdu || it.title || ''}
+                    onChange={(e) => {
+                      handleItemChange(idx, 'titleUrdu', e.target.value);
+                      handleItemChange(idx, 'title', e.target.value);
+                    }}
+                    placeholder="🇵🇰 اردو عنوان (e.g. سفر کی مسنون دعا)"
                     style={{
                       padding: '8px 12px',
                       borderRadius: 8,
@@ -384,11 +482,12 @@ export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps
                       background: 'var(--color-surface)',
                       color: 'var(--color-text)',
                       fontSize: '0.88rem',
+                      fontFamily: "'Noto Nastaliq Urdu', 'Urdu Typesetting', serif",
                     }}
                   />
                   <input
                     type="text"
-                    value={it.reference}
+                    value={it.reference || ''}
                     onChange={(e) => handleItemChange(idx, 'reference', e.target.value)}
                     placeholder="حوالہ (Reference e.g. صحیح البخاری)"
                     style={{
@@ -397,7 +496,7 @@ export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps
                       border: '1px solid var(--color-border)',
                       background: 'var(--color-surface)',
                       color: 'var(--color-text)',
-                      fontSize: '0.88rem',
+                      fontSize: '0.86rem',
                     }}
                   />
                 </div>

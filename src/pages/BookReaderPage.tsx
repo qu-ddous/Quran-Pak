@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   ArrowLeft, Search, ChevronLeft, ChevronRight,
-  Maximize2, Minimize2, UserCheck, BookMarked, BookOpen, Layers
+  Maximize2, Minimize2, UserCheck
 } from 'lucide-react';
 import { getBookById } from '../db/booksDb';
 import type { IslamicBook } from '../types/books';
@@ -599,6 +599,52 @@ export default function BookReaderPage() {
             >
               📜 مکمل فہرست (All Duas)
             </button>
+          </div>
+
+          {/* Paper Theme Switcher: Notebook Register vs Book */}
+          <div
+            style={{
+              display: 'inline-flex',
+              background: 'var(--color-bg)',
+              borderRadius: 12,
+              padding: 4,
+              border: '1px solid var(--color-border)',
+            }}
+          >
+            <button
+              onClick={() => setPaperTheme('register')}
+              title="کتاب کو کاپی یا رجسٹر کی طرح لکیروں کے ساتھ پڑھیں"
+              style={{
+                padding: '6px 12px',
+                borderRadius: 8,
+                border: 'none',
+                background: paperTheme === 'register' ? '#dc2626' : 'transparent',
+                color: paperTheme === 'register' ? '#ffffff' : 'var(--color-text-muted)',
+                fontWeight: 750,
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              📒 رجسٹر طرز (Ruled Register)
+            </button>
+            <button
+              onClick={() => setPaperTheme('book')}
+              title="عام صاف ستھری کتابی شکل"
+              style={{
+                padding: '6px 12px',
+                borderRadius: 8,
+                border: 'none',
+                background: paperTheme === 'book' ? 'var(--color-brand)' : 'transparent',
+                color: paperTheme === 'book' ? '#ffffff' : 'var(--color-text-muted)',
+                fontWeight: 750,
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              📖 کتابی طرز (Book)
+            </button>
             <button
               onClick={toggleFullscreen}
               aria-label="Toggle Fullscreen"
@@ -823,6 +869,7 @@ export default function BookReaderPage() {
               showTransliteration={showTransliteration}
               showUrdu={showUrdu}
               showEnglish={showEnglish}
+              paperTheme={paperTheme}
             />
           )}
 
@@ -862,9 +909,14 @@ export default function BookReaderPage() {
               <span>پچھلا صفحہ • Previous</span>
             </button>
 
-            <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--color-gold-700)' }}>
-              {currentPageIndex + 1} / {totalPages}
-            </span>
+            <div style={{ textAlign: 'center' }}>
+              <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--color-gold-700)' }}>
+                صفحہ {currentPageIndex + 1} از {totalPages}
+              </span>
+              <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)' }}>
+                {book.titleEnglish || book.title}
+              </div>
+            </div>
 
             <button
               onClick={handleNextPage}
@@ -889,7 +941,7 @@ export default function BookReaderPage() {
         </div>
       ) : (
         /* CONTINUOUS LIST READER MODE */
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {chapterItems.map((item) => (
             <DuaItemCard
               key={item.id}
@@ -900,6 +952,7 @@ export default function BookReaderPage() {
               showTransliteration={showTransliteration}
               showUrdu={showUrdu}
               showEnglish={showEnglish}
+              paperTheme={paperTheme}
             />
           ))}
         </div>
