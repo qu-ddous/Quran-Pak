@@ -318,7 +318,7 @@ export default function IslamicBooksPage() {
                           {item.reference || chapter.title}
                         </span>
                       </div>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', direction: 'rtl', textAlign: 'right' }}>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', direction: 'rtl', textAlign: 'right', fontFamily: 'var(--font-urdu)', lineHeight: 1.7 }}>
                         {book.titleUrdu || book.title} • <span style={{ color: 'var(--color-brand)' }}>مصنف: {book.author}</span>
                       </div>
                     </div>
@@ -338,7 +338,7 @@ export default function IslamicBooksPage() {
                         <span style={{ fontSize: '0.65rem', fontWeight: 800, padding: '1px 5px', borderRadius: 4, background: 'rgba(27, 67, 50, 0.1)', color: 'var(--color-brand)' }}>
                           🇵🇰 اردو
                         </span>
-                        <span style={{ fontSize: '0.96rem', fontWeight: 700, color: 'var(--color-text)', fontFamily: "'Noto Nastaliq Urdu', 'Urdu Typesetting', serif" }}>
+                        <span style={{ fontSize: '1.02rem', fontWeight: 700, color: 'var(--color-text)', fontFamily: 'var(--font-urdu)', lineHeight: 1.7 }}>
                           {item.titleUrdu || item.title}
                         </span>
                       </div>
@@ -368,15 +368,16 @@ export default function IslamicBooksPage() {
                     <p
                       style={{
                         margin: '0 0 6px',
-                        fontSize: '0.82rem',
+                        fontSize: '0.94rem',
                         color: 'var(--color-text)',
-                        lineHeight: 1.5,
+                        lineHeight: 1.9,
                         display: '-webkit-box',
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: 'vertical',
                         overflow: 'hidden',
                         direction: 'rtl',
                         textAlign: 'right',
+                        fontFamily: 'var(--font-urdu)',
                       }}
                     >
                       {item.translationUrdu}

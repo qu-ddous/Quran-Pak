@@ -177,11 +177,11 @@ export const BookCard = ({ book, onDelete }: BookCardProps) => {
             </div>
             <div
               style={{
-                fontSize: '1.08rem',
+                fontSize: '1.18rem',
                 fontWeight: 700,
                 color: 'var(--color-brand)',
-                lineHeight: 1.6,
-                fontFamily: "'Noto Nastaliq Urdu', 'Urdu Typesetting', serif",
+                lineHeight: 1.85,
+                fontFamily: 'var(--font-urdu)',
               }}
             >
               {book.titleUrdu || book.title}
@@ -194,7 +194,7 @@ export const BookCard = ({ book, onDelete }: BookCardProps) => {
               display: 'flex',
               alignItems: 'center',
               gap: 8,
-              fontSize: '0.82rem',
+              fontSize: '0.86rem',
               color: 'var(--color-gold-700)',
               fontWeight: 700,
               marginBottom: 10,
@@ -203,9 +203,12 @@ export const BookCard = ({ book, onDelete }: BookCardProps) => {
               background: 'var(--color-gold-soft)',
             }}
           >
-            <UserCheck size={14} style={{ color: 'var(--color-brand)' }} />
-            <span>
-              مصنف: {book.author} ({book.authorEnglish})
+            <UserCheck size={14} style={{ color: 'var(--color-brand)', flexShrink: 0 }} />
+            <span style={{ fontFamily: 'var(--font-urdu)', direction: 'rtl', lineHeight: 1.6 }}>
+              مصنف: {book.author}
+            </span>
+            <span style={{ fontSize: '0.78rem', opacity: 0.85, fontWeight: 500 }}>
+              ({book.authorEnglish})
             </span>
           </div>
 
@@ -213,13 +216,16 @@ export const BookCard = ({ book, onDelete }: BookCardProps) => {
           <p
             style={{
               margin: '0 0 16px',
-              fontSize: '0.84rem',
+              fontSize: '0.88rem',
               color: 'var(--color-text-muted)',
-              lineHeight: 1.55,
+              lineHeight: 1.85,
               display: '-webkit-box',
               WebkitLineClamp: 3,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
+              fontFamily: 'var(--font-urdu)',
+              direction: 'rtl',
+              textAlign: 'right',
             }}
           >
             {book.description}

@@ -222,11 +222,11 @@ export const DuaItemCard = ({
             </span>
             <span
               style={{
-                fontSize: '1.05rem',
+                fontSize: '1.15rem',
                 fontWeight: 700,
                 color: 'var(--color-text)',
-                lineHeight: 1.4,
-                fontFamily: "'Noto Nastaliq Urdu', 'Urdu Typesetting', serif",
+                lineHeight: 1.8,
+                fontFamily: 'var(--font-urdu)',
               }}
             >
               {item.titleUrdu || item.title}
@@ -390,8 +390,8 @@ export const DuaItemCard = ({
       {showUrdu && item.translationUrdu && (
         <div
           style={{
-            fontSize: '1.08rem',
-            lineHeight: 2.05,
+            fontSize: '1.14rem',
+            lineHeight: 2.2,
             color: 'var(--color-text)',
             textAlign: 'right',
             direction: 'rtl',
@@ -403,11 +403,11 @@ export const DuaItemCard = ({
             borderTop: '1px solid var(--color-border)',
             borderBottom: '1px solid var(--color-border)',
             borderLeft: '1px solid var(--color-border)',
-            fontFamily: "'Noto Nastaliq Urdu', 'Urdu Typesetting', system-ui, serif",
+            fontFamily: 'var(--font-urdu)',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: 'var(--color-gold-soft)', color: 'var(--color-brand)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+            <span style={{ fontSize: '0.78rem', fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: 'var(--color-gold-soft)', color: 'var(--color-brand)', fontFamily: 'var(--font-urdu)' }}>
               اردو ترجمہ و مفہوم
             </span>
           </div>

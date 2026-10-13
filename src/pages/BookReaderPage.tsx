@@ -288,10 +288,10 @@ export default function BookReaderPage() {
               </div>
               <div
                 style={{
-                  fontSize: 'clamp(1.2rem, 2.3vw, 1.6rem)',
+                  fontSize: 'clamp(1.3rem, 2.5vw, 1.75rem)',
                   fontWeight: 700,
-                  fontFamily: "'Noto Nastaliq Urdu', 'Urdu Typesetting', serif",
-                  lineHeight: 1.55,
+                  fontFamily: 'var(--font-urdu)',
+                  lineHeight: 1.85,
                   color: '#ffffff',
                 }}
               >
@@ -351,13 +351,16 @@ export default function BookReaderPage() {
               borderRadius: 12,
               background: 'rgba(0, 0, 0, 0.3)',
               border: '1px solid rgba(255, 255, 255, 0.15)',
-              fontSize: '0.84rem',
+              fontSize: '0.86rem',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <UserCheck size={16} style={{ color: 'var(--color-accent)' }} />
-              <span style={{ fontWeight: 700 }}>
-                تصنیف و تحقیق: {book.author} ({book.authorEnglish})
+              <span style={{ fontWeight: 700, fontFamily: 'var(--font-urdu)', direction: 'rtl', lineHeight: 1.6 }}>
+                تصنیف و تحقیق: {book.author}
+              </span>
+              <span style={{ opacity: 0.85, fontSize: '0.8rem' }}>
+                ({book.authorEnglish})
               </span>
             </div>
 
@@ -374,10 +377,13 @@ export default function BookReaderPage() {
           <p
             style={{
               margin: '12px 0 0',
-              fontSize: '0.88rem',
-              color: 'rgba(255, 255, 255, 0.9)',
+              fontSize: '0.98rem',
+              color: 'rgba(255, 255, 255, 0.95)',
               maxWidth: 820,
-              lineHeight: 1.55,
+              lineHeight: 1.85,
+              fontFamily: 'var(--font-urdu)',
+              direction: 'rtl',
+              textAlign: 'right',
             }}
           >
             {book.description}

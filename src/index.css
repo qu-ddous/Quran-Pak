@@ -1,7 +1,34 @@
 @import "tailwindcss";
 
+/* ─── Jameel Noori Nastaleeq Font Configuration ──────────────────────────── */
+@font-face {
+  font-family: 'Jameel Noori Nastaleeq';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src:
+    local('Jameel Noori Nastaleeq'),
+    local('JameelNooriNastaleeq'),
+    local('Jameel Noori Nastaleeq Kasheeda'),
+    url('https://cdn.jsdelivr.net/npm/jameel-noori/fonts/jameel-noori-nastaleeq4.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JameelNooriNastaliq';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src:
+    local('Jameel Noori Nastaleeq'),
+    local('JameelNooriNastaliq'),
+    url('https://cdn.jsdelivr.net/npm/jameel-noori/fonts/jameel-noori-nastaleeq4.woff2') format('woff2');
+}
+
 /* ─── Design Tokens & Rich Color Palette ──────────────────────────────────── */
 :root {
+  /* Urdu Typography Token */
+  --font-urdu: 'Jameel Noori Nastaleeq', 'JameelNooriNastaliq', 'Noto Nastaliq Urdu', 'Urdu Typesetting', serif;
+
   /* Royal Emerald Palette */
   --color-primary-50:  #f0faf4;
   --color-primary-100: #dcf2e6;
@@ -105,6 +132,22 @@ body {
 .font-arabic-md { font-size: 1.65rem; line-height: 2.3; }
 .font-arabic-lg { font-size: 2.05rem; line-height: 2.5; }
 .font-arabic-xl { font-size: 2.55rem; line-height: 2.7; }
+
+/* ─── Urdu Typography (Jameel Noori Nastaleeq) ────────────────────────────── */
+.urdu-text,
+.font-urdu,
+[lang="ur"] {
+  font-family: var(--font-urdu);
+  direction: rtl;
+  text-align: right;
+  line-height: 2.2;
+  letter-spacing: 0;
+}
+
+.font-urdu-sm { font-size: 1.05rem; line-height: 2.0; font-family: var(--font-urdu); }
+.font-urdu-md { font-size: 1.25rem; line-height: 2.2; font-family: var(--font-urdu); }
+.font-urdu-lg { font-size: 1.55rem; line-height: 2.4; font-family: var(--font-urdu); }
+.font-urdu-xl { font-size: 1.95rem; line-height: 2.6; font-family: var(--font-urdu); }
 
 /* ─── Shiny & Glow Effects ────────────────────────────────────────────────── */
 .shiny-icon {

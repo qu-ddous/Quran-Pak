@@ -254,8 +254,9 @@ export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps
                   border: '1.5px solid var(--color-border)',
                   background: 'var(--color-bg)',
                   color: 'var(--color-text)',
-                  fontSize: '0.95rem',
-                  fontFamily: "'Noto Nastaliq Urdu', 'Urdu Typesetting', serif",
+                  fontSize: '1.05rem',
+                  lineHeight: 1.8,
+                  fontFamily: 'var(--font-urdu)',
                 }}
               />
             </div>
@@ -481,8 +482,9 @@ export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps
                       border: '1px solid var(--color-border)',
                       background: 'var(--color-surface)',
                       color: 'var(--color-text)',
-                      fontSize: '0.88rem',
-                      fontFamily: "'Noto Nastaliq Urdu', 'Urdu Typesetting', serif",
+                      fontSize: '0.98rem',
+                      fontFamily: 'var(--font-urdu)',
+                      lineHeight: 1.7,
                     }}
                   />
                   <input
@@ -536,7 +538,9 @@ export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps
                       border: '1px solid var(--color-border)',
                       background: 'var(--color-surface)',
                       color: 'var(--color-text)',
-                      fontSize: '0.88rem',
+                      fontSize: '0.96rem',
+                      lineHeight: 1.8,
+                      fontFamily: 'var(--font-urdu)',
                     }}
                   />
                   <textarea

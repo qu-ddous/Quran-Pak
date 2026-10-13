@@ -73,6 +73,10 @@ export default function SurahReaderPage() {
     autoPlayRef.current = autoPlay;
   }, [autoPlay]);
 
+  const isUrduTranslation =
+    settings.translationEdition.startsWith('ur.') ||
+    AVAILABLE_TRANSLATIONS.find((t) => t.identifier === settings.translationEdition)?.language === 'ur';
+
   const [activeModalAyah, setActiveModalAyah] = useState<Ayah | null>(null);
 
   const load = useCallback(async () => {
@@ -786,10 +790,27 @@ export default function SurahReaderPage() {
                 {/* Translation text */}
                 {settings.readingMode !== 'arabic-only' && translationAyah && (
                   <div>
-                    <p style={{ margin: '0 0 6px', lineHeight: 1.8, color: 'var(--color-text)', fontSize: '1rem' }}>
+                    <p
+                      style={{
+                        margin: '0 0 6px',
+                        lineHeight: isUrduTranslation ? 2.2 : 1.8,
+                        color: 'var(--color-text)',
+                        fontSize: isUrduTranslation ? '1.12rem' : '1rem',
+                        direction: isUrduTranslation ? 'rtl' : 'ltr',
+                        textAlign: isUrduTranslation ? 'right' : 'left',
+                        fontFamily: isUrduTranslation ? 'var(--font-urdu)' : 'inherit',
+                      }}
+                    >
                       {translationAyah.text}
                     </p>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', textAlign: 'right', fontStyle: 'italic' }}>
+                    <div
+                      style={{
+                        fontSize: '0.78rem',
+                        color: 'var(--color-text-muted)',
+                        textAlign: isUrduTranslation ? 'left' : 'right',
+                        fontStyle: 'italic',
+                      }}
+                    >
                       — {AVAILABLE_TRANSLATIONS.find(t => t.identifier === settings.translationEdition)?.name ?? settings.translationEdition}
                     </div>
                   </div>
@@ -1008,7 +1029,17 @@ export default function SurahReaderPage() {
             </p>
 
             {translation?.ayahs[activeModalAyah.numberInSurah - 1] && (
-              <p style={{ color: 'var(--color-text)', lineHeight: 1.7, fontSize: '0.98rem', marginBottom: 20 }}>
+              <p
+                style={{
+                  color: 'var(--color-text)',
+                  lineHeight: isUrduTranslation ? 2.2 : 1.7,
+                  fontSize: isUrduTranslation ? '1.12rem' : '0.98rem',
+                  marginBottom: 20,
+                  direction: isUrduTranslation ? 'rtl' : 'ltr',
+                  textAlign: isUrduTranslation ? 'right' : 'left',
+                  fontFamily: isUrduTranslation ? 'var(--font-urdu)' : 'inherit',
+                }}
+              >
                 {translation.ayahs[activeModalAyah.numberInSurah - 1].text}
               </p>
             )}
