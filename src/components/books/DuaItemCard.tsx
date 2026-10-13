@@ -466,7 +466,10 @@ export const DuaItemCard = ({
                 background: 'var(--color-gold-soft)',
                 color: 'var(--color-gold-700)',
                 fontWeight: 700,
-                fontSize: '0.76rem',
+                fontSize: '0.86rem',
+                fontFamily: 'var(--font-urdu)',
+                lineHeight: 1.6,
+                direction: 'rtl',
               }}
             >
               <BookOpen size={12} />
@@ -485,7 +488,10 @@ export const DuaItemCard = ({
                 background: 'rgba(27, 67, 50, 0.08)',
                 color: 'var(--color-brand)',
                 fontWeight: 700,
-                fontSize: '0.76rem',
+                fontSize: '0.86rem',
+                fontFamily: 'var(--font-urdu)',
+                lineHeight: 1.6,
+                direction: 'rtl',
               }}
             >
               <Sparkles size={12} />
@@ -513,7 +519,15 @@ export const DuaItemCard = ({
             }}
             title="تعداد گننے کے لیے کلک کریں (Tap to Count)"
           >
-            <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--color-brand)' }}>
+            <span
+              style={{
+                fontSize: '0.88rem',
+                fontWeight: 800,
+                color: 'var(--color-brand)',
+                fontFamily: 'var(--font-urdu)',
+                lineHeight: 1.5,
+              }}
+            >
               تسبیح کاؤنٹر:
             </span>
             <span

@@ -135,7 +135,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link to="/books/namaz-e-hanafi" className="footer-link">
-                  <span>Namaz-e-Hanafi مع ترجمہ</span>
+                  <span>Namaz-e-Hanafi <span style={{ fontFamily: 'var(--font-urdu)', fontSize: '0.94rem' }}>مع ترجمہ</span></span>
                 </Link>
               </li>
               <li>

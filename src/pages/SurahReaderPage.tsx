@@ -13,6 +13,7 @@ import { useToast } from '../context/ToastContext';
 import type { Ayah, Surah } from '../types/quran';
 import { LoadingSpinner, ErrorState, Bismillah, Badge } from '../components/ui/SharedComponents';
 import type { Bookmark as BookmarkType } from '../db/userDb';
+import { isUrduText } from '../utils/urduUtils';
 
 const FONT_SIZE_MAP = { sm: '1.45rem', md: '1.85rem', lg: '2.25rem', xl: '2.7rem' };
 
@@ -75,7 +76,8 @@ export default function SurahReaderPage() {
 
   const isUrduTranslation =
     settings.translationEdition.startsWith('ur.') ||
-    AVAILABLE_TRANSLATIONS.find((t) => t.identifier === settings.translationEdition)?.language === 'ur';
+    AVAILABLE_TRANSLATIONS.find((t) => t.identifier === settings.translationEdition)?.language === 'ur' ||
+    (translation?.ayahs && translation.ayahs.length > 0 && isUrduText(translation.ayahs[0].text));
 
   const [activeModalAyah, setActiveModalAyah] = useState<Ayah | null>(null);
 

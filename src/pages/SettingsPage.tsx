@@ -189,9 +189,25 @@ export default function SettingsPage() {
                     style={{ accentColor: 'var(--color-brand)' }}
                   />
                   <div>
-                    <div style={{ fontWeight: 600, color: 'var(--color-text)', fontSize: '0.95rem' }}>{ed.name}</div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                      Language: {ed.language.toUpperCase()} • Identifier: {ed.identifier}
+                    <div
+                      style={{
+                        fontWeight: 600,
+                        color: 'var(--color-text)',
+                        fontSize: ed.language === 'ur' ? '1.12rem' : '0.95rem',
+                        fontFamily: ed.language === 'ur' ? 'var(--font-urdu)' : 'inherit',
+                        lineHeight: ed.language === 'ur' ? 1.8 : 1.4,
+                        direction: ed.language === 'ur' ? 'rtl' : 'ltr',
+                      }}
+                    >
+                      {ed.name}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+                      <span>Language: {ed.language.toUpperCase()} • Identifier: {ed.identifier}</span>
+                      {ed.language === 'ur' && (
+                        <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: 4, background: 'var(--color-gold-soft)', color: 'var(--color-brand)', fontWeight: 700 }}>
+                          جمیل نوری نستعلیق
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>

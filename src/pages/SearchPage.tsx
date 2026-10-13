@@ -12,6 +12,7 @@ import { useSettings } from '../context/SettingsContext';
 import { useAudio } from '../context/AudioContext';
 import type { SearchMatch, SurahMeta } from '../types/quran';
 import { LoadingSpinner, EmptyState } from '../components/ui/SharedComponents';
+import { isUrduText } from '../utils/urduUtils';
 
 // Clean text for flexible transliteration comparisons
 function normalize(str: string): string {
@@ -607,16 +608,34 @@ export default function SearchPage() {
                   </Link>
                 </div>
 
-                <p style={{
-                  margin: 0,
-                  fontSize: '1.02rem',
-                  lineHeight: 1.7,
-                  color: 'var(--color-text)',
-                  fontFamily: match.edition?.format === 'text' && match.edition?.language === 'ar' ? "'Noto Naskh Arabic', serif" : 'inherit',
-                  direction: match.edition?.direction === 'rtl' ? 'rtl' : 'ltr',
-                }}>
-                  {match.text}
-                </p>
+                {(() => {
+                  const isUrduMatch =
+                    match.edition?.language === 'ur' ||
+                    selectedEditionInfo?.language === 'ur' ||
+                    edition.startsWith('ur.') ||
+                    isUrduText(match.text);
+                  const isArabicMatch = match.edition?.format === 'text' && match.edition?.language === 'ar';
+
+                  return (
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: isUrduMatch ? '1.14rem' : '1.02rem',
+                        lineHeight: isUrduMatch ? 2.2 : 1.7,
+                        color: 'var(--color-text)',
+                        fontFamily: isArabicMatch
+                          ? "'Noto Naskh Arabic', serif"
+                          : isUrduMatch
+                          ? 'var(--font-urdu)'
+                          : 'inherit',
+                        direction: isArabicMatch || isUrduMatch || match.edition?.direction === 'rtl' ? 'rtl' : 'ltr',
+                        textAlign: isUrduMatch ? 'right' : 'left',
+                      }}
+                    >
+                      {match.text}
+                    </p>
+                  );
+                })()}
               </div>
             ))}
           </div>

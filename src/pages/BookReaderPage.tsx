@@ -844,13 +844,28 @@ export default function BookReaderPage() {
               border: '1px solid var(--color-border)',
             }}
           >
-            <div style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--color-brand)' }}>
+            <div
+              style={{
+                fontSize: '0.98rem',
+                fontWeight: 700,
+                color: 'var(--color-brand)',
+                fontFamily: 'var(--font-urdu)',
+                lineHeight: 1.6,
+              }}
+            >
               صفحہ {currentPageIndex + 1} از {totalPages}
             </div>
 
             {/* Quick Page Jump Slider / Dropdown */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>
+              <span
+                style={{
+                  fontSize: '0.88rem',
+                  color: 'var(--color-text-muted)',
+                  fontFamily: 'var(--font-urdu)',
+                  lineHeight: 1.5,
+                }}
+              >
                 صفحہ منتخب کریں:
               </span>
               <select
@@ -865,12 +880,14 @@ export default function BookReaderPage() {
                   border: '1px solid var(--color-border)',
                   background: 'var(--color-bg)',
                   color: 'var(--color-text)',
-                  fontSize: '0.8rem',
+                  fontSize: '0.86rem',
+                  fontFamily: 'var(--font-urdu)',
+                  direction: 'rtl',
                 }}
               >
                 {chapterItems.map((it, idx) => (
                   <option key={it.id} value={idx}>
-                    {idx + 1}. {it.title.substring(0, 32)}...
+                    {idx + 1}. {(it.titleUrdu || it.title).substring(0, 36)}...
                   </option>
                 ))}
               </select>
@@ -918,11 +935,13 @@ export default function BookReaderPage() {
                 gap: 6,
                 padding: '10px 18px',
                 borderRadius: 12,
-                fontSize: '0.88rem',
+                fontSize: '0.94rem',
                 fontWeight: 700,
                 opacity: currentPageIndex === 0 ? 0.4 : 1,
                 cursor: currentPageIndex === 0 ? 'not-allowed' : 'pointer',
                 border: '1px solid var(--color-border)',
+                fontFamily: 'var(--font-urdu)',
+                lineHeight: 1.5,
               }}
             >
               <ChevronLeft size={18} />
@@ -930,7 +949,15 @@ export default function BookReaderPage() {
             </button>
 
             <div style={{ textAlign: 'center' }}>
-              <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--color-gold-700)' }}>
+              <span
+                style={{
+                  fontSize: '1.02rem',
+                  fontWeight: 800,
+                  color: 'var(--color-gold-700)',
+                  fontFamily: 'var(--font-urdu)',
+                  lineHeight: 1.6,
+                }}
+              >
                 صفحہ {currentPageIndex + 1} از {totalPages}
               </span>
               <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)' }}>
@@ -948,10 +975,12 @@ export default function BookReaderPage() {
                 gap: 6,
                 padding: '10px 18px',
                 borderRadius: 12,
-                fontSize: '0.88rem',
+                fontSize: '0.94rem',
                 fontWeight: 700,
                 opacity: currentPageIndex === totalPages - 1 ? 0.4 : 1,
                 cursor: currentPageIndex === totalPages - 1 ? 'not-allowed' : 'pointer',
+                fontFamily: 'var(--font-urdu)',
+                lineHeight: 1.5,
               }}
             >
               <span>اگلا صفحہ • Next</span>

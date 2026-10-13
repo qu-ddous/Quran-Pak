@@ -72,8 +72,8 @@ export const AVAILABLE_TRANSLATIONS: Edition[] = [
   {
     identifier: 'ur.jalandhry',
     language: 'ur',
-    name: 'Fateh Muhammad Jalandhry',
-    englishName: 'Jalandhry (Urdu)',
+    name: 'مولانا فتح محمد جالندھری (اردو)',
+    englishName: 'Fateh Muhammad Jalandhry (Urdu)',
     format: 'text',
     type: 'translation',
     direction: 'rtl',
@@ -81,7 +81,7 @@ export const AVAILABLE_TRANSLATIONS: Edition[] = [
   {
     identifier: 'ur.ahmedali',
     language: 'ur',
-    name: 'Ahmed Ali',
+    name: 'مولانا احمد علی لاہوری (اردو)',
     englishName: 'Ahmed Ali (Urdu)',
     format: 'text',
     type: 'translation',

@@ -1394,7 +1394,18 @@ export default function HomePage() {
                   >
                     بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
                   </p>
-                  <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', textAlign: 'center', fontStyle: 'italic', marginBottom: 20 }}>
+                  <p
+                    style={{
+                      fontSize: selectedTranslation === 'ur.maududi' ? '1.14rem' : '0.88rem',
+                      color: 'var(--color-text-muted)',
+                      textAlign: 'center',
+                      fontStyle: selectedTranslation === 'ur.maududi' ? 'normal' : 'italic',
+                      marginBottom: 20,
+                      fontFamily: selectedTranslation === 'ur.maududi' ? 'var(--font-urdu)' : 'inherit',
+                      lineHeight: selectedTranslation === 'ur.maududi' ? 2.2 : 1.6,
+                      direction: selectedTranslation === 'ur.maududi' ? 'rtl' : 'ltr',
+                    }}
+                  >
                     {translationData.bismillah}
                   </p>
 
@@ -1406,7 +1417,19 @@ export default function HomePage() {
                         الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ۝
                       </span>
                     </div>
-                    <p style={{ fontSize: previewFontSize === 'sm' ? '0.84rem' : previewFontSize === 'md' ? '0.92rem' : '1.02rem', color: 'var(--color-text)', lineHeight: 1.5, margin: 0 }}>
+                    <p
+                      style={{
+                        fontSize: selectedTranslation === 'ur.maududi'
+                          ? (previewFontSize === 'sm' ? '1.08rem' : previewFontSize === 'md' ? '1.2rem' : '1.36rem')
+                          : (previewFontSize === 'sm' ? '0.84rem' : previewFontSize === 'md' ? '0.92rem' : '1.02rem'),
+                        color: 'var(--color-text)',
+                        lineHeight: selectedTranslation === 'ur.maududi' ? 2.2 : 1.5,
+                        margin: 0,
+                        fontFamily: selectedTranslation === 'ur.maududi' ? 'var(--font-urdu)' : 'inherit',
+                        direction: selectedTranslation === 'ur.maududi' ? 'rtl' : 'ltr',
+                        textAlign: selectedTranslation === 'ur.maududi' ? 'right' : 'left',
+                      }}
+                    >
                       {translationData.ayah1}
                     </p>
                   </div>

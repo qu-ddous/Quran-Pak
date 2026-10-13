@@ -7,6 +7,7 @@ import { useToast } from '../context/ToastContext';
 import type { Ayah } from '../types/quran';
 import { JUZ_META } from '../types/quran';
 import { LoadingSpinner, ErrorState, Bismillah } from '../components/ui/SharedComponents';
+import { isUrduText } from '../utils/urduUtils';
 
 const FONT_SIZE_MAP = { sm: '1.45rem', md: '1.85rem', lg: '2.25rem', xl: '2.7rem' };
 
@@ -84,6 +85,10 @@ export default function JuzReaderPage() {
 
   const juzMeta = JUZ_META.find((j) => j.number === num);
   const translationInfo = AVAILABLE_TRANSLATIONS.find((t) => t.identifier === settings.translationEdition);
+  const isUrduTranslation =
+    settings.translationEdition.startsWith('ur.') ||
+    translationInfo?.language === 'ur' ||
+    (translationAyahs.length > 0 && isUrduText(translationAyahs[0].text));
 
   return (
     <div className="quran-page-container" style={{ paddingTop: 24, paddingBottom: 140 }}>
@@ -326,10 +331,27 @@ export default function JuzReaderPage() {
                 {/* Translation Text */}
                 {tAyah && (
                   <div>
-                    <p style={{ margin: '0 0 6px', lineHeight: 1.8, color: 'var(--color-text)', fontSize: '0.98rem' }}>
+                    <p
+                      style={{
+                        margin: '0 0 6px',
+                        lineHeight: isUrduTranslation ? 2.2 : 1.8,
+                        color: 'var(--color-text)',
+                        fontSize: isUrduTranslation ? '1.14rem' : '0.98rem',
+                        direction: isUrduTranslation ? 'rtl' : 'ltr',
+                        textAlign: isUrduTranslation ? 'right' : 'left',
+                        fontFamily: isUrduTranslation ? 'var(--font-urdu)' : 'inherit',
+                      }}
+                    >
                       {tAyah.text}
                     </p>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textAlign: 'right', fontStyle: 'italic' }}>
+                    <div
+                      style={{
+                        fontSize: '0.78rem',
+                        color: 'var(--color-text-muted)',
+                        textAlign: isUrduTranslation ? 'left' : 'right',
+                        fontStyle: 'italic',
+                      }}
+                    >
                       — {translationInfo?.name ?? settings.translationEdition}
                     </div>
                   </div>

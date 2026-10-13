@@ -254,7 +254,17 @@ export default function IslamicBooksPage() {
             }}
           >
             <div>
-              <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--color-brand)' }}>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: '1.25rem',
+                  fontWeight: 800,
+                  color: 'var(--color-brand)',
+                  fontFamily: 'var(--font-urdu)',
+                  direction: 'rtl',
+                  lineHeight: 1.8,
+                }}
+              >
                 تلاش کے نتائج ({searchResults.length} دعائیں ملیں)
               </h2>
               <div style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>
@@ -265,7 +275,7 @@ export default function IslamicBooksPage() {
             <button
               onClick={() => setSearchQuery('')}
               className="btn-ghost"
-              style={{ fontSize: '0.8rem', padding: '4px 10px' }}
+              style={{ fontSize: '0.86rem', padding: '4px 10px', fontFamily: 'var(--font-urdu)', lineHeight: 1.6 }}
             >
               تلاش بند کریں
             </button>
@@ -449,7 +459,7 @@ export default function IslamicBooksPage() {
                 gap: 8,
                 padding: '9px 18px',
                 borderRadius: 24,
-                fontSize: '0.85rem',
+                fontSize: '0.94rem',
                 fontWeight: isActive ? 800 : 600,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
@@ -458,6 +468,8 @@ export default function IslamicBooksPage() {
                 color: isActive ? '#ffffff' : 'var(--color-text)',
                 border: isActive ? '1.5px solid var(--color-brand)' : '1px solid var(--color-border)',
                 boxShadow: isActive ? '0 4px 12px rgba(27, 67, 50, 0.25)' : 'none',
+                fontFamily: 'var(--font-urdu)',
+                lineHeight: 1.6,
               }}
             >
               <span>{icon}</span>
@@ -471,7 +483,17 @@ export default function IslamicBooksPage() {
       <section style={{ marginBottom: 40 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: '1.35rem', fontWeight: 800, color: 'var(--color-text)' }}>
+            <h2
+              style={{
+                margin: 0,
+                fontSize: '1.45rem',
+                fontWeight: 800,
+                color: 'var(--color-text)',
+                fontFamily: 'var(--font-urdu)',
+                direction: 'rtl',
+                lineHeight: 1.8,
+              }}
+            >
               کتب و رہنما گائیڈز ({filteredBooks.length})
             </h2>
             <div style={{ fontSize: '0.84rem', color: 'var(--color-text-muted)' }}>
