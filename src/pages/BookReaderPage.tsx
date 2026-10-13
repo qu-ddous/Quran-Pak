@@ -93,17 +93,28 @@ export default function BookReaderPage() {
   const totalPages = chapterItems.length;
   const currentItem = chapterItems[currentPageIndex];
 
+  const scrollToReadingStart = () => {
+    const readerTarget = document.getElementById('book-reading-content-start');
+    if (readerTarget) {
+      const navOffset = 75;
+      const y = readerTarget.getBoundingClientRect().top + window.pageYOffset - navOffset;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   const handlePrevPage = () => {
     if (currentPageIndex > 0) {
       setCurrentPageIndex((prev) => prev - 1);
-      window.scrollTo({ top: 120, behavior: 'smooth' });
+      scrollToReadingStart();
     }
   };
 
   const handleNextPage = () => {
     if (currentPageIndex < totalPages - 1) {
       setCurrentPageIndex((prev) => prev + 1);
-      window.scrollTo({ top: 120, behavior: 'smooth' });
+      scrollToReadingStart();
     }
   };
 
@@ -813,8 +824,9 @@ export default function BookReaderPage() {
       ) : viewMode === 'page' ? (
         /* PAGE BY PAGE READER MODE */
         <div>
-          {/* Top Page Progress Indicator */}
+          {/* Top Page Progress Indicator with anchor */}
           <div
+            id="book-reading-content-start"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -839,7 +851,7 @@ export default function BookReaderPage() {
                 value={currentPageIndex}
                 onChange={(e) => {
                   setCurrentPageIndex(Number(e.target.value));
-                  window.scrollTo({ top: 120, behavior: 'smooth' });
+                  scrollToReadingStart();
                 }}
                 style={{
                   padding: '4px 8px',
@@ -859,18 +871,20 @@ export default function BookReaderPage() {
             </div>
           </div>
 
-          {/* Current Page Dua Item Card */}
+          {/* Current Page Dua Item Card with Animated Page-Turn Wrapper */}
           {currentItem && (
-            <DuaItemCard
-              item={currentItem}
-              bookId={book.id}
-              bookTitle={book.title}
-              arabicFontSize={arabicFontSize}
-              showTransliteration={showTransliteration}
-              showUrdu={showUrdu}
-              showEnglish={showEnglish}
-              paperTheme={paperTheme}
-            />
+            <div id="reader-page-viewport" key={currentPageIndex} className="book-page-turn">
+              <DuaItemCard
+                item={currentItem}
+                bookId={book.id}
+                bookTitle={book.title}
+                arabicFontSize={arabicFontSize}
+                showTransliteration={showTransliteration}
+                showUrdu={showUrdu}
+                showEnglish={showEnglish}
+                paperTheme={paperTheme}
+              />
+            </div>
           )}
 
           {/* Bottom Page Navigation Controls */}
