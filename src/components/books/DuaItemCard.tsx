@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  Volume2, VolumeX, Copy, Check, Bookmark, Heart,
+  Volume2, VolumeX, Copy, Check, Bookmark,
   RotateCcw, Sparkles, BookOpen, Share2
 } from 'lucide-react';
 import type { BookItem } from '../../types/books';

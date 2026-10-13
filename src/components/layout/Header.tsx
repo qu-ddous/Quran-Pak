@@ -3,7 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
   BookOpen, Search, Headphones, Bookmark, BarChart2,
   Settings, Info, Menu, X, Moon, Sun, Download, Home,
-  FileText, Shield, ChevronRight, Sparkles,
+  FileText, Shield, ChevronRight, Sparkles, BookMarked
 } from 'lucide-react';
 import { useSettings } from '../../context/SettingsContext';
 
@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { to: '/', label: 'Home', icon: Home },
   { to: '/quran', label: 'Quran', icon: BookOpen },
   { to: '/juz', label: 'Juz', icon: FileText },
+  { to: '/books', label: 'Books & Duas', icon: BookMarked },
   { to: '/search', label: 'Search', icon: Search },
   { to: '/listen', label: 'Listen', icon: Headphones },
   { to: '/bookmarks', label: 'Bookmarks', icon: Bookmark },

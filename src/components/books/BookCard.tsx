@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, Clock, Layers, ArrowRight, Trash2 } from 'lucide-react';
 import type { IslamicBook } from '../../types/books';
@@ -8,7 +7,7 @@ interface BookCardProps {
   onDelete?: (bookId: string) => void;
 }
 
-export const BookCard: React.FC<BookCardProps> = ({ book, onDelete }) => {
+export const BookCard = ({ book, onDelete }: BookCardProps) => {
   return (
     <div
       className="card group"

@@ -128,6 +128,17 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/books" className="footer-link">
+                  <span>Islamic Books &amp; Duas Library</span>
+                  <span className="footer-pill" style={{ background: 'var(--color-gold-soft)', color: 'var(--color-gold-700)' }}>New</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/books/namaz-e-hanafi" className="footer-link">
+                  <span>Namaz-e-Hanafi مع ترجمہ</span>
+                </Link>
+              </li>
+              <li>
                 <Link to="/search" className="footer-link">
                   <span>Global Word &amp; Verse Search</span>
                 </Link>

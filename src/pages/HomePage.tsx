@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   BookOpen, Search, Headphones, ChevronRight, ArrowRight,
   Sparkles, Compass, Play, Pause, SkipBack, SkipForward,
-  Shuffle, Repeat, Volume2, VolumeX, Heart, Clock
+  Shuffle, Repeat, Volume2, VolumeX, Heart, Clock, BookMarked
 } from 'lucide-react';
 import { getLastRead } from '../db/userDb';
 import type { ReadingHistory } from '../db/userDb';
@@ -390,7 +390,7 @@ export default function HomePage() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 8,
-                  padding: '13px 24px',
+                  padding: '13px 22px',
                   borderRadius: 9999,
                   background: 'rgba(255, 255, 255, 0.88)',
                   backdropFilter: 'blur(8px)',
@@ -405,6 +405,27 @@ export default function HomePage() {
               >
                 <Headphones size={18} className="shiny-icon" style={{ color: 'var(--color-accent)' }} />
                 <span>Listen Audio</span>
+              </Link>
+
+              <Link
+                to="/books"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '13px 22px',
+                  borderRadius: 9999,
+                  background: 'var(--gradient-gold)',
+                  color: '#1a1a1a',
+                  fontWeight: 800,
+                  fontSize: '0.96rem',
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 16px rgba(212, 175, 55, 0.3)',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <BookMarked size={18} />
+                <span>Islamic Books & Duas (کتب و دعائیں)</span>
               </Link>
             </div>
 
@@ -613,6 +634,262 @@ export default function HomePage() {
                   backgroundPosition: '86% 75%',
                 }}
               />
+            </Link>
+          </div>
+        </section>
+
+        {/* ─── 2.5. Islamic Books & Duas Spotlight Section ─── */}
+        <section style={{ marginBottom: 70 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-end', gap: 16, marginBottom: 24 }}>
+            <div>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '4px 12px',
+                  borderRadius: 20,
+                  background: 'var(--color-gold-soft)',
+                  color: 'var(--color-gold-700)',
+                  fontSize: '0.8rem',
+                  fontWeight: 800,
+                  marginBottom: 10,
+                }}
+              >
+                <Sparkles size={14} />
+                <span>کتب و دعاؤں کی لائبریری • Islamic Books</span>
+              </div>
+              <h2 className="section-title-editorial" style={{ margin: '0 0 6px', textAlign: 'left' }}>
+                Islamic Books, Namaz & <span className="hero-gold-text">Duas Library</span>
+              </h2>
+              <p className="section-subtitle-editorial" style={{ margin: 0, textAlign: 'left' }}>
+                مکمل نمازِ حنفی مع ترجمہ، اسلام کے چھ کلمے، حصن المسلم کی روزمرہ دعائیں، اور قرآنی ۴۰ ربنا دعائیں۔
+              </p>
+            </div>
+
+            <Link
+              to="/books"
+              className="btn-primary"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '10px 18px',
+                borderRadius: 14,
+                fontSize: '0.88rem',
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              <BookOpen size={16} />
+              <span>تمام کتب دیکھیں • View All Books</span>
+              <ArrowRight size={15} />
+            </Link>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+            {/* Book Card 1: Namaz-e-Hanafi */}
+            <Link
+              to="/books/namaz-e-hanafi"
+              className="card"
+              style={{
+                borderRadius: 20,
+                overflow: 'hidden',
+                textDecoration: 'none',
+                border: '1.5px solid var(--color-border)',
+                background: 'var(--color-surface)',
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'all 0.25s ease',
+                boxShadow: '0 4px 18px rgba(0,0,0,0.04)',
+              }}
+            >
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #092c21 0%, #165b44 60%, #0d382b 100%)',
+                  padding: '20px 20px 16px',
+                  color: '#ffffff',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '3px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.2)' }}>
+                    نماز گائیڈ • Salah
+                  </span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--color-accent)' }}>
+                    22 اذکار و احکام
+                  </span>
+                </div>
+                <div className="arabic-text" style={{ fontSize: '1.35rem', color: '#ffffff', textAlign: 'left', direction: 'rtl' }}>
+                  صَلَاةُ الحَنَفِيَّةِ مَعَ التَّرْجَمَةِ
+                </div>
+              </div>
+              <div style={{ padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '1.05rem', fontWeight: 800, color: 'var(--color-brand)' }}>
+                    Namaz-e-Hanafi مع مکمل ترجمہ
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '0.84rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                    تکبیرِ تحریمہ، ثناء، تشہد، درودِ ابراہیم، دعائے قنوت، نمازِ جنازہ اور تسبیحات مع اردو و انگریزی ترجمہ۔
+                  </p>
+                </div>
+                <div style={{ marginTop: 14, fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span>کتاب کھولیں • Open Guide</span>
+                  <ChevronRight size={14} />
+                </div>
+              </div>
+            </Link>
+
+            {/* Book Card 2: 6 Kalimas */}
+            <Link
+              to="/books/shash-kalimat"
+              className="card"
+              style={{
+                borderRadius: 20,
+                overflow: 'hidden',
+                textDecoration: 'none',
+                border: '1.5px solid var(--color-border)',
+                background: 'var(--color-surface)',
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'all 0.25s ease',
+                boxShadow: '0 4px 18px rgba(0,0,0,0.04)',
+              }}
+            >
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #451a03 0%, #854d0e 60%, #713f12 100%)',
+                  padding: '20px 20px 16px',
+                  color: '#ffffff',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '3px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.2)' }}>
+                    کلمے • Six Kalimas
+                  </span>
+                  <span style={{ fontSize: '0.75rem', color: '#fef08a' }}>
+                    8 کلمات مع ایمان
+                  </span>
+                </div>
+                <div className="arabic-text" style={{ fontSize: '1.35rem', color: '#ffffff', textAlign: 'left', direction: 'rtl' }}>
+                  الكَلِمَاتُ السِّتَّةُ مَعَ التَّرْجَمَةِ
+                </div>
+              </div>
+              <div style={{ padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '1.05rem', fontWeight: 800, color: '#854d0e' }}>
+                    شش کلمے مع ترجمہ و فضیلت
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '0.84rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                    کلمہ طیبہ، شہادت، تمجید، توحید، استغفار، ردِ کفر، اور ایمانِ مجمل و مفصل مع مکمل اعراب اور فضائل۔
+                  </p>
+                </div>
+                <div style={{ marginTop: 14, fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span>کلمے پڑھیں • Read Kalimas</span>
+                  <ChevronRight size={14} />
+                </div>
+              </div>
+            </Link>
+
+            {/* Book Card 3: Hisn al-Muslim */}
+            <Link
+              to="/books/hisn-al-muslim"
+              className="card"
+              style={{
+                borderRadius: 20,
+                overflow: 'hidden',
+                textDecoration: 'none',
+                border: '1.5px solid var(--color-border)',
+                background: 'var(--color-surface)',
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'all 0.25s ease',
+                boxShadow: '0 4px 18px rgba(0,0,0,0.04)',
+              }}
+            >
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #022c22 0%, #0f766e 60%, #115e59 100%)',
+                  padding: '20px 20px 16px',
+                  color: '#ffffff',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '3px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.2)' }}>
+                    مسنون دعائیں • Daily Duas
+                  </span>
+                  <span style={{ fontSize: '0.75rem', color: '#99f6e4' }}>
+                    18 مسنون دعائیں
+                  </span>
+                </div>
+                <div className="arabic-text" style={{ fontSize: '1.35rem', color: '#ffffff', textAlign: 'left', direction: 'rtl' }}>
+                  حِصْنُ المُسْلِمِ مِنْ أَذْكَارِ الكِتَابِ
+                </div>
+              </div>
+              <div style={{ padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '1.05rem', fontWeight: 800, color: '#0f766e' }}>
+                    حصن المسلم: روزمرہ دعائیں
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '0.84rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                    صبح و شام کے اذکار، کھانا، سفر، سونا، جاگنا، بیت الخلاء، مسجد اور پریشانی و غم سے نجات کی دعائیں۔
+                  </p>
+                </div>
+                <div style={{ marginTop: 14, fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span>دعائیں دیکھیں • Open Duas</span>
+                  <ChevronRight size={14} />
+                </div>
+              </div>
+            </Link>
+
+            {/* Book Card 4: 40 Rabbana Duas */}
+            <Link
+              to="/books/rabbana-duas"
+              className="card"
+              style={{
+                borderRadius: 20,
+                overflow: 'hidden',
+                textDecoration: 'none',
+                border: '1.5px solid var(--color-border)',
+                background: 'var(--color-surface)',
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'all 0.25s ease',
+                boxShadow: '0 4px 18px rgba(0,0,0,0.04)',
+              }}
+            >
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #1e1b4b 100%)',
+                  padding: '20px 20px 16px',
+                  color: '#ffffff',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '3px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.2)' }}>
+                    قرآنی • 40 Rabbana
+                  </span>
+                  <span style={{ fontSize: '0.75rem', color: '#c7d2fe' }}>
+                    قرآنِ پاک کی دعائیں
+                  </span>
+                </div>
+                <div className="arabic-text" style={{ fontSize: '1.35rem', color: '#ffffff', textAlign: 'left', direction: 'rtl' }}>
+                  الأَرْبَعُونَ رَبَّنَا مِنَ القُرْآنِ
+                </div>
+              </div>
+              <div style={{ padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '1.05rem', fontWeight: 800, color: '#312e81' }}>
+                    قرآنی ۴۰ ربنا دعائیں مع ترجمہ
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '0.84rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                    قرآن مجید کی وہ مبارک دعائیں جو لفظ "ربنا" سے شروع ہوتی ہیں، سورت اور آیت کے مکمل حوالے کے ساتھ۔
+                  </p>
+                </div>
+                <div style={{ marginTop: 14, fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span>ربنا دعائیں پڑھیں • Read Rabbana</span>
+                  <ChevronRight size={14} />
+                </div>
+              </div>
             </Link>
           </div>
         </section>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Plus, Trash2, BookPlus, Sparkles } from 'lucide-react';
 import type { BookCategory, UserCustomBookInput } from '../../types/books';
 import { addCustomBook } from '../../db/booksDb';
@@ -10,7 +10,7 @@ interface AddBookModalProps {
   onBookAdded: () => void;
 }
 
-export const AddBookModal: React.FC<AddBookModalProps> = ({ isOpen, onClose, onBookAdded }) => {
+export const AddBookModal = ({ isOpen, onClose, onBookAdded }: AddBookModalProps) => {
   const { showToast } = useToast();
 
   const [title, setTitle] = useState('');

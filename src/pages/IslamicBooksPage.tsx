@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import {
-  BookOpen, Search, Sparkles, Plus, Bookmark, Compass,
-  Layers, ArrowRight, Heart, X, Check, ExternalLink, HelpCircle
+  Search, Sparkles, Plus,
+  ArrowRight, X, HelpCircle
 } from 'lucide-react';
 import { getAllBooks, deleteCustomBook, searchAllDuas, getSavedDuas } from '../db/booksDb';
 import type { IslamicBook, BookCategory } from '../types/books';
@@ -22,7 +22,6 @@ const CATEGORY_TABS: { key: BookCategory; label: string; icon: string }[] = [
 
 export default function IslamicBooksPage() {
   const { showToast } = useToast();
-  const navigate = useNavigate();
 
   const [books, setBooks] = useState<IslamicBook[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<BookCategory>('all');

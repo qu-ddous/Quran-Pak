@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Compass, Headphones, Bookmark } from 'lucide-react';
+import { Home, BookOpen, BookMarked, Headphones, Bookmark } from 'lucide-react';
 
 interface NavItem {
   to: string;
@@ -11,7 +11,7 @@ interface NavItem {
 const BOTTOM_TABS: NavItem[] = [
   { to: '/', label: 'Home', arabic: 'الرئيسية', icon: Home },
   { to: '/quran', label: 'Quran', arabic: 'القرآن', icon: BookOpen },
-  { to: '/juz', label: 'Juz', arabic: 'الأجزاء', icon: Compass },
+  { to: '/books', label: 'Books', arabic: 'الكتب', icon: BookMarked },
   { to: '/listen', label: 'Listen', arabic: 'استماع', icon: Headphones },
   { to: '/bookmarks', label: 'Saved', arabic: 'المحفوظات', icon: Bookmark },
 ];
@@ -22,7 +22,8 @@ export default function MobileBottomNav() {
   // Hide the global mobile bottom nav on reading pages so reader controls have full focus
   const isReadingPage = 
     location.pathname.startsWith('/surah/') || 
-    (location.pathname.startsWith('/juz/') && location.pathname !== '/juz');
+    (location.pathname.startsWith('/juz/') && location.pathname !== '/juz') ||
+    (location.pathname.startsWith('/books/') && location.pathname !== '/books');
 
   if (isReadingPage) {
     return null;
