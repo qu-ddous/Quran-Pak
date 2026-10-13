@@ -620,8 +620,8 @@ export default function SearchPage() {
                     <p
                       style={{
                         margin: 0,
-                        fontSize: isUrduMatch ? '1.14rem' : '1.02rem',
-                        lineHeight: isUrduMatch ? 2.2 : 1.7,
+                        fontSize: isUrduMatch ? '1.28rem' : '1.02rem',
+                        lineHeight: isUrduMatch ? 2.3 : 1.7,
                         color: 'var(--color-text)',
                         fontFamily: isArabicMatch
                           ? "'Noto Naskh Arabic', serif"

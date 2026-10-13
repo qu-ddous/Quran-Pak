@@ -109,16 +109,19 @@ export default function IslamicBooksPage() {
             }}
           >
             <Sparkles size={14} />
-            <span>مستند کتب، دعائیں، نمازِ حنفی، اور شش کلمے مع ترجمہ</span>
+            <span style={{ fontFamily: 'var(--font-urdu)', fontSize: '0.98rem' }}>مستند کتب، دعائیں، نمازِ حنفی، اور شش کلمے مع ترجمہ</span>
           </div>
 
           <h1
             style={{
               margin: '0 0 10px',
-              fontSize: 'clamp(1.7rem, 3.5vw, 2.4rem)',
+              fontSize: 'clamp(2rem, 4vw, 2.75rem)',
               fontWeight: 900,
-              lineHeight: 1.25,
+              lineHeight: 1.4,
               letterSpacing: '-0.02em',
+              fontFamily: 'var(--font-urdu)',
+              direction: 'rtl',
+              textAlign: 'left',
             }}
           >
             اسلامی کتب و دعاؤں کی لائبریری
@@ -141,10 +144,13 @@ export default function IslamicBooksPage() {
           <p
             style={{
               margin: '0 0 24px',
-              fontSize: '0.96rem',
-              lineHeight: 1.65,
-              color: 'rgba(255, 255, 255, 0.9)',
-              maxWidth: 720,
+              fontSize: '1.12rem',
+              lineHeight: 2.1,
+              color: 'rgba(255, 255, 255, 0.95)',
+              maxWidth: 760,
+              fontFamily: 'var(--font-urdu)',
+              direction: 'rtl',
+              textAlign: 'left',
             }}
           >
             کسی بھی چھوٹی یا بڑی دعا کو عربی، اردو ترجمہ اور انگریزی میں تلاش کریں اور پڑھیں۔
@@ -180,8 +186,9 @@ export default function IslamicBooksPage() {
                   background: 'rgba(255, 255, 255, 0.15)',
                   backdropFilter: 'blur(10px)',
                   color: '#ffffff',
-                  fontSize: '0.92rem',
+                  fontSize: '0.96rem',
                   outline: 'none',
+                  fontFamily: 'var(--font-urdu)',
                 }}
               />
               {searchQuery && (
@@ -284,10 +291,10 @@ export default function IslamicBooksPage() {
           {searchResults.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '30px 10px', color: 'var(--color-text-muted)' }}>
               <HelpCircle size={36} style={{ margin: '0 auto 10px', opacity: 0.5 }} />
-              <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--color-text)' }}>
+              <div style={{ fontWeight: 700, fontSize: '1.2rem', color: 'var(--color-text)', fontFamily: 'var(--font-urdu)', lineHeight: 1.8 }}>
                 کوئی دعا یا نتیجہ نہیں ملا
               </div>
-              <div style={{ fontSize: '0.85rem' }}>
+              <div style={{ fontSize: '0.98rem', fontFamily: 'var(--font-urdu)', lineHeight: 1.8 }}>
                 متبادل الفاظ آزمائیں جیسے: "قنوت"، "سفر"، "کھانا"، "استغفار"، یا انگریزی میں "qunoot", "travel", "hanafi"
               </div>
             </div>

@@ -1,8 +1,12 @@
 export type BookCategory = 
   | 'all'
+  | 'hadith'
   | 'namaz'
-  | 'kalima'
   | 'duas'
+  | 'kalima'
+  | 'seerah'
+  | 'adab'
+  | 'fiqh'
   | 'quranic'
   | 'special'
   | 'ruqyah'

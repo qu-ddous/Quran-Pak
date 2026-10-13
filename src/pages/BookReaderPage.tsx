@@ -593,9 +593,11 @@ export default function BookReaderPage() {
                 background: viewMode === 'page' ? 'var(--color-brand)' : 'transparent',
                 color: viewMode === 'page' ? '#ffffff' : 'var(--color-text-muted)',
                 fontWeight: 700,
-                fontSize: '0.82rem',
+                fontSize: '0.88rem',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
+                fontFamily: 'var(--font-urdu)',
+                lineHeight: 1.5,
               }}
             >
               📖 صفحہ وار (Page View)
@@ -609,9 +611,11 @@ export default function BookReaderPage() {
                 background: viewMode === 'continuous' ? 'var(--color-brand)' : 'transparent',
                 color: viewMode === 'continuous' ? '#ffffff' : 'var(--color-text-muted)',
                 fontWeight: 700,
-                fontSize: '0.82rem',
+                fontSize: '0.88rem',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
+                fontFamily: 'var(--font-urdu)',
+                lineHeight: 1.5,
               }}
             >
               📜 مکمل فہرست (All Duas)
@@ -638,9 +642,11 @@ export default function BookReaderPage() {
                 background: paperTheme === 'register' ? '#dc2626' : 'transparent',
                 color: paperTheme === 'register' ? '#ffffff' : 'var(--color-text-muted)',
                 fontWeight: 750,
-                fontSize: '0.8rem',
+                fontSize: '0.86rem',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
+                fontFamily: 'var(--font-urdu)',
+                lineHeight: 1.5,
               }}
             >
               📒 رجسٹر طرز (Ruled Register)
@@ -655,9 +661,11 @@ export default function BookReaderPage() {
                 background: paperTheme === 'book' ? 'var(--color-brand)' : 'transparent',
                 color: paperTheme === 'book' ? '#ffffff' : 'var(--color-text-muted)',
                 fontWeight: 750,
-                fontSize: '0.8rem',
+                fontSize: '0.86rem',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
+                fontFamily: 'var(--font-urdu)',
+                lineHeight: 1.5,
               }}
             >
               📖 کتابی طرز (Book)

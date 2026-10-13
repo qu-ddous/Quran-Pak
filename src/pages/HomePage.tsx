@@ -651,9 +651,10 @@ export default function HomePage() {
                   borderRadius: 20,
                   background: 'var(--color-gold-soft)',
                   color: 'var(--color-gold-700)',
-                  fontSize: '0.8rem',
+                  fontSize: '0.86rem',
                   fontWeight: 800,
                   marginBottom: 10,
+                  fontFamily: 'var(--font-urdu)',
                 }}
               >
                 <Sparkles size={14} />
@@ -662,7 +663,7 @@ export default function HomePage() {
               <h2 className="section-title-editorial" style={{ margin: '0 0 6px', textAlign: 'left' }}>
                 Islamic Books, Namaz & <span className="hero-gold-text">Duas Library</span>
               </h2>
-              <p className="section-subtitle-editorial" style={{ margin: 0, textAlign: 'left' }}>
+              <p className="section-subtitle-editorial" style={{ margin: 0, textAlign: 'left', fontFamily: 'var(--font-urdu)', fontSize: '1.14rem', lineHeight: 2.1, direction: 'rtl' }}>
                 مکمل نمازِ حنفی مع ترجمہ، اسلام کے چھ کلمے، حصن المسلم کی روزمرہ دعائیں، اور قرآنی ۴۰ ربنا دعائیں۔
               </p>
             </div>
@@ -676,9 +677,10 @@ export default function HomePage() {
                 gap: 8,
                 padding: '10px 18px',
                 borderRadius: 14,
-                fontSize: '0.88rem',
+                fontSize: '0.92rem',
                 fontWeight: 700,
                 textDecoration: 'none',
+                fontFamily: 'var(--font-urdu)',
               }}
             >
               <BookOpen size={16} />
@@ -712,10 +714,10 @@ export default function HomePage() {
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '3px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.2)' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 700, padding: '3px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-urdu)' }}>
                     نماز گائیڈ • Salah
                   </span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--color-accent)' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--color-accent)', fontFamily: 'var(--font-urdu)' }}>
                     22 اذکار و احکام
                   </span>
                 </div>
@@ -725,14 +727,14 @@ export default function HomePage() {
               </div>
               <div style={{ padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
-                  <h3 style={{ margin: '0 0 6px', fontSize: '1.05rem', fontWeight: 800, color: 'var(--color-brand)' }}>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '1.24rem', fontWeight: 800, color: 'var(--color-brand)', fontFamily: 'var(--font-urdu)', direction: 'rtl', textAlign: 'right', lineHeight: 1.8 }}>
                     Namaz-e-Hanafi مع مکمل ترجمہ
                   </h3>
-                  <p style={{ margin: 0, fontSize: '0.84rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                  <p style={{ margin: 0, fontSize: '0.98rem', color: 'var(--color-text-muted)', lineHeight: 2.05, fontFamily: 'var(--font-urdu)', direction: 'rtl', textAlign: 'right' }}>
                     تکبیرِ تحریمہ، ثناء، تشہد، درودِ ابراہیم، دعائے قنوت، نمازِ جنازہ اور تسبیحات مع اردو و انگریزی ترجمہ۔
                   </p>
                 </div>
-                <div style={{ marginTop: 14, fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ marginTop: 14, fontSize: '0.9rem', fontWeight: 700, color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-urdu)' }}>
                   <span>کتاب کھولیں • Open Guide</span>
                   <ChevronRight size={14} />
                 </div>
@@ -763,10 +765,10 @@ export default function HomePage() {
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '3px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.2)' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 700, padding: '3px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-urdu)' }}>
                     کلمے • Six Kalimas
                   </span>
-                  <span style={{ fontSize: '0.75rem', color: '#fef08a' }}>
+                  <span style={{ fontSize: '0.85rem', color: '#fef08a', fontFamily: 'var(--font-urdu)' }}>
                     8 کلمات مع ایمان
                   </span>
                 </div>
@@ -776,14 +778,14 @@ export default function HomePage() {
               </div>
               <div style={{ padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
-                  <h3 style={{ margin: '0 0 6px', fontSize: '1.05rem', fontWeight: 800, color: '#854d0e' }}>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '1.24rem', fontWeight: 800, color: '#854d0e', fontFamily: 'var(--font-urdu)', direction: 'rtl', textAlign: 'right', lineHeight: 1.8 }}>
                     شش کلمے مع ترجمہ و فضیلت
                   </h3>
-                  <p style={{ margin: 0, fontSize: '0.84rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                  <p style={{ margin: 0, fontSize: '0.98rem', color: 'var(--color-text-muted)', lineHeight: 2.05, fontFamily: 'var(--font-urdu)', direction: 'rtl', textAlign: 'right' }}>
                     کلمہ طیبہ، شہادت، تمجید، توحید، استغفار، ردِ کفر، اور ایمانِ مجمل و مفصل مع مکمل اعراب اور فضائل۔
                   </p>
                 </div>
-                <div style={{ marginTop: 14, fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ marginTop: 14, fontSize: '0.9rem', fontWeight: 700, color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-urdu)' }}>
                   <span>کلمے پڑھیں • Read Kalimas</span>
                   <ChevronRight size={14} />
                 </div>
@@ -814,10 +816,10 @@ export default function HomePage() {
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '3px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.2)' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 700, padding: '3px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-urdu)' }}>
                     مسنون دعائیں • Daily Duas
                   </span>
-                  <span style={{ fontSize: '0.75rem', color: '#99f6e4' }}>
+                  <span style={{ fontSize: '0.85rem', color: '#99f6e4', fontFamily: 'var(--font-urdu)' }}>
                     18 مسنون دعائیں
                   </span>
                 </div>
@@ -827,14 +829,14 @@ export default function HomePage() {
               </div>
               <div style={{ padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
-                  <h3 style={{ margin: '0 0 6px', fontSize: '1.05rem', fontWeight: 800, color: '#0f766e' }}>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '1.24rem', fontWeight: 800, color: '#0f766e', fontFamily: 'var(--font-urdu)', direction: 'rtl', textAlign: 'right', lineHeight: 1.8 }}>
                     حصن المسلم: روزمرہ دعائیں
                   </h3>
-                  <p style={{ margin: 0, fontSize: '0.84rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                  <p style={{ margin: 0, fontSize: '0.98rem', color: 'var(--color-text-muted)', lineHeight: 2.05, fontFamily: 'var(--font-urdu)', direction: 'rtl', textAlign: 'right' }}>
                     صبح و شام کے اذکار، کھانا، سفر، سونا، جاگنا، بیت الخلاء، مسجد اور پریشانی و غم سے نجات کی دعائیں۔
                   </p>
                 </div>
-                <div style={{ marginTop: 14, fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ marginTop: 14, fontSize: '0.9rem', fontWeight: 700, color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-urdu)' }}>
                   <span>دعائیں دیکھیں • Open Duas</span>
                   <ChevronRight size={14} />
                 </div>
@@ -865,10 +867,10 @@ export default function HomePage() {
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '3px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.2)' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 700, padding: '3px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-urdu)' }}>
                     قرآنی • 40 Rabbana
                   </span>
-                  <span style={{ fontSize: '0.75rem', color: '#c7d2fe' }}>
+                  <span style={{ fontSize: '0.85rem', color: '#c7d2fe', fontFamily: 'var(--font-urdu)' }}>
                     قرآنِ پاک کی دعائیں
                   </span>
                 </div>
@@ -878,14 +880,14 @@ export default function HomePage() {
               </div>
               <div style={{ padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
-                  <h3 style={{ margin: '0 0 6px', fontSize: '1.05rem', fontWeight: 800, color: '#312e81' }}>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '1.24rem', fontWeight: 800, color: '#312e81', fontFamily: 'var(--font-urdu)', direction: 'rtl', textAlign: 'right', lineHeight: 1.8 }}>
                     قرآنی ۴۰ ربنا دعائیں مع ترجمہ
                   </h3>
-                  <p style={{ margin: 0, fontSize: '0.84rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                  <p style={{ margin: 0, fontSize: '0.98rem', color: 'var(--color-text-muted)', lineHeight: 2.05, fontFamily: 'var(--font-urdu)', direction: 'rtl', textAlign: 'right' }}>
                     قرآن مجید کی وہ مبارک دعائیں جو لفظ "ربنا" سے شروع ہوتی ہیں، سورت اور آیت کے مکمل حوالے کے ساتھ۔
                   </p>
                 </div>
-                <div style={{ marginTop: 14, fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ marginTop: 14, fontSize: '0.9rem', fontWeight: 700, color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-urdu)' }}>
                   <span>ربنا دعائیں پڑھیں • Read Rabbana</span>
                   <ChevronRight size={14} />
                 </div>
@@ -1335,10 +1337,10 @@ export default function HomePage() {
                         outline: 'none',
                       }}
                     >
-                      <option value="en.sahih">Sahih International</option>
-                      <option value="ur.maududi">Abul A'la Maududi (Urdu)</option>
+                      <option value="en.sahih">Sahih International (English)</option>
+                      <option value="ur.maududi">مولانا سید ابو الاعلیٰ مودودی (اردو — جمیل نوری نستعلیق)</option>
                       <option value="en.khattab">The Clear Quran (Dr. Khattab)</option>
-                      <option value="en.yusufali">Yusuf Ali</option>
+                      <option value="en.yusufali">Yusuf Ali (English)</option>
                     </select>
                   </div>
 
@@ -1396,13 +1398,13 @@ export default function HomePage() {
                   </p>
                   <p
                     style={{
-                      fontSize: selectedTranslation === 'ur.maududi' ? '1.14rem' : '0.88rem',
+                      fontSize: selectedTranslation === 'ur.maududi' ? '1.28rem' : '0.88rem',
                       color: 'var(--color-text-muted)',
                       textAlign: 'center',
                       fontStyle: selectedTranslation === 'ur.maududi' ? 'normal' : 'italic',
                       marginBottom: 20,
                       fontFamily: selectedTranslation === 'ur.maududi' ? 'var(--font-urdu)' : 'inherit',
-                      lineHeight: selectedTranslation === 'ur.maududi' ? 2.2 : 1.6,
+                      lineHeight: selectedTranslation === 'ur.maududi' ? 2.3 : 1.6,
                       direction: selectedTranslation === 'ur.maududi' ? 'rtl' : 'ltr',
                     }}
                   >
@@ -1420,10 +1422,10 @@ export default function HomePage() {
                     <p
                       style={{
                         fontSize: selectedTranslation === 'ur.maududi'
-                          ? (previewFontSize === 'sm' ? '1.08rem' : previewFontSize === 'md' ? '1.2rem' : '1.36rem')
+                          ? (previewFontSize === 'sm' ? '1.22rem' : previewFontSize === 'md' ? '1.38rem' : '1.55rem')
                           : (previewFontSize === 'sm' ? '0.84rem' : previewFontSize === 'md' ? '0.92rem' : '1.02rem'),
                         color: 'var(--color-text)',
-                        lineHeight: selectedTranslation === 'ur.maududi' ? 2.2 : 1.5,
+                        lineHeight: selectedTranslation === 'ur.maududi' ? 2.3 : 1.5,
                         margin: 0,
                         fontFamily: selectedTranslation === 'ur.maududi' ? 'var(--font-urdu)' : 'inherit',
                         direction: selectedTranslation === 'ur.maududi' ? 'rtl' : 'ltr',

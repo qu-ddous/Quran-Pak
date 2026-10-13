@@ -329,33 +329,37 @@ export default function JuzReaderPage() {
                 </p>
 
                 {/* Translation Text */}
-                {tAyah && (
-                  <div>
-                    <p
-                      style={{
-                        margin: '0 0 6px',
-                        lineHeight: isUrduTranslation ? 2.2 : 1.8,
-                        color: 'var(--color-text)',
-                        fontSize: isUrduTranslation ? '1.14rem' : '0.98rem',
-                        direction: isUrduTranslation ? 'rtl' : 'ltr',
-                        textAlign: isUrduTranslation ? 'right' : 'left',
-                        fontFamily: isUrduTranslation ? 'var(--font-urdu)' : 'inherit',
-                      }}
-                    >
-                      {tAyah.text}
-                    </p>
-                    <div
-                      style={{
-                        fontSize: '0.78rem',
-                        color: 'var(--color-text-muted)',
-                        textAlign: isUrduTranslation ? 'left' : 'right',
-                        fontStyle: 'italic',
-                      }}
-                    >
-                      — {translationInfo?.name ?? settings.translationEdition}
+                {tAyah && (() => {
+                  const isUrdu = isUrduTranslation || isUrduText(tAyah.text);
+                  return (
+                    <div>
+                      <p
+                        style={{
+                          margin: '0 0 8px',
+                          lineHeight: isUrdu ? 2.3 : 1.8,
+                          color: 'var(--color-text)',
+                          fontSize: isUrdu ? '1.32rem' : '0.98rem',
+                          direction: isUrdu ? 'rtl' : 'ltr',
+                          textAlign: isUrdu ? 'right' : 'left',
+                          fontFamily: isUrdu ? 'var(--font-urdu)' : 'inherit',
+                        }}
+                      >
+                        {tAyah.text}
+                      </p>
+                      <div
+                        style={{
+                          fontSize: isUrdu ? '0.94rem' : '0.78rem',
+                          fontFamily: isUrdu ? 'var(--font-urdu)' : 'inherit',
+                          color: 'var(--color-text-muted)',
+                          textAlign: isUrdu ? 'left' : 'right',
+                          fontStyle: 'italic',
+                        }}
+                      >
+                        — {translationInfo?.name ?? settings.translationEdition}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
               </div>
             </div>
           );

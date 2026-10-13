@@ -172,12 +172,12 @@ export const BookCard = ({ book, onDelete }: BookCardProps) => {
               textAlign: 'right',
             }}
           >
-            <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--color-gold-700)', marginBottom: 2 }}>
+            <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--color-gold-700)', marginBottom: 2, fontFamily: 'var(--font-urdu)' }}>
               🇵🇰 اردو عنوان:
             </div>
             <div
               style={{
-                fontSize: '1.18rem',
+                fontSize: '1.25rem',
                 fontWeight: 700,
                 color: 'var(--color-brand)',
                 lineHeight: 1.85,
@@ -194,7 +194,7 @@ export const BookCard = ({ book, onDelete }: BookCardProps) => {
               display: 'flex',
               alignItems: 'center',
               gap: 8,
-              fontSize: '0.86rem',
+              fontSize: '0.88rem',
               color: 'var(--color-gold-700)',
               fontWeight: 700,
               marginBottom: 10,
@@ -216,9 +216,9 @@ export const BookCard = ({ book, onDelete }: BookCardProps) => {
           <p
             style={{
               margin: '0 0 16px',
-              fontSize: '0.88rem',
+              fontSize: '0.96rem',
               color: 'var(--color-text-muted)',
-              lineHeight: 1.85,
+              lineHeight: 1.95,
               display: '-webkit-box',
               WebkitLineClamp: 3,
               WebkitBoxOrient: 'vertical',
@@ -248,7 +248,7 @@ export const BookCard = ({ book, onDelete }: BookCardProps) => {
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
               <Layers size={14} style={{ color: 'var(--color-brand)' }} />
-              <span>{book.totalItems} صفحات / دعائیں</span>
+              <span style={{ fontFamily: 'var(--font-urdu)', fontSize: '0.88rem' }}>{book.totalItems} صفحات / دعائیں</span>
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
               <Clock size={14} style={{ color: 'var(--color-accent)' }} />
@@ -266,7 +266,7 @@ export const BookCard = ({ book, onDelete }: BookCardProps) => {
               justifyContent: 'center',
               gap: 8,
               padding: '11px 16px',
-              fontSize: '0.9rem',
+              fontSize: '0.92rem',
               fontWeight: 800,
               borderRadius: 14,
               textDecoration: 'none',
@@ -274,7 +274,7 @@ export const BookCard = ({ book, onDelete }: BookCardProps) => {
             }}
           >
             <BookMarked size={17} />
-            <span>📒 رجسٹر کھولیں • Open Register</span>
+            <span style={{ fontFamily: 'var(--font-urdu)', fontSize: '0.98rem' }}>📒 رجسٹر کھولیں • Open Register</span>
             <ArrowRight size={15} />
           </Link>
         </div>
