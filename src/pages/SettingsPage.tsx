@@ -272,7 +272,7 @@ export default function SettingsPage() {
           </div>
 
           <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', margin: '0 0 16px 0' }}>
-            Noor Quran stores your bookmarks, reflections, reading history, and offline cached Surahs exclusively inside your browser's IndexedDB storage. No account is required and no telemetry is sent to external servers.
+            Noor Quran stores your personal reflection notes, reading history, and offline cached Surahs exclusively inside your browser's local IndexedDB storage.
           </p>
 
           {!showConfirmClear ? (
@@ -298,7 +298,7 @@ export default function SettingsPage() {
           ) : (
             <div style={{ background: '#fef2f2', padding: 16, borderRadius: 8, border: '1px solid #fca5a5' }}>
               <p style={{ margin: '0 0 12px 0', fontSize: '0.875rem', color: '#991b1b', fontWeight: 600 }}>
-                Are you sure? This will delete all saved bookmarks, reflection notes, history, and offline cached texts. This cannot be undone.
+                Are you sure? This will delete all reflection notes, reading history, and offline cached texts. This cannot be undone.
               </p>
               <div style={{ display: 'flex', gap: 10 }}>
                 <button

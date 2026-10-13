@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Clock, Trash2, BookOpen, Bookmark, Sparkles,
-  TrendingUp, Award, Compass, ArrowRight,
+  Clock, Trash2, BookOpen, Sparkles,
+  TrendingUp, Award, Compass, ArrowRight, BookMarked,
 } from 'lucide-react';
-import { getRecentHistory, clearHistory, getBookmarks, getNotes } from '../db/userDb';
+import { getRecentHistory, clearHistory, getNotes } from '../db/userDb';
 import { useToast } from '../context/ToastContext';
 import type { ReadingHistory } from '../db/userDb';
 import { LoadingSpinner, EmptyState } from '../components/ui/SharedComponents';
@@ -12,7 +12,6 @@ import { JUZ_META } from '../types/quran';
 
 export default function ProgressPage() {
   const [history, setHistory] = useState<ReadingHistory[]>([]);
-  const [bookmarkCount, setBookmarkCount] = useState(0);
   const [noteCount, setNoteCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
@@ -21,13 +20,12 @@ export default function ProgressPage() {
     document.title = 'Quran Journey Analytics — Noor Quran';
     Promise.all([
       getRecentHistory(60).then(setHistory),
-      getBookmarks().then((b) => setBookmarkCount(b.length)),
       getNotes().then((n) => setNoteCount(n.length)),
     ]).finally(() => setLoading(false));
   }, []);
 
   const handleClear = async () => {
-    if (!window.confirm('Clear all reading history? This cannot be undone. Your bookmarks and notes will not be affected.')) return;
+    if (!window.confirm('Clear all reading history? This cannot be undone. Your notes will not be affected.')) return;
     await clearHistory();
     setHistory([]);
     showToast('Reading history cleared', 'info');
@@ -175,14 +173,14 @@ export default function ProgressPage() {
 
         <div className="card" style={{ padding: '22px 24px', borderRadius: 18, border: '1.5px solid var(--color-border-gold)', display: 'flex', alignItems: 'center', gap: 16 }}>
           <div className="icon-badge-gold" style={{ width: 48, height: 48, borderRadius: 14 }}>
-            <Bookmark size={22} className="shiny-icon" />
+            <BookMarked size={22} className="shiny-icon" />
           </div>
           <div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--color-brand)', lineHeight: 1 }}>
-              {bookmarkCount}
+              {new Set(history.map(h => h.surahNumber)).size}
             </div>
             <div style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginTop: 4 }}>
-              Saved Ayahs
+              Unique Surahs Read
             </div>
           </div>
         </div>

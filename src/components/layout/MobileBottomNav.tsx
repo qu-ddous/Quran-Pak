@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, BookOpen, BookMarked, Headphones, Bookmark } from 'lucide-react';
+import { Home, BookOpen, BookMarked, Headphones, Search } from 'lucide-react';
 
 interface NavItem {
   to: string;
@@ -13,7 +13,7 @@ const BOTTOM_TABS: NavItem[] = [
   { to: '/quran', label: 'Quran', arabic: 'القرآن', icon: BookOpen },
   { to: '/books', label: 'Books', arabic: 'الكتب', icon: BookMarked },
   { to: '/listen', label: 'Listen', arabic: 'استماع', icon: Headphones },
-  { to: '/bookmarks', label: 'Saved', arabic: 'المحفوظات', icon: Bookmark },
+  { to: '/search', label: 'Search', arabic: 'البحث', icon: Search },
 ];
 
 export default function MobileBottomNav() {

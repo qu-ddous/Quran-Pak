@@ -1,18 +1,17 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
-  ChevronLeft, ChevronRight, Bookmark, BookmarkCheck, Copy, Play, Pause,
+  ChevronLeft, ChevronRight, Copy, Play, Pause,
   Square, Settings2, BookOpen, Layers, Volume2, Repeat, ArrowLeft, ArrowUp,
   Sparkles, Headphones,
 } from 'lucide-react';
 import { fetchSurahWithTranslation, buildAudioUrl, AVAILABLE_TRANSLATIONS } from '../api/quranApi';
 import { KNOWN_RECITERS } from '../types/quran';
-import { addBookmark, removeBookmark, recordVisit } from '../db/userDb';
+import { recordVisit } from '../db/userDb';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
 import type { Ayah, Surah } from '../types/quran';
 import { LoadingSpinner, ErrorState, Bismillah, Badge } from '../components/ui/SharedComponents';
-import type { Bookmark as BookmarkType } from '../db/userDb';
 import { isUrduText } from '../utils/urduUtils';
 
 const FONT_SIZE_MAP = { sm: '1.45rem', md: '1.85rem', lg: '2.25rem', xl: '2.7rem' };
@@ -56,7 +55,6 @@ export default function SurahReaderPage() {
   const [translation, setTranslation] = useState<Surah | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
   const [showSettings, setShowSettings] = useState(false);
 
   // View Mode: 'cards' (Verse by verse with translation) or 'mushaf' (Traditional Continuous Holy Book Page)
@@ -231,25 +229,7 @@ export default function SurahReaderPage() {
     playAyahByIndexRef.current = playAyahByIndex;
   }, [playAyahByIndex]);
 
-  const toggleBookmark = async (ayah: Ayah) => {
-    const id = `${num}:${ayah.numberInSurah}`;
-    const already = bookmarkedIds.has(id);
-    if (already) {
-      await removeBookmark(id);
-      setBookmarkedIds((prev) => { const s = new Set(prev); s.delete(id); return s; });
-      showToast('Bookmark removed', 'info');
-    } else {
-      const bm: BookmarkType = {
-        id, surahNumber: num, ayahNumber: ayah.numberInSurah,
-        surahName: arabic?.name ?? '', surahEnglishName: arabic?.englishName ?? '',
-        ayahText: ayah.text.slice(0, 80),
-        createdAt: Date.now(),
-      };
-      await addBookmark(bm);
-      setBookmarkedIds((prev) => new Set(prev).add(id));
-      showToast('Ayah bookmarked', 'success');
-    }
-  };
+
 
   const copyReference = (ayah: Ayah, cleanedText: string) => {
     const translationAyah = translation?.ayahs[ayah.numberInSurah - 1];
@@ -689,9 +669,7 @@ export default function SurahReaderPage() {
           {arabic.ayahs.map((ayah, idx) => {
             const cleanedText = stripLeadingBismillah(ayah.text, num, ayah.numberInSurah);
             const translationAyah = translation?.ayahs[ayah.numberInSurah - 1];
-            const bmId = `${num}:${ayah.numberInSurah}`;
             const isPlaying = playingAyah === ayah.numberInSurah;
-            const isBm = bookmarkedIds.has(bmId);
 
             return (
               <div
@@ -749,15 +727,6 @@ export default function SurahReaderPage() {
                       )}
                     </button>
 
-                    <button
-                      onClick={() => toggleBookmark(ayah)}
-                      aria-label="Bookmark ayah"
-                      className="btn-ghost"
-                      style={{ padding: '7px 9px', borderRadius: 8, color: isBm ? 'var(--color-accent)' : undefined }}
-                      title={isBm ? 'Bookmarked' : 'Add bookmark'}
-                    >
-                      {isBm ? <BookmarkCheck size={18} className="shiny-icon" /> : <Bookmark size={18} />}
-                    </button>
 
                     <button
                       onClick={() => copyReference(ayah, cleanedText)}
@@ -1060,16 +1029,6 @@ export default function SurahReaderPage() {
                 style={{ padding: '8px 16px', fontSize: '0.85rem' }}
               >
                 <Play size={14} className="shiny-icon" fill="currentColor" /> Play Recitation
-              </button>
-              <button
-                onClick={() => {
-                  toggleBookmark(activeModalAyah);
-                  setActiveModalAyah(null);
-                }}
-                className="btn-secondary"
-                style={{ padding: '8px 14px', fontSize: '0.85rem' }}
-              >
-                <Bookmark size={14} /> Bookmark
               </button>
             </div>
           </div>

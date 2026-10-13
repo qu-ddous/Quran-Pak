@@ -19,16 +19,12 @@ const JuzBrowserPage = lazy(() => import('./pages/JuzBrowserPage'));
 const JuzReaderPage = lazy(() => import('./pages/JuzReaderPage'));
 const SearchPage = lazy(() => import('./pages/SearchPage'));
 const ListenPage = lazy(() => import('./pages/ListenPage'));
-const BookmarksPage = lazy(() => import('./pages/BookmarksPage'));
 const NotesPage = lazy(() => import('./pages/NotesPage'));
 const ProgressPage = lazy(() => import('./pages/ProgressPage'));
 const DownloadsPage = lazy(() => import('./pages/DownloadsPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
-const SourcesPage = lazy(() => import('./pages/SourcesPage'));
 const IslamicBooksPage = lazy(() => import('./pages/IslamicBooksPage'));
 const BookReaderPage = lazy(() => import('./pages/BookReaderPage'));
-const AboutPage = lazy(() => import('./pages/AboutPage'));
-const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 function PageWrapper({ children }: { children: React.ReactNode }) {
@@ -58,16 +54,12 @@ export default function App() {
                     <Route path="/juz/:juzNumber" element={<PageWrapper><JuzReaderPage /></PageWrapper>} />
                     <Route path="/search" element={<PageWrapper><SearchPage /></PageWrapper>} />
                     <Route path="/listen" element={<PageWrapper><ListenPage /></PageWrapper>} />
-                    <Route path="/bookmarks" element={<PageWrapper><BookmarksPage /></PageWrapper>} />
                     <Route path="/books" element={<PageWrapper><IslamicBooksPage /></PageWrapper>} />
                     <Route path="/books/:bookId" element={<PageWrapper><BookReaderPage /></PageWrapper>} />
                     <Route path="/notes" element={<PageWrapper><NotesPage /></PageWrapper>} />
                     <Route path="/progress" element={<PageWrapper><ProgressPage /></PageWrapper>} />
                     <Route path="/downloads" element={<PageWrapper><DownloadsPage /></PageWrapper>} />
                     <Route path="/settings" element={<PageWrapper><SettingsPage /></PageWrapper>} />
-                    <Route path="/sources" element={<PageWrapper><SourcesPage /></PageWrapper>} />
-                    <Route path="/about" element={<PageWrapper><AboutPage /></PageWrapper>} />
-                    <Route path="/privacy" element={<PageWrapper><PrivacyPage /></PageWrapper>} />
                     <Route path="*" element={<PageWrapper><NotFoundPage /></PageWrapper>} />
                   </Routes>
                 </Suspense>

@@ -144,7 +144,7 @@ export default function QuranBrowserPage() {
               textShadow: '0 0 14px rgba(212, 175, 55, 0.4)',
             }}
           >
-            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+            بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
           </p>
 
           <h1 className="hero-headline" style={{ fontSize: 'clamp(2.2rem, 4vw, 3.2rem)', margin: '0 0 12px' }}>

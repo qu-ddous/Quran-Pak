@@ -157,7 +157,7 @@ export default function Footer() {
               <Sparkles size={16} className="shiny-icon" /> Popular &amp; Tools
             </h3>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {POPULAR_SURAHS.slice(0, 4).map((s) => (
+              {POPULAR_SURAHS.slice(0, 6).map((s) => (
                 <li key={s.num}>
                   <Link to={`/surah/${s.num}`} className="footer-link">
                     <span>Surah {s.name}</span>
@@ -165,43 +165,28 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link to="/bookmarks" className="footer-link">
-                  <span>Saved Verses (Bookmarks)</span>
-                </Link>
-              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Personal Tools & Settings */}
+          <div>
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--color-brand)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 18px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <ShieldCheck size={16} className="shiny-icon" /> Personal Tools &amp; Settings
+            </h3>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
               <li>
                 <Link to="/notes" className="footer-link">
                   <span>My Ayah Reflection Notes</span>
                 </Link>
               </li>
               <li>
+                <Link to="/progress" className="footer-link">
+                  <span>Khatm &amp; Reading Analytics</span>
+                </Link>
+              </li>
+              <li>
                 <Link to="/downloads" className="footer-link">
                   <span>Offline Storage &amp; Cache</span>
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 4: Text Integrity & Transparency */}
-          <div>
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--color-brand)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 18px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <ShieldCheck size={16} className="shiny-icon" /> Integrity &amp; About
-            </h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <li>
-                <Link to="/sources" className="footer-link">
-                  <span>Canonical Sources &amp; Methodology</span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="footer-link">
-                  <span>About Noor Quran Mission</span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/privacy" className="footer-link">
-                  <span>Local-First Privacy Policy</span>
                 </Link>
               </li>
               <li>

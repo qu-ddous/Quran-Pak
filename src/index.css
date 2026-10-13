@@ -1254,7 +1254,7 @@ body {
   border-bottom: 2px solid var(--color-border-gold);
   background-size: cover;
   background-repeat: no-repeat;
-  box-shadow: 0 16px 40px rgba(27, 67, 50, 0.12), 0 0 20px rgba(212, 175, 55, 0.15);
+  box-shadow: 0 16px 40px rgba(10, 35, 26, 0.35), 0 0 24px rgba(212, 175, 55, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -1263,57 +1263,45 @@ body {
   }
 }
 
-.hero-bg-quran { background-image: url('/hero-bg-clean.jpg'); background-position: right 25% center; }
-.hero-bg-juz { background-image: url('/juz-hero-bg.jpg'); background-position: center; }
-.hero-bg-search { background-image: url('/search-hero-bg.jpg'); background-position: right 20% center; }
-.hero-bg-listen { background-image: url('/listen-hero-bg.jpg'); background-position: center; }
-.hero-bg-bookmarks { background-image: url('/bookmarks-hero-bg.jpg'); background-position: center; }
-.hero-bg-progress { background-image: url('/progress-hero-bg.jpg'); background-position: center; }
+/* Page-specific Sacred Emerald Themes (pure CSS gradients, zero raster images) */
+.hero-bg-quran {
+  background: linear-gradient(135deg, #052117 0%, #0c382a 45%, #144937 100%);
+}
+.hero-bg-juz {
+  background: linear-gradient(135deg, #051d1f 0%, #0a3335 45%, #0e4438 100%);
+}
+.hero-bg-search {
+  background: linear-gradient(135deg, #082319 0%, #153c2b 45%, #1f4220 100%);
+}
+.hero-bg-listen {
+  background: linear-gradient(135deg, #061e25 0%, #0d3639 45%, #082921 100%);
+}
+.hero-bg-progress {
+  background: linear-gradient(135deg, #08211a 0%, #113f32 45%, #19463b 100%);
+}
 
-/* Direct image visibility: Directional Scrim protecting text on left while keeping right side authentic and vibrant */
+/* Sacred Geometric Overlay (pure SVG data-URI, 0 raster image files needed) */
 .quran-hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(254, 252, 248, 0.98) 0%,
-    rgba(254, 252, 248, 0.94) 42%,
-    rgba(254, 252, 248, 0.70) 65%,
-    rgba(254, 252, 248, 0.20) 84%,
-    rgba(254, 252, 248, 0.0) 100%
-  );
+  background-image: 
+    radial-gradient(circle at 85% 25%, rgba(212, 175, 55, 0.24) 0%, transparent 60%),
+    radial-gradient(circle at 15% 80%, rgba(52, 211, 153, 0.16) 0%, transparent 55%),
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23d4af37' stroke-width='1' stroke-opacity='0.1'%3E%3Cpath d='M40 0 L80 40 L40 80 L0 40 Z'/%3E%3Cpath d='M40 10 L70 40 L40 70 L10 40 Z'/%3E%3Ccircle cx='40' cy='40' r='18'/%3E%3Ccircle cx='40' cy='40' r='8'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: auto, auto, 80px 80px;
   pointer-events: none;
 }
 
 .dark .quran-hero-overlay {
-  background: linear-gradient(
-    90deg,
-    rgba(10, 24, 18, 0.98) 0%,
-    rgba(10, 24, 18, 0.94) 42%,
-    rgba(10, 24, 18, 0.70) 65%,
-    rgba(10, 24, 18, 0.20) 84%,
-    rgba(10, 24, 18, 0.0) 100%
-  );
+  background-image: 
+    radial-gradient(circle at 85% 25%, rgba(212, 175, 55, 0.22) 0%, transparent 60%),
+    radial-gradient(circle at 15% 80%, rgba(16, 185, 129, 0.14) 0%, transparent 55%),
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23d4af37' stroke-width='1' stroke-opacity='0.08'%3E%3Cpath d='M40 0 L80 40 L40 80 L0 40 Z'/%3E%3Cpath d='M40 10 L70 40 L40 70 L10 40 Z'/%3E%3Ccircle cx='40' cy='40' r='18'/%3E%3Ccircle cx='40' cy='40' r='8'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 @media (max-width: 768px) {
   .quran-hero-overlay {
-    background: linear-gradient(
-      180deg,
-      rgba(254, 252, 248, 0.97) 0%,
-      rgba(254, 252, 248, 0.93) 58%,
-      rgba(254, 252, 248, 0.70) 85%,
-      rgba(254, 252, 248, 0.30) 100%
-    );
-  }
-  .dark .quran-hero-overlay {
-    background: linear-gradient(
-      180deg,
-      rgba(10, 24, 18, 0.97) 0%,
-      rgba(10, 24, 18, 0.93) 58%,
-      rgba(10, 24, 18, 0.70) 85%,
-      rgba(10, 24, 18, 0.30) 100%
-    );
+    background-size: auto, auto, 60px 60px;
   }
 }
 
@@ -1321,20 +1309,20 @@ body {
 .hero-glass-card {
   position: relative;
   z-index: 2;
-  max-width: 680px;
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1.5px solid rgba(212, 175, 55, 0.38);
+  max-width: 720px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(212, 175, 55, 0.45);
   border-radius: 26px;
-  padding: 34px 36px;
-  box-shadow: 0 16px 42px rgba(15, 45, 33, 0.09), 0 0 20px rgba(212, 175, 55, 0.15);
+  padding: 34px 38px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.25), 0 0 24px rgba(212, 175, 55, 0.18);
 }
 
 .dark .hero-glass-card {
-  background: rgba(10, 26, 20, 0.84);
-  border-color: rgba(212, 175, 55, 0.42);
-  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.45), 0 0 22px rgba(212, 175, 55, 0.18);
+  background: rgba(9, 28, 21, 0.88);
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55), 0 0 28px rgba(212, 175, 55, 0.22);
 }
 
 @media (max-width: 768px) {
@@ -1344,7 +1332,7 @@ body {
   }
 }
 
-/* Enhanced Typography & Contrast Directly Over Image */
+/* Enhanced Typography & Contrast Directly Over Hero */
 .quran-hero-banner h1 {
   text-shadow: 0 1px 16px rgba(255, 255, 255, 0.9), 0 2px 5px rgba(0, 0, 0, 0.12);
 }
@@ -1403,11 +1391,11 @@ body {
 .surah-cartouche-texture {
   position: absolute;
   inset: 0;
-  background-image: url('/journey-read.jpg');
-  background-size: cover;
-  background-position: center;
-  opacity: 0.12;
-  mix-blend-mode: overlay;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.16) 0%, transparent 70%),
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23d4af37' stroke-width='1' stroke-opacity='0.09'%3E%3Cpath d='M40 0 L80 40 L40 80 L0 40 Z'/%3E%3Cpath d='M40 10 L70 40 L40 70 L10 40 Z'/%3E%3Ccircle cx='40' cy='40' r='18'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: auto, 80px 80px;
+  opacity: 1;
   pointer-events: none;
 }
 

@@ -15,16 +15,6 @@ import { openDB, type IDBPDatabase } from 'idb';
 const DB_NAME = 'noor-quran-db';
 const DB_VERSION = 1;
 
-export interface Bookmark {
-  id: string; // `${surahNumber}:${ayahNumber}`
-  surahNumber: number;
-  ayahNumber: number;
-  surahName: string;
-  surahEnglishName: string;
-  ayahText: string; // First ~80 chars of Arabic text
-  createdAt: number; // Unix ms timestamp
-}
-
 export interface Note {
   id: string; // UUID
   surahNumber: number;
@@ -47,7 +37,6 @@ export interface UserSettings {
 }
 
 type NoorDB = IDBPDatabase<{
-  bookmarks: { key: string; value: Bookmark; indexes: { 'by-surah': number } };
   notes: { key: string; value: Note; indexes: { 'by-surah': number } };
   readingHistory: { key: string; value: ReadingHistory; indexes: { 'by-visited': number } };
   settings: { key: string; value: UserSettings };
@@ -86,30 +75,6 @@ async function getDb(): Promise<NoorDB> {
     },
   }) as NoorDB;
   return _db;
-}
-
-// ─── Bookmarks ────────────────────────────────────────────────────────────────
-
-export async function addBookmark(bm: Bookmark): Promise<void> {
-  const db = await getDb();
-  await db.put('bookmarks', bm);
-}
-
-export async function removeBookmark(id: string): Promise<void> {
-  const db = await getDb();
-  await db.delete('bookmarks', id);
-}
-
-export async function getBookmarks(): Promise<Bookmark[]> {
-  const db = await getDb();
-  const all: Bookmark[] = await db.getAll('bookmarks');
-  return all.sort((a: Bookmark, b: Bookmark) => b.createdAt - a.createdAt);
-}
-
-export async function isBookmarked(id: string): Promise<boolean> {
-  const db = await getDb();
-  const item = await db.get('bookmarks', id);
-  return !!item;
 }
 
 // ─── Notes ────────────────────────────────────────────────────────────────────
@@ -181,7 +146,9 @@ export async function setSetting(key: string, value: unknown): Promise<void> {
 
 export async function clearAllData(): Promise<void> {
   const db = await getDb();
-  await db.clear('bookmarks');
+  if (db.objectStoreNames.contains('bookmarks')) {
+    await db.clear('bookmarks');
+  }
   await db.clear('notes');
   await db.clear('readingHistory');
   await db.clear('settings');

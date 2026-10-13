@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
-  BookOpen, Search, Headphones, Bookmark, BarChart2,
-  Settings, Info, Menu, X, Moon, Sun, Download, Home,
-  FileText, Shield, ChevronRight, Sparkles, BookMarked
+  BookOpen, Search, Headphones, BarChart2,
+  Settings, Menu, X, Moon, Sun, Download, Home,
+  FileText, ChevronRight, BookMarked, Edit3
 } from 'lucide-react';
 import { useSettings } from '../../context/SettingsContext';
 
@@ -14,16 +14,13 @@ const NAV_LINKS = [
   { to: '/books', label: 'Books & Duas', icon: BookMarked },
   { to: '/search', label: 'Search', icon: Search },
   { to: '/listen', label: 'Listen', icon: Headphones },
-  { to: '/bookmarks', label: 'Bookmarks', icon: Bookmark },
   { to: '/progress', label: 'Progress', icon: BarChart2 },
 ];
 
 const SECONDARY_LINKS = [
+  { to: '/notes', label: 'Reflections & Notes', icon: Edit3 },
+  { to: '/downloads', label: 'Offline Storage', icon: Download },
   { to: '/settings', label: 'Settings', icon: Settings },
-  { to: '/downloads', label: 'Downloads', icon: Download },
-  { to: '/sources', label: 'Sources', icon: Info },
-  { to: '/about', label: 'About', icon: Sparkles },
-  { to: '/privacy', label: 'Privacy', icon: Shield },
 ];
 
 export default function Header() {
