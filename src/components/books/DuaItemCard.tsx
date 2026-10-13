@@ -15,7 +15,6 @@ interface DuaItemCardProps {
   showTransliteration?: boolean;
   showUrdu?: boolean;
   showEnglish?: boolean;
-  paperTheme?: 'register' | 'book';
 }
 
 export const DuaItemCard = ({
@@ -26,7 +25,6 @@ export const DuaItemCard = ({
   showTransliteration = true,
   showUrdu = true,
   showEnglish = true,
-  paperTheme = 'register',
 }: DuaItemCardProps) => {
   const { showToast } = useToast();
   const [copied, setCopied] = useState(false);
@@ -117,72 +115,20 @@ export const DuaItemCard = ({
     }
   };
 
-  const isRegister = paperTheme === 'register';
-
   return (
     <div
       id={`item-${item.id}`}
       style={{
-        borderRadius: 20,
-        padding: isRegister ? '26px 28px 24px 34px' : '24px 26px',
-        marginBottom: 24,
+        padding: '18px 12px 24px',
+        marginBottom: 20,
         position: 'relative',
-        background: isRegister ? 'var(--color-surface)' : 'var(--color-surface)',
-        // Faint horizontal register ruled lines when in register mode
-        backgroundImage: isRegister
-          ? 'repeating-linear-gradient(transparent, transparent 35px, rgba(148, 163, 184, 0.18) 35px, rgba(148, 163, 184, 0.18) 36px)'
-          : 'none',
-        // Red margin line on the left like a real register notebook
-        borderLeft: isRegister ? '4px solid #ef4444' : '1.5px solid var(--color-border)',
-        borderTop: '1.5px solid var(--color-border)',
-        borderRight: '1.5px solid var(--color-border)',
-        borderBottom: '1.5px solid var(--color-border)',
-        boxShadow: isRegister
-          ? '0 6px 25px rgba(0, 0, 0, 0.05), inset 3px 0 0 rgba(239, 68, 68, 0.3)'
-          : '0 4px 18px rgba(0, 0, 0, 0.03)',
+        background: 'transparent',
+        border: 'none',
+        boxShadow: 'none',
+        borderBottom: '1.5px dashed rgba(148, 163, 184, 0.28)',
         transition: 'all 0.2s ease',
-        overflow: 'hidden',
       }}
     >
-      {/* Real Register Notebook Top Header Bar */}
-      {isRegister && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 16,
-            paddingBottom: 10,
-            borderBottom: '1.5px solid rgba(239, 68, 68, 0.35)',
-            fontSize: '0.78rem',
-            color: 'var(--color-text-muted)',
-            fontFamily: 'monospace',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ color: '#ef4444', fontWeight: 800 }}>●</span>
-            <span style={{ fontWeight: 700, color: 'var(--color-text)' }}>
-              صفحہ / Page: {item.pageNumber || 1}
-            </span>
-          </div>
-
-          <div
-            className="arabic-text"
-            style={{
-              fontSize: '0.9rem',
-              color: 'var(--color-accent)',
-              fontWeight: 700,
-              lineHeight: 1,
-            }}
-          >
-            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-          </div>
-
-          <div style={{ color: 'var(--color-gold-700)', fontWeight: 700 }}>
-            {item.reference ? `حوالہ: ${item.reference}` : 'مستند و مسنون'}
-          </div>
-        </div>
-      )}
 
       {/* ─── Tri-Lingual Titles Header Box ─── */}
       <div
@@ -342,23 +288,22 @@ export const DuaItemCard = ({
         </div>
       </div>
 
-      {/* ─── Arabic Sacred Text Box ─── */}
+      {/* ─── Arabic Sacred Text ─── */}
       <div
         className="arabic-text select-all"
         style={{
           fontSize: `${arabicFontSize}px`,
-          lineHeight: 2.3,
+          lineHeight: 2.15,
           color: 'var(--color-text)',
           textAlign: 'right',
           direction: 'rtl',
-          padding: '14px 18px',
-          background: isRegister ? 'rgba(255, 255, 255, 0.7)' : 'var(--color-bg)',
-          borderRadius: 16,
+          padding: '12px 6px 18px',
+          background: 'transparent',
+          borderRadius: 0,
           marginBottom: 16,
-          border: '1.5px solid var(--color-border-gold)',
+          border: 'none',
           letterSpacing: '0.01em',
           wordBreak: 'break-word',
-          boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.03)',
         }}
       >
         {item.arabicText}
@@ -372,11 +317,11 @@ export const DuaItemCard = ({
             fontStyle: 'italic',
             color: 'var(--color-text-muted)',
             marginBottom: 14,
-            padding: '8px 14px',
-            background: 'rgba(212, 175, 55, 0.06)',
-            borderLeft: '3px solid var(--color-accent)',
-            borderRadius: '0 10px 10px 0',
-            lineHeight: 1.55,
+            padding: '4px 12px',
+            background: 'transparent',
+            borderLeft: '2.5px solid var(--color-accent)',
+            borderRadius: 0,
+            lineHeight: 1.6,
           }}
         >
           <strong style={{ fontStyle: 'normal', fontSize: '0.78rem', color: 'var(--color-gold-700)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 2 }}>
@@ -390,24 +335,24 @@ export const DuaItemCard = ({
       {showUrdu && item.translationUrdu && (
         <div
           style={{
-            fontSize: '1.14rem',
-            lineHeight: 2.2,
+            fontSize: '1.24rem',
+            lineHeight: 2.15,
             color: 'var(--color-text)',
             textAlign: 'right',
             direction: 'rtl',
             marginBottom: 14,
-            padding: '12px 16px',
-            borderRadius: 12,
-            background: isRegister ? 'rgba(255, 255, 255, 0.85)' : 'var(--color-surface)',
+            padding: '8px 16px 8px 6px',
+            borderRadius: 0,
+            background: 'transparent',
             borderRight: '3.5px solid var(--color-brand)',
-            borderTop: '1px solid var(--color-border)',
-            borderBottom: '1px solid var(--color-border)',
-            borderLeft: '1px solid var(--color-border)',
+            borderTop: 'none',
+            borderBottom: 'none',
+            borderLeft: 'none',
             fontFamily: 'var(--font-urdu)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-            <span style={{ fontSize: '0.78rem', fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: 'var(--color-gold-soft)', color: 'var(--color-brand)', fontFamily: 'var(--font-urdu)' }}>
+            <span style={{ fontSize: '0.78rem', fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: 'rgba(27, 67, 50, 0.1)', color: 'var(--color-brand)', fontFamily: 'var(--font-urdu)' }}>
               اردو ترجمہ و مفہوم
             </span>
           </div>
@@ -419,17 +364,17 @@ export const DuaItemCard = ({
       {showEnglish && item.translationEnglish && (
         <div
           style={{
-            fontSize: '0.92rem',
-            lineHeight: 1.6,
+            fontSize: '0.93rem',
+            lineHeight: 1.65,
             color: 'var(--color-text)',
             marginBottom: 16,
-            padding: '10px 14px',
-            borderRadius: 12,
-            background: isRegister ? 'rgba(255, 255, 255, 0.85)' : 'var(--color-bg)',
+            padding: '6px 6px 6px 14px',
+            borderRadius: 0,
+            background: 'transparent',
             borderLeft: '3.5px solid #3b82f6',
-            borderTop: '1px solid var(--color-border)',
-            borderBottom: '1px solid var(--color-border)',
-            borderRight: '1px solid var(--color-border)',
+            borderTop: 'none',
+            borderBottom: 'none',
+            borderRight: 'none',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>

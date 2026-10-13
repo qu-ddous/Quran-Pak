@@ -12,16 +12,9 @@ export interface SavedDuaRecord {
   savedAt: string;
 }
 
-// ─── Fetch All Books (Preset + Custom) ───────────────────────────────────────
+// ─── Fetch All Books ────────────────────────────────────────────────────────
 export function getAllBooks(): IslamicBook[] {
-  try {
-    const rawCustom = localStorage.getItem(CUSTOM_BOOKS_STORAGE_KEY);
-    const customBooks: IslamicBook[] = rawCustom ? JSON.parse(rawCustom) : [];
-    return [...ISLAMIC_BOOKS_DATA, ...customBooks];
-  } catch (e) {
-    console.error('Failed to load custom books from storage:', e);
-    return ISLAMIC_BOOKS_DATA;
-  }
+  return ISLAMIC_BOOKS_DATA;
 }
 
 // ─── Get Single Book by ID ───────────────────────────────────────────────────

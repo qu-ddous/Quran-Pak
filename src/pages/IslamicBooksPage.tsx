@@ -1,23 +1,26 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Search, Sparkles, Plus,
-  ArrowRight, X, HelpCircle
+  Search, Sparkles, BookOpen,
+  ArrowRight, X, HelpCircle, Library
 } from 'lucide-react';
-import { getAllBooks, deleteCustomBook, searchAllDuas, getSavedDuas } from '../db/booksDb';
+import { getAllBooks, searchAllDuas, getSavedDuas } from '../db/booksDb';
 import type { IslamicBook, BookCategory } from '../types/books';
 import { BookCard } from '../components/books/BookCard';
-import { AddBookModal } from '../components/books/AddBookModal';
 import { useToast } from '../context/ToastContext';
 
 const CATEGORY_TABS: { key: BookCategory; label: string; icon: string }[] = [
   { key: 'all', label: 'تمام کتب • All Books', icon: '📚' },
+  { key: 'hadith', label: 'کتبِ احادیث نبویہ • Hadith', icon: '📜' },
   { key: 'namaz', label: 'نمازِ حنفی و احکام • Salah', icon: '🕌' },
-  { key: 'kalima', label: 'شش کلمے • 6 Kalimas', icon: '✨' },
-  { key: 'duas', label: 'حصن المسلم • Daily Duas', icon: '🤲' },
+  { key: 'duas', label: 'حصن المسلم و اذکار • Duas', icon: '🤲' },
+  { key: 'kalima', label: 'شش کلمے و عقائد • Kalimas', icon: '✨' },
+  { key: 'seerah', label: 'شمائل و سیرت • Shamail', icon: '🌸' },
+  { key: 'adab', label: 'اخلاق و آداب • Manners', icon: '🤝' },
+  { key: 'fiqh', label: 'فقہ و ادلہ • Fiqh', icon: '⚖️' },
   { key: 'quranic', label: '۴۰ ربنا دعائیں • Rabbana', icon: '📖' },
-  { key: 'special', label: 'استخارہ و خصوصی • Special', icon: '🌙' },
   { key: 'ruqyah', label: 'شفا و حفاظت • Healing', icon: '🛡️' },
+  { key: 'special', label: 'استخارہ و خصوصی • Special', icon: '🌙' },
 ];
 
 export default function IslamicBooksPage() {
@@ -26,7 +29,6 @@ export default function IslamicBooksPage() {
   const [books, setBooks] = useState<IslamicBook[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<BookCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [savedDuasCount, setSavedDuasCount] = useState(0);
 
   const refreshBooks = () => {
@@ -53,13 +55,6 @@ export default function IslamicBooksPage() {
     if (!searchQuery.trim()) return [];
     return searchAllDuas(searchQuery, selectedCategory);
   }, [searchQuery, selectedCategory]);
-
-  const handleDeleteBook = (bookId: string) => {
-    if (deleteCustomBook(bookId)) {
-      showToast('کتاب کامیابی سے حذف کر دی گئی', 'success');
-      refreshBooks();
-    }
-  };
 
   return (
     <div className="quran-page-container" style={{ paddingBottom: 80 }}>
@@ -158,10 +153,10 @@ export default function IslamicBooksPage() {
             حصن المسلم کی روزمرہ دعائیں، اور ۴۰ قرآنی ربنا دعائیں باآسانی کارڈز اور کتابی صفحات میں مطالعہ فرمائیں۔
           </p>
 
-          {/* Action Bar inside Hero: Search + Add Book */}
+          {/* Action Bar inside Hero: Live Search */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
             {/* Live Search Input */}
-            <div style={{ position: 'relative', flex: 1, minWidth: 280, maxWidth: 540 }}>
+            <div style={{ position: 'relative', flex: 1, minWidth: 280, maxWidth: 640 }}>
               <Search
                 size={18}
                 style={{
@@ -177,7 +172,7 @@ export default function IslamicBooksPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="کسی بھی دعا، نماز، کلمہ یا لفظ کو تلاش کریں (e.g. قنوت، کھانا، سفر، استخارہ)..."
+                placeholder="کسی بھی کتاب، دعا، نماز، کلمہ یا لفظ کو تلاش کریں (e.g. بخاری، قنوت، کھانا، سفر، استخارہ)..."
                 style={{
                   width: '100%',
                   padding: '12px 40px 12px 42px',
@@ -211,29 +206,6 @@ export default function IslamicBooksPage() {
                 </button>
               )}
             </div>
-
-            {/* Add Custom Book Button */}
-            <button
-              onClick={() => setIsAddModalOpen(true)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '12px 20px',
-                borderRadius: 14,
-                background: 'var(--gradient-gold)',
-                color: '#1a1a1a',
-                border: 'none',
-                fontSize: '0.9rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                boxShadow: '0 4px 14px rgba(212, 175, 55, 0.35)',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <Plus size={18} />
-              <span>کتاب شامل کریں • Add Book</span>
-            </button>
           </div>
         </div>
       </section>
@@ -433,7 +405,7 @@ export default function IslamicBooksPage() {
                       textDecoration: 'none',
                     }}
                   >
-                    <span>📒 رجسٹر میں کھولیں • Open in Register</span>
+                    <span>📖 کتاب کا مطالعہ کریں • Read Book</span>
                     <ArrowRight size={14} />
                   </Link>
                 </div>
@@ -521,17 +493,10 @@ export default function IslamicBooksPage() {
           }}
         >
           {filteredBooks.map((book) => (
-            <BookCard key={book.id} book={book} onDelete={handleDeleteBook} />
+            <BookCard key={book.id} book={book} />
           ))}
         </div>
       </section>
-
-      {/* Add Custom Book Modal */}
-      <AddBookModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onBookAdded={refreshBooks}
-      />
     </div>
   );
 }

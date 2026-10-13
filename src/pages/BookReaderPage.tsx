@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   ArrowLeft, Search, ChevronLeft, ChevronRight,
-  Maximize2, Minimize2, UserCheck
+  Maximize2, Minimize2, BookOpen, ScrollText,
+  Minus, Plus, Type, UserCheck, BookMarked
 } from 'lucide-react';
 import { getBookById } from '../db/booksDb';
 import type { IslamicBook } from '../types/books';
@@ -18,7 +19,6 @@ export default function BookReaderPage() {
 
   // Reading Preferences
   const [viewMode, setViewMode] = useState<'page' | 'continuous'>('page');
-  const [paperTheme, setPaperTheme] = useState<'register' | 'book'>('register');
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [arabicFontSize, setArabicFontSize] = useState(26);
   const [showTransliteration, setShowTransliteration] = useState(true);
@@ -169,21 +169,6 @@ export default function BookReaderPage() {
           >
             {book.categoryLabel}
           </span>
-          {paperTheme === 'register' && (
-            <span
-              style={{
-                padding: '3px 10px',
-                borderRadius: 14,
-                fontSize: '0.74rem',
-                fontWeight: 700,
-                background: 'rgba(239, 68, 68, 0.12)',
-                color: '#dc2626',
-                border: '1px solid rgba(239, 68, 68, 0.25)',
-              }}
-            >
-              📒 رجسٹر موڈ (Lined Register)
-            </span>
-          )}
         </div>
       </div>
 
@@ -201,17 +186,6 @@ export default function BookReaderPage() {
           border: '1.5px solid rgba(255, 255, 255, 0.2)',
         }}
       >
-        {/* Subtle decorative lined register overlay texture */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            opacity: 0.08,
-            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.4) 20px, rgba(255,255,255,0.4) 21px)',
-            pointerEvents: 'none',
-          }}
-        />
-
         <div style={{ position: 'relative', zIndex: 1 }}>
           {/* Trilingual Title Grid: English, Urdu, and Arabic clearly presented */}
           <div
@@ -391,163 +365,25 @@ export default function BookReaderPage() {
         </div>
       </section>
 
-      {/* ─── Authentic Ruled Register Ledger Header Plate ────────────────────── */}
-      {paperTheme === 'register' && (
-        <div
-          style={{
-            borderRadius: 18,
-            background: 'var(--color-surface)',
-            border: '2px solid var(--color-border)',
-            borderLeft: '6px solid #ef4444', // Classic red vertical margin line
-            padding: '16px 20px',
-            marginBottom: 20,
-            position: 'relative',
-            boxShadow: '0 4px 18px rgba(0, 0, 0, 0.04)',
-            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(148, 163, 184, 0.14) 28px, rgba(148, 163, 184, 0.14) 29px)',
-          }}
-        >
-          {/* Top Spiral Punch Hole simulation */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingBottom: 10,
-              marginBottom: 12,
-              borderBottom: '1.5px dashed rgba(239, 68, 68, 0.35)',
-            }}
-          >
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              {[1, 2, 3, 4, 5, 6].map((hole) => (
-                <div
-                  key={hole}
-                  style={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: '50%',
-                    background: 'var(--color-bg)',
-                    border: '1.5px solid rgba(100, 116, 139, 0.4)',
-                    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.25)',
-                  }}
-                />
-              ))}
-              <span
-                style={{
-                  fontSize: '0.74rem',
-                  fontWeight: 800,
-                  color: 'var(--color-gold-700)',
-                  letterSpacing: '0.06em',
-                  marginLeft: 6,
-                }}
-              >
-                📓 رجسٹرِ اسلامی کتب و ادعیہ • ISLAMIC NOTEBOOK REGISTER
-              </span>
-            </div>
-
-            <div
-              className="arabic-text"
-              style={{
-                fontSize: '0.95rem',
-                color: 'var(--color-brand)',
-                fontWeight: 700,
-              }}
-            >
-              بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-            </div>
-          </div>
-
-          {/* Register Ledger Info: Date, Subject, Page No */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: 10,
-              fontSize: '0.82rem',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                background: 'var(--color-bg)',
-                padding: '6px 12px',
-                borderRadius: 8,
-                border: '1px solid var(--color-border)',
-              }}
-            >
-              <span style={{ color: '#ef4444', fontWeight: 800 }}>DATE / تاریخ:</span>
-              <span style={{ fontWeight: 700, color: 'var(--color-text)' }}>
-                1448ھ (مطابق 2026ء)
-              </span>
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                background: 'var(--color-bg)',
-                padding: '6px 12px',
-                borderRadius: 8,
-                border: '1px solid var(--color-border)',
-              }}
-            >
-              <span style={{ color: 'var(--color-brand)', fontWeight: 800 }}>SUBJECT / عنوان:</span>
-              <span
-                style={{
-                  fontWeight: 700,
-                  color: 'var(--color-text)',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {book.titleEnglish || book.title}
-              </span>
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                background: 'var(--color-bg)',
-                padding: '6px 12px',
-                borderRadius: 8,
-                border: '1px solid var(--color-border)',
-              }}
-            >
-              <span style={{ color: 'var(--color-gold-700)', fontWeight: 800 }}>PAGE / صفحہ:</span>
-              <span style={{ fontWeight: 800, color: 'var(--color-brand)' }}>
-                صفحہ {currentPageIndex + 1} از {totalPages}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ─── Reading Control Toolbar ─────────────────────────────────────────── */}
+      {/* ─── Modern Reading Control Toolbar ─────────────────────────────────── */}
       <div
-        className="card"
         style={{
           borderRadius: 18,
-          padding: '16px 20px',
-          marginBottom: 24,
+          padding: '14px 18px',
+          marginBottom: 20,
           border: '1.5px solid var(--color-border)',
           background: 'var(--color-surface)',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
           display: 'flex',
           flexDirection: 'column',
-          gap: 14,
+          gap: 12,
         }}
       >
-        {/* Row 1: Chapter Selector & Mode Switcher */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-          {/* Chapter Selector (if multiple chapters) */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 240 }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>
-              باب / فہرست:
-            </span>
+        {/* Row 1: Chapter Dropdown + View Mode + Style Theme + Fullscreen */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+          {/* Chapter Selector */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 260 }}>
+            <BookMarked size={17} style={{ color: 'var(--color-brand)', flexShrink: 0 }} />
             <select
               value={selectedChapterIndex}
               onChange={(e) => {
@@ -556,7 +392,6 @@ export default function BookReaderPage() {
               }}
               style={{
                 width: '100%',
-                maxWidth: 320,
                 padding: '8px 12px',
                 borderRadius: 10,
                 border: '1.5px solid var(--color-border)',
@@ -564,6 +399,8 @@ export default function BookReaderPage() {
                 color: 'var(--color-text)',
                 fontSize: '0.88rem',
                 fontWeight: 600,
+                fontFamily: 'var(--font-urdu)',
+                lineHeight: 1.5,
               }}
             >
               {book.chapters.map((ch, idx) => (
@@ -574,139 +411,102 @@ export default function BookReaderPage() {
             </select>
           </div>
 
-          {/* Mode Switcher: Page by Page vs Continuous */}
-          <div
-            style={{
-              display: 'inline-flex',
-              background: 'var(--color-bg)',
-              borderRadius: 12,
-              padding: 4,
-              border: '1px solid var(--color-border)',
-            }}
-          >
-            <button
-              onClick={() => setViewMode('page')}
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
+            {/* View Mode Segmented Pill */}
+            <div
               style={{
-                padding: '6px 14px',
-                borderRadius: 8,
-                border: 'none',
-                background: viewMode === 'page' ? 'var(--color-brand)' : 'transparent',
-                color: viewMode === 'page' ? '#ffffff' : 'var(--color-text-muted)',
-                fontWeight: 700,
-                fontSize: '0.88rem',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-                fontFamily: 'var(--font-urdu)',
-                lineHeight: 1.5,
+                display: 'inline-flex',
+                background: 'var(--color-bg)',
+                borderRadius: 12,
+                padding: 3,
+                border: '1px solid var(--color-border)',
+                gap: 2,
               }}
             >
-              📖 صفحہ وار (Page View)
-            </button>
-            <button
-              onClick={() => setViewMode('continuous')}
-              style={{
-                padding: '6px 14px',
-                borderRadius: 8,
-                border: 'none',
-                background: viewMode === 'continuous' ? 'var(--color-brand)' : 'transparent',
-                color: viewMode === 'continuous' ? '#ffffff' : 'var(--color-text-muted)',
-                fontWeight: 700,
-                fontSize: '0.88rem',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-                fontFamily: 'var(--font-urdu)',
-                lineHeight: 1.5,
-              }}
-            >
-              📜 مکمل فہرست (All Duas)
-            </button>
-          </div>
+              <button
+                onClick={() => setViewMode('page')}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '6px 12px',
+                  borderRadius: 9,
+                  border: 'none',
+                  background: viewMode === 'page' ? 'var(--color-brand)' : 'transparent',
+                  color: viewMode === 'page' ? '#ffffff' : 'var(--color-text-muted)',
+                  fontWeight: 700,
+                  fontSize: '0.84rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  fontFamily: 'var(--font-urdu)',
+                  lineHeight: 1.4,
+                }}
+              >
+                <BookOpen size={14} />
+                <span>صفحہ وار</span>
+              </button>
+              <button
+                onClick={() => setViewMode('continuous')}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '6px 12px',
+                  borderRadius: 9,
+                  border: 'none',
+                  background: viewMode === 'continuous' ? 'var(--color-brand)' : 'transparent',
+                  color: viewMode === 'continuous' ? '#ffffff' : 'var(--color-text-muted)',
+                  fontWeight: 700,
+                  fontSize: '0.84rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  fontFamily: 'var(--font-urdu)',
+                  lineHeight: 1.4,
+                }}
+              >
+                <ScrollText size={14} />
+                <span>مکمل فہرست</span>
+              </button>
+            </div>
 
-          {/* Paper Theme Switcher: Notebook Register vs Book */}
-          <div
-            style={{
-              display: 'inline-flex',
-              background: 'var(--color-bg)',
-              borderRadius: 12,
-              padding: 4,
-              border: '1px solid var(--color-border)',
-            }}
-          >
-            <button
-              onClick={() => setPaperTheme('register')}
-              title="کتاب کو کاپی یا رجسٹر کی طرح لکیروں کے ساتھ پڑھیں"
-              style={{
-                padding: '6px 12px',
-                borderRadius: 8,
-                border: 'none',
-                background: paperTheme === 'register' ? '#dc2626' : 'transparent',
-                color: paperTheme === 'register' ? '#ffffff' : 'var(--color-text-muted)',
-                fontWeight: 750,
-                fontSize: '0.86rem',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-                fontFamily: 'var(--font-urdu)',
-                lineHeight: 1.5,
-              }}
-            >
-              📒 رجسٹر طرز (Ruled Register)
-            </button>
-            <button
-              onClick={() => setPaperTheme('book')}
-              title="عام صاف ستھری کتابی شکل"
-              style={{
-                padding: '6px 12px',
-                borderRadius: 8,
-                border: 'none',
-                background: paperTheme === 'book' ? 'var(--color-brand)' : 'transparent',
-                color: paperTheme === 'book' ? '#ffffff' : 'var(--color-text-muted)',
-                fontWeight: 750,
-                fontSize: '0.86rem',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-                fontFamily: 'var(--font-urdu)',
-                lineHeight: 1.5,
-              }}
-            >
-              📖 کتابی طرز (Book)
-            </button>
+            {/* Fullscreen Button */}
             <button
               onClick={toggleFullscreen}
               aria-label="Toggle Fullscreen"
-              title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen Reading Mode'}
               style={{
-                marginLeft: 4,
-                padding: '6px 10px',
-                borderRadius: 8,
-                border: 'none',
-                background: isFullscreen ? 'var(--color-gold-soft)' : 'transparent',
-                color: isFullscreen ? 'var(--color-gold-700)' : 'var(--color-text-muted)',
-                fontWeight: 700,
-                fontSize: '0.82rem',
-                cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 5,
+                padding: '6px 10px',
+                borderRadius: 10,
+                border: '1px solid var(--color-border)',
+                background: isFullscreen ? 'var(--color-gold-soft)' : 'var(--color-bg)',
+                color: isFullscreen ? 'var(--color-gold-700)' : 'var(--color-text)',
+                fontWeight: 700,
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
               }}
             >
-              {isFullscreen ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
-              <span>{isFullscreen ? 'Exit' : 'Full'}</span>
+              {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+              <span>{isFullscreen ? 'بند کریں' : 'فل سکرین'}</span>
             </button>
           </div>
         </div>
 
-        {/* Row 2: In-book Search & Display Settings */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 12, borderTop: '1px solid var(--color-border)', paddingTop: 12 }}>
+        {/* Row 2: In-book Search & Font Sizer & Translation Toggles */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 10, borderTop: '1px solid var(--color-border)', paddingTop: 10 }}>
           {/* Quick in-book search */}
-          <div style={{ position: 'relative', minWidth: 220, flex: 1 }}>
+          <div style={{ position: 'relative', minWidth: 200, flex: 1, maxWidth: 360 }}>
             <Search
-              size={15}
+              size={14}
               style={{
                 position: 'absolute',
                 left: 10,
                 top: '50%',
                 transform: 'translateY(-50%)',
                 color: 'var(--color-text-muted)',
+                pointerEvents: 'none',
               }}
             />
             <input
@@ -719,107 +519,129 @@ export default function BookReaderPage() {
               placeholder="اس کتاب میں تلاش کریں..."
               style={{
                 width: '100%',
-                padding: '6px 12px 6px 32px',
+                padding: '6px 10px 6px 30px',
                 borderRadius: 8,
                 border: '1px solid var(--color-border)',
                 background: 'var(--color-bg)',
                 color: 'var(--color-text)',
-                fontSize: '0.82rem',
+                fontSize: '0.84rem',
+                fontFamily: 'var(--font-urdu)',
               }}
             />
           </div>
 
-          {/* Arabic Font Sizer */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
-              عربی فونٹ سائز:
-            </span>
-            <button
-              onClick={() => setArabicFontSize((prev) => Math.max(18, prev - 2))}
-              aria-label="Decrease font size"
-              style={{
-                padding: '4px 8px',
-                borderRadius: 6,
-                border: '1px solid var(--color-border)',
-                background: 'var(--color-bg)',
-                color: 'var(--color-text)',
-                cursor: 'pointer',
-                fontSize: '0.78rem',
-                fontWeight: 700,
-              }}
-            >
-              A-
-            </button>
-            <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--color-brand)', minWidth: 26, textAlign: 'center' }}>
-              {arabicFontSize}
-            </span>
-            <button
-              onClick={() => setArabicFontSize((prev) => Math.min(42, prev + 2))}
-              aria-label="Increase font size"
-              style={{
-                padding: '4px 8px',
-                borderRadius: 6,
-                border: '1px solid var(--color-border)',
-                background: 'var(--color-bg)',
-                color: 'var(--color-text)',
-                cursor: 'pointer',
-                fontSize: '0.78rem',
-                fontWeight: 700,
-              }}
-            >
-              A+
-            </button>
-          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 }}>
+            {/* Arabic Font Sizer */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--color-bg)', padding: '3px 6px', borderRadius: 10, border: '1px solid var(--color-border)' }}>
+              <Type size={13} style={{ color: 'var(--color-brand)', marginLeft: 4 }} />
+              <button
+                onClick={() => setArabicFontSize((prev) => Math.max(18, prev - 2))}
+                aria-label="Decrease font size"
+                style={{
+                  width: 24,
+                  height: 24,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 6,
+                  border: '1px solid var(--color-border)',
+                  background: 'var(--color-surface)',
+                  color: 'var(--color-text)',
+                  cursor: 'pointer',
+                }}
+              >
+                <Minus size={12} />
+              </button>
+              <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--color-brand)', minWidth: 22, textAlign: 'center' }}>
+                {arabicFontSize}
+              </span>
+              <button
+                onClick={() => setArabicFontSize((prev) => Math.min(44, prev + 2))}
+                aria-label="Increase font size"
+                style={{
+                  width: 24,
+                  height: 24,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 6,
+                  border: '1px solid var(--color-border)',
+                  background: 'var(--color-surface)',
+                  color: 'var(--color-text)',
+                  cursor: 'pointer',
+                }}
+              >
+                <Plus size={12} />
+              </button>
+            </div>
 
-          {/* Toggle Translation Chips */}
-          <div style={{ display: 'flex', gap: 6 }}>
-            <button
-              onClick={() => setShowUrdu((p) => !p)}
-              style={{
-                padding: '4px 10px',
-                borderRadius: 8,
-                fontSize: '0.76rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                border: showUrdu ? '1.5px solid var(--color-brand)' : '1px solid var(--color-border)',
-                background: showUrdu ? 'rgba(27, 67, 50, 0.1)' : 'transparent',
-                color: showUrdu ? 'var(--color-brand)' : 'var(--color-text-muted)',
-              }}
-            >
-              اردو {showUrdu ? '✓' : ''}
-            </button>
+            {/* Language / Translation Pills */}
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button
+                onClick={() => setShowUrdu((p) => !p)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  padding: '5px 10px',
+                  borderRadius: 8,
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  border: showUrdu ? '1.5px solid var(--color-brand)' : '1px solid var(--color-border)',
+                  background: showUrdu ? 'rgba(27, 67, 50, 0.12)' : 'var(--color-bg)',
+                  color: showUrdu ? 'var(--color-brand)' : 'var(--color-text-muted)',
+                  fontFamily: 'var(--font-urdu)',
+                  lineHeight: 1.4,
+                }}
+              >
+                <span>اردو</span>
+                {showUrdu && <span>✓</span>}
+              </button>
 
-            <button
-              onClick={() => setShowEnglish((p) => !p)}
-              style={{
-                padding: '4px 10px',
-                borderRadius: 8,
-                fontSize: '0.76rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                border: showEnglish ? '1.5px solid var(--color-brand)' : '1px solid var(--color-border)',
-                background: showEnglish ? 'rgba(27, 67, 50, 0.1)' : 'transparent',
-                color: showEnglish ? 'var(--color-brand)' : 'var(--color-text-muted)',
-              }}
-            >
-              English {showEnglish ? '✓' : ''}
-            </button>
+              <button
+                onClick={() => setShowEnglish((p) => !p)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  padding: '5px 10px',
+                  borderRadius: 8,
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  border: showEnglish ? '1.5px solid #3b82f6' : '1px solid var(--color-border)',
+                  background: showEnglish ? 'rgba(59, 130, 246, 0.12)' : 'var(--color-bg)',
+                  color: showEnglish ? '#2563eb' : 'var(--color-text-muted)',
+                  lineHeight: 1.4,
+                }}
+              >
+                <span>English</span>
+                {showEnglish && <span>✓</span>}
+              </button>
 
-            <button
-              onClick={() => setShowTransliteration((p) => !p)}
-              style={{
-                padding: '4px 10px',
-                borderRadius: 8,
-                fontSize: '0.76rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                border: showTransliteration ? '1.5px solid var(--color-accent)' : '1px solid var(--color-border)',
-                background: showTransliteration ? 'var(--color-gold-soft)' : 'transparent',
-                color: showTransliteration ? 'var(--color-gold-700)' : 'var(--color-text-muted)',
-              }}
-            >
-              تلفظ {showTransliteration ? '✓' : ''}
-            </button>
+              <button
+                onClick={() => setShowTransliteration((p) => !p)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  padding: '5px 10px',
+                  borderRadius: 8,
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  border: showTransliteration ? '1.5px solid var(--color-accent)' : '1px solid var(--color-border)',
+                  background: showTransliteration ? 'var(--color-gold-soft)' : 'var(--color-bg)',
+                  color: showTransliteration ? 'var(--color-gold-700)' : 'var(--color-text-muted)',
+                  fontFamily: 'var(--font-urdu)',
+                  lineHeight: 1.4,
+                }}
+              >
+                <span>تلفظ</span>
+                {showTransliteration && <span>✓</span>}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -904,7 +726,58 @@ export default function BookReaderPage() {
 
           {/* Current Page Dua Item Card with Animated Page-Turn Wrapper */}
           {currentItem && (
-            <div id="reader-page-viewport" key={currentPageIndex} className="book-page-turn">
+            <div
+              id="reader-page-viewport"
+              key={currentPageIndex}
+              className="book-page-turn"
+              style={{
+                borderRadius: 20,
+                background: 'var(--color-surface)',
+                border: '1.5px solid var(--color-border-gold)',
+                padding: '24px 28px',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(212, 175, 55, 0.15)',
+                position: 'relative',
+              }}
+            >
+              {/* Classical Islamic Book Header */}
+              <div
+                style={{
+                  textAlign: 'center',
+                  paddingBottom: 14,
+                  marginBottom: 18,
+                  borderBottom: '1.5px solid var(--color-border-gold)',
+                }}
+              >
+                <div
+                  className="arabic-text"
+                  style={{
+                    fontSize: '1.45rem',
+                    color: 'var(--color-brand)',
+                    fontWeight: 800,
+                    marginBottom: 6,
+                    textAlign: 'center',
+                  }}
+                >
+                  بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 12,
+                    fontSize: '0.92rem',
+                    color: 'var(--color-gold-700)',
+                    fontFamily: 'var(--font-urdu)',
+                    direction: 'rtl',
+                  }}
+                >
+                  <span>{book.titleUrdu || book.title}</span>
+                  <span style={{ opacity: 0.6 }}>•</span>
+                  <span>صفحہ {currentPageIndex + 1} از {totalPages}</span>
+                </div>
+              </div>
+
               <DuaItemCard
                 item={currentItem}
                 bookId={book.id}
@@ -913,7 +786,6 @@ export default function BookReaderPage() {
                 showTransliteration={showTransliteration}
                 showUrdu={showUrdu}
                 showEnglish={showEnglish}
-                paperTheme={paperTheme}
               />
             </div>
           )}
@@ -940,7 +812,7 @@ export default function BookReaderPage() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 6,
+                gap: 8,
                 padding: '10px 18px',
                 borderRadius: 12,
                 fontSize: '0.94rem',
@@ -948,12 +820,12 @@ export default function BookReaderPage() {
                 opacity: currentPageIndex === 0 ? 0.4 : 1,
                 cursor: currentPageIndex === 0 ? 'not-allowed' : 'pointer',
                 border: '1px solid var(--color-border)',
-                fontFamily: 'var(--font-urdu)',
-                lineHeight: 1.5,
+                lineHeight: 1.4,
               }}
             >
               <ChevronLeft size={18} />
-              <span>پچھلا صفحہ • Previous</span>
+              <span style={{ fontFamily: 'var(--font-urdu)', fontSize: '0.96rem', direction: 'rtl' }}>پچھلا صفحہ</span>
+              <span style={{ fontSize: '0.74rem', opacity: 0.65, fontWeight: 500 }}>(Previous)</span>
             </button>
 
             <div style={{ textAlign: 'center' }}>
@@ -980,25 +852,76 @@ export default function BookReaderPage() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 6,
+                gap: 8,
                 padding: '10px 18px',
                 borderRadius: 12,
                 fontSize: '0.94rem',
                 fontWeight: 700,
                 opacity: currentPageIndex === totalPages - 1 ? 0.4 : 1,
                 cursor: currentPageIndex === totalPages - 1 ? 'not-allowed' : 'pointer',
-                fontFamily: 'var(--font-urdu)',
-                lineHeight: 1.5,
+                lineHeight: 1.4,
               }}
             >
-              <span>اگلا صفحہ • Next</span>
+              <span style={{ fontFamily: 'var(--font-urdu)', fontSize: '0.96rem', direction: 'rtl' }}>اگلا صفحہ</span>
+              <span style={{ fontSize: '0.74rem', opacity: 0.85, fontWeight: 500 }}>(Next)</span>
               <ChevronRight size={18} />
             </button>
           </div>
         </div>
       ) : (
         /* CONTINUOUS LIST READER MODE */
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div
+          id="reader-page-viewport"
+          style={{
+            borderRadius: 20,
+            background: 'var(--color-surface)',
+            border: '1.5px solid var(--color-border-gold)',
+            padding: '24px 28px',
+            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(212, 175, 55, 0.15)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 16,
+          }}
+        >
+          {/* Classical Islamic Book Header */}
+          <div
+            style={{
+              textAlign: 'center',
+              paddingBottom: 14,
+              marginBottom: 10,
+              borderBottom: '1.5px solid var(--color-border-gold)',
+            }}
+          >
+            <div
+              className="arabic-text"
+              style={{
+                fontSize: '1.45rem',
+                color: 'var(--color-brand)',
+                fontWeight: 800,
+                marginBottom: 6,
+                textAlign: 'center',
+              }}
+            >
+              بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 12,
+                fontSize: '0.92rem',
+                color: 'var(--color-gold-700)',
+                fontFamily: 'var(--font-urdu)',
+                direction: 'rtl',
+              }}
+            >
+              <span>{book.titleUrdu || book.title}</span>
+              <span style={{ opacity: 0.6 }}>•</span>
+              <span>تمام صفحات و ادعیہ ({chapterItems.length})</span>
+            </div>
+          </div>
+
           {chapterItems.map((item) => (
             <DuaItemCard
               key={item.id}
@@ -1009,7 +932,6 @@ export default function BookReaderPage() {
               showTransliteration={showTransliteration}
               showUrdu={showUrdu}
               showEnglish={showEnglish}
-              paperTheme={paperTheme}
             />
           ))}
         </div>

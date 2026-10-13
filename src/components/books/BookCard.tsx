@@ -1,13 +1,12 @@
 import { Link } from 'react-router-dom';
-import { Clock, Layers, ArrowRight, Trash2, UserCheck, BookMarked } from 'lucide-react';
+import { Clock, Layers, ArrowRight, UserCheck, BookOpen } from 'lucide-react';
 import type { IslamicBook } from '../../types/books';
 
 interface BookCardProps {
   book: IslamicBook;
-  onDelete?: (bookId: string) => void;
 }
 
-export const BookCard = ({ book, onDelete }: BookCardProps) => {
+export const BookCard = ({ book }: BookCardProps) => {
   return (
     <div
       className="card group"
@@ -63,33 +62,6 @@ export const BookCard = ({ book, onDelete }: BookCardProps) => {
           >
             {book.categoryLabel}
           </span>
-
-          {book.isCustom && onDelete && (
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (window.confirm(`Are you sure you want to delete "${book.titleEnglish || book.title}"?`)) {
-                  onDelete(book.id);
-                }
-              }}
-              aria-label="Delete custom book"
-              style={{
-                background: 'rgba(239, 68, 68, 0.3)',
-                border: '1px solid rgba(239, 68, 68, 0.5)',
-                color: '#ffffff',
-                padding: '4px 8px',
-                borderRadius: 8,
-                cursor: 'pointer',
-                fontSize: '0.75rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-              }}
-            >
-              <Trash2 size={13} />
-            </button>
-          )}
         </div>
 
         {/* Arabic Calligraphy on Cover */}
@@ -273,8 +245,8 @@ export const BookCard = ({ book, onDelete }: BookCardProps) => {
               boxShadow: '0 4px 14px rgba(27, 67, 50, 0.2)',
             }}
           >
-            <BookMarked size={17} />
-            <span style={{ fontFamily: 'var(--font-urdu)', fontSize: '0.98rem' }}>📒 رجسٹر کھولیں • Open Register</span>
+            <BookOpen size={17} />
+            <span style={{ fontFamily: 'var(--font-urdu)', fontSize: '0.98rem' }}>کتاب کا مطالعہ کریں • Read Book</span>
             <ArrowRight size={15} />
           </Link>
         </div>

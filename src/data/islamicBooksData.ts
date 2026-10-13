@@ -1,6 +1,8 @@
 import type { IslamicBook } from '../types/books';
+import { CLASSICAL_OPEN_SOURCE_BOOKS } from './classicalBooksData';
 
 export const ISLAMIC_BOOKS_DATA: IslamicBook[] = [
+  ...CLASSICAL_OPEN_SOURCE_BOOKS,
   // ─── BOOK 1: TALEEM-UL-ISLAM / NAMAZ-E-HANAFI ─────────────────────────────
   {
     id: 'namaz-e-hanafi',
