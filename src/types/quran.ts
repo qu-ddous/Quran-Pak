@@ -41,6 +41,7 @@ export interface Surah {
   numberOfAyahs: number;
   revelationType: 'Meccan' | 'Medinan';
   ayahs: Ayah[];
+  edition?: Edition;
 }
 
 export interface Edition {

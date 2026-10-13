@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
   Search, ExternalLink, AlertCircle, Sparkles, BookOpen,
-  ArrowRight, X, Headphones, CheckCircle2, RotateCcw
+  ArrowRight, X, Headphones, CheckCircle2, RotateCcw, Compass
 } from 'lucide-react';
 import {
   searchQuran, SEARCHABLE_EDITIONS, DEFAULT_TRANSLATION_EN,

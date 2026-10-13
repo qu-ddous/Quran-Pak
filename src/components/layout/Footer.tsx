@@ -3,16 +3,11 @@ import {
   BookOpen, 
   Compass, 
   Headphones, 
-  Bookmark, 
   Sparkles, 
   Heart, 
   ShieldCheck, 
   Search, 
-  Settings, 
-  BarChart3, 
-  DownloadCloud, 
-  FileText,
-  ArrowRight
+  Settings
 } from 'lucide-react';
 
 const currentYear = new Date().getFullYear();
