@@ -46,15 +46,18 @@ export default function JuzBrowserPage() {
         <div className="quran-hero-overlay" />
         <div className="hero-glass-card">
           {/* Ornate Bismillah calligraphic badge */}
-          <div style={{
-            fontSize: '1.5rem',
-            color: 'var(--color-gold-500)',
-            fontFamily: "'Amiri', serif",
-            fontWeight: 800,
-            marginBottom: 8,
-            letterSpacing: '0.04em',
-            textShadow: '0 2px 8px rgba(0,0,0,0.15)',
-          }}>
+          <div
+            lang="ar"
+            style={{
+              fontSize: '1.5rem',
+              color: 'var(--color-gold-500)',
+              fontFamily: 'var(--font-arabic)',
+              fontWeight: 800,
+              marginBottom: 8,
+              letterSpacing: '0.04em',
+              textShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            }}
+          >
             بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
           </div>
 

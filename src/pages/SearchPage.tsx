@@ -206,13 +206,16 @@ export default function SearchPage() {
       <div className="quran-hero-banner hero-bg-search">
         <div className="quran-hero-overlay" />
         <div className="hero-glass-card">
-          <div style={{
-            fontSize: '1.45rem',
-            color: 'var(--color-gold-500)',
-            fontFamily: "'Amiri', serif",
-            fontWeight: 800,
-            marginBottom: 8,
-          }}>
+          <div
+            lang="ar"
+            style={{
+              fontSize: '1.45rem',
+              color: 'var(--color-gold-500)',
+              fontFamily: 'var(--font-arabic)',
+              fontWeight: 800,
+              marginBottom: 8,
+            }}
+          >
             البحث في القرآن الكريم
           </div>
 
@@ -624,7 +627,7 @@ export default function SearchPage() {
                         lineHeight: isUrduMatch ? 2.3 : 1.7,
                         color: 'var(--color-text)',
                         fontFamily: isArabicMatch
-                          ? "'Noto Naskh Arabic', serif"
+                          ? 'var(--font-arabic)'
                           : isUrduMatch
                           ? 'var(--font-urdu)'
                           : 'inherit',

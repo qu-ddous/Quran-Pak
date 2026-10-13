@@ -1,5 +1,48 @@
 @import "tailwindcss";
 
+/* ─── Uthmanic Hafs (Quranic) Font Configuration ─────────────────────────── */
+@font-face {
+  font-family: 'Uthmanic Hafs';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src:
+    local('KFGQPC Uthmanic Script HAFS'),
+    local('KFGQPC Uthmanic Script HAFS Regular'),
+    local('UthmanicHafs'),
+    local('Uthmanic Hafs'),
+    url('https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/fonts/uthmanic-hafs1-ver09.woff2') format('woff2'),
+    url('https://cdn.jsdelivr.net/gh/mustafa0x/qpc-fonts@master/various-woff2/UthmanicHafs1%20Ver09.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'KFGQPC Uthmanic Script HAFS';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src:
+    local('KFGQPC Uthmanic Script HAFS'),
+    local('KFGQPC Uthmanic Script HAFS Regular'),
+    local('UthmanicHafs'),
+    local('Uthmanic Hafs'),
+    url('https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/fonts/uthmanic-hafs1-ver09.woff2') format('woff2'),
+    url('https://cdn.jsdelivr.net/gh/mustafa0x/qpc-fonts@master/various-woff2/UthmanicHafs1%20Ver09.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'UthmanicHafs';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src:
+    local('KFGQPC Uthmanic Script HAFS'),
+    local('KFGQPC Uthmanic Script HAFS Regular'),
+    local('UthmanicHafs'),
+    local('Uthmanic Hafs'),
+    url('https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/fonts/uthmanic-hafs1-ver09.woff2') format('woff2'),
+    url('https://cdn.jsdelivr.net/gh/mustafa0x/qpc-fonts@master/various-woff2/UthmanicHafs1%20Ver09.woff2') format('woff2');
+}
+
 /* ─── Jameel Noori Nastaleeq Font Configuration ──────────────────────────── */
 @font-face {
   font-family: 'Jameel Noori Nastaleeq';
@@ -26,6 +69,9 @@
 
 /* ─── Design Tokens & Rich Color Palette ──────────────────────────────────── */
 :root {
+  /* Arabic Typography Token (Uthmanic Hafs Quranic) */
+  --font-arabic: 'Uthmanic Hafs', 'KFGQPC Uthmanic Script HAFS', 'UthmanicHafs', 'Amiri Quran', 'Scheherazade New', 'Noto Naskh Arabic', serif;
+
   /* Urdu Typography Token */
   --font-urdu: 'Jameel Noori Nastaleeq', 'JameelNooriNastaliq', 'Noto Nastaliq Urdu', 'Urdu Typesetting', serif;
 
@@ -119,9 +165,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Arabic Typography ───────────────────────────────────────────────────── */
-.arabic-text {
-  font-family: 'Noto Naskh Arabic', 'Traditional Arabic', serif;
+/* ─── Arabic Typography (Uthmanic Hafs - Quranic) ─────────────────────────── */
+.arabic-text,
+.font-arabic,
+.arabic-script,
+.quran-arabic-text,
+.surah-card-arabic,
+.listen-surah-arabic,
+[lang="ar"],
+:lang(ar) {
+  font-family: var(--font-arabic) !important;
   direction: rtl;
   text-align: right;
   line-height: 2.2;
@@ -543,7 +596,7 @@ body {
 }
 
 .surah-card-arabic {
-  font-family: 'Noto Naskh Arabic', serif;
+  font-family: var(--font-arabic);
   font-size: 1.45rem;
   font-weight: 800;
   color: #fef08a;
@@ -1813,7 +1866,7 @@ body {
 }
 
 .mini-player-arabic {
-  font-family: 'Amiri', serif;
+  font-family: var(--font-arabic);
   font-size: 1.1rem;
   color: var(--color-gold-500);
   margin-left: 4px;

@@ -90,13 +90,16 @@ export default function ListenPage() {
       <div className="quran-hero-banner hero-bg-listen">
         <div className="quran-hero-overlay" />
         <div className="hero-glass-card">
-          <div style={{
-            fontSize: '1.45rem',
-            color: 'var(--color-gold-500)',
-            fontFamily: "'Amiri', serif",
-            fontWeight: 800,
-            marginBottom: 8,
-          }}>
+          <div
+            lang="ar"
+            style={{
+              fontSize: '1.45rem',
+              color: 'var(--color-gold-500)',
+              fontFamily: 'var(--font-arabic)',
+              fontWeight: 800,
+              marginBottom: 8,
+            }}
+          >
             استمع إلى القرآن الكريم
           </div>
 

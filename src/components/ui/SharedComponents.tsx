@@ -117,7 +117,7 @@ export function Bismillah() {
         lang="ar"
         aria-label="Bismillah ir-Rahman ir-Rahim"
       >
-        بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+        بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
       </p>
     </div>
   );

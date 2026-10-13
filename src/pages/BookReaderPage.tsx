@@ -758,7 +758,7 @@ export default function BookReaderPage() {
                     textAlign: 'center',
                   }}
                 >
-                  بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+                  بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
                 </div>
                 <div
                   style={{
@@ -902,7 +902,7 @@ export default function BookReaderPage() {
                 textAlign: 'center',
               }}
             >
-              بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+              بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
             </div>
             <div
               style={{

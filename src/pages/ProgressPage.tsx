@@ -76,13 +76,16 @@ export default function ProgressPage() {
       <div className="quran-hero-banner hero-bg-progress">
         <div className="quran-hero-overlay" />
         <div className="hero-glass-card">
-          <div style={{
-            fontSize: '1.45rem',
-            color: 'var(--color-gold-500)',
-            fontFamily: "'Amiri', serif",
-            fontWeight: 800,
-            marginBottom: 8,
-          }}>
+          <div
+            lang="ar"
+            style={{
+              fontSize: '1.45rem',
+              color: 'var(--color-gold-500)',
+              fontFamily: 'var(--font-arabic)',
+              fontWeight: 800,
+              marginBottom: 8,
+            }}
+          >
             مسيرة القراءة والختمة المباركة
           </div>
 
