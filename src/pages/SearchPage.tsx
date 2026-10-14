@@ -202,74 +202,31 @@ export default function SearchPage() {
 
   return (
     <div className="quran-page-container" style={{ paddingBottom: 100 }}>
-      {/* ─── Panoramic Luxury Header Banner ─── */}
-      <div className="quran-hero-banner hero-bg-search">
-        <div className="quran-hero-overlay" />
-        <div className="hero-glass-card">
-          <div
-            lang="ar"
-            style={{
-              fontSize: '1.45rem',
-              color: 'var(--color-gold-500)',
-              fontFamily: 'var(--font-arabic)',
-              fontWeight: 800,
-              marginBottom: 8,
-            }}
-          >
+      {/* ─── Clean Noble Page Header (Open, Dignified, No Cards) ─── */}
+      <section className="clean-noble-header">
+        <div className="clean-noble-container">
+          <div className="clean-noble-bismillah" lang="ar">
             البحث في القرآن الكريم
           </div>
 
-          <h1 style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
-            fontSize: 'clamp(2rem, 4vw, 3rem)',
-            fontWeight: 800,
-            color: 'var(--color-brand)',
-            lineHeight: 1.15,
-            margin: '0 0 12px',
-          }}>
-            Search the Noble Quran
+          <h1 className="clean-noble-title">
+            Search the <span className="clean-noble-gold">Noble Quran</span>
           </h1>
 
-          <p style={{
-            fontSize: '1rem',
-            lineHeight: 1.6,
-            marginBottom: 20,
-          }}>
+          <p className="clean-noble-subtitle">
             Search through Arabic verses, chapter names, classical English translations, and Urdu commentaries across all 6,236 Ayahs.
           </p>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 14px',
-              borderRadius: 9999,
-              background: 'rgba(212, 175, 55, 0.18)',
-              border: '1.5px solid var(--color-border-gold)',
-              fontWeight: 800,
-              fontSize: '0.85rem',
-              color: 'var(--color-brand)',
-            }}>
-              <BookOpen size={14} className="shiny-icon" /> 114 Surahs & 6,236 Ayahs
+          <div className="clean-noble-badges">
+            <span className="clean-noble-pill gold">
+              <BookOpen size={14} className="shiny-icon" /> 114 Surahs &amp; 6,236 Ayahs
             </span>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 14px',
-              borderRadius: 9999,
-              background: 'rgba(45, 106, 79, 0.16)',
-              border: '1.5px solid var(--color-border-gold)',
-              fontWeight: 800,
-              fontSize: '0.85rem',
-              color: 'var(--color-brand)',
-            }}>
-              <Sparkles size={14} className="shiny-icon" /> Smart Chapter & Verse Detection
+            <span className="clean-noble-pill">
+              <Sparkles size={14} className="shiny-icon" /> Smart Chapter &amp; Verse Detection
             </span>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* ─── Search Controls Box ─── */}
       <div className="card" style={{ padding: '24px 28px', marginBottom: 28, borderRadius: 20, border: '2px solid var(--color-border-gold)' }}>

@@ -164,204 +164,124 @@ export default function BookReaderPage() {
               fontSize: '0.74rem',
               fontWeight: 700,
               background: 'var(--color-gold-soft)',
-              color: 'var(--color-gold-700)',
+              color: 'var(--color-gold-text)',
             }}
           >
-            {book.categoryLabel}
+            {book.category}
           </span>
         </div>
       </div>
 
-      {/* ─── Book Header Showcase Card (Trilingual Titles & Real Author) ───────── */}
+      {/* ─── Classical Prestigious Book Header (Clean & Dignified, No Cards) ─── */}
       <section
         style={{
-          borderRadius: 24,
-          padding: '26px 28px',
-          background: book.coverGradient,
-          color: '#ffffff',
-          marginBottom: 20,
-          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.18)',
+          padding: '24px 16px 24px',
+          marginBottom: 24,
           position: 'relative',
-          overflow: 'hidden',
-          border: '1.5px solid rgba(255, 255, 255, 0.2)',
+          borderBottom: '1px solid var(--color-border)',
         }}
       >
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          {/* Trilingual Title Grid: English, Urdu, and Arabic clearly presented */}
+        <div style={{ maxWidth: 860, margin: '0 auto', textAlign: 'center' }}>
+          {/* 1. Arabic Sacred Book Title */}
+          <div
+            className="arabic-text"
+            lang="ar"
+            style={{
+              fontSize: 'clamp(1.7rem, 3.5vw, 2.3rem)',
+              fontWeight: 800,
+              color: 'var(--color-accent)',
+              lineHeight: 1.4,
+              marginBottom: 6,
+              textAlign: 'center',
+            }}
+          >
+            {book.titleArabic || book.arabicTitle}
+          </div>
+
+          {/* 2. Urdu Book Title */}
+          <h1
+            style={{
+              margin: '0 0 8px',
+              fontSize: 'clamp(1.4rem, 2.8vw, 1.95rem)',
+              fontWeight: 800,
+              fontFamily: 'var(--font-urdu)',
+              lineHeight: 1.85,
+              color: 'var(--color-text)',
+              direction: 'rtl',
+              textAlign: 'center',
+            }}
+          >
+            {book.titleUrdu || book.title}
+          </h1>
+
+          {/* 3. English Subtitle */}
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: 16,
+              fontSize: '0.96rem',
+              fontWeight: 600,
+              color: 'var(--color-text-secondary)',
               marginBottom: 16,
             }}
           >
-            {/* 1. English Book Title Box */}
-            <div
-              style={{
-                padding: '12px 16px',
-                borderRadius: 14,
-                background: 'rgba(0, 0, 0, 0.25)',
-                border: '1px solid rgba(255, 255, 255, 0.22)',
-                backdropFilter: 'blur(6px)',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  color: 'var(--color-accent)',
-                  letterSpacing: '0.06em',
-                  textTransform: 'uppercase',
-                  marginBottom: 4,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 5,
-                }}
-              >
-                <span>🇬🇧 English Title (انگریزی نام):</span>
-              </div>
-              <h1
-                style={{
-                  margin: 0,
-                  fontSize: 'clamp(1.2rem, 2.2vw, 1.55rem)',
-                  fontWeight: 800,
-                  lineHeight: 1.3,
-                  color: '#ffffff',
-                }}
-              >
-                {book.titleEnglish || book.title}
-              </h1>
-            </div>
-
-            {/* 2. Urdu Book Title Box */}
-            <div
-              style={{
-                padding: '12px 16px',
-                borderRadius: 14,
-                background: 'rgba(212, 175, 55, 0.18)',
-                border: '1px solid rgba(212, 175, 55, 0.4)',
-                direction: 'rtl',
-                textAlign: 'right',
-                backdropFilter: 'blur(6px)',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '0.74rem',
-                  fontWeight: 800,
-                  color: 'var(--color-accent)',
-                  marginBottom: 4,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 5,
-                  justifyContent: 'flex-start',
-                }}
-              >
-                <span>🇵🇰 اردو عنوان (Urdu Title):</span>
-              </div>
-              <div
-                style={{
-                  fontSize: 'clamp(1.3rem, 2.5vw, 1.75rem)',
-                  fontWeight: 700,
-                  fontFamily: 'var(--font-urdu)',
-                  lineHeight: 1.85,
-                  color: '#ffffff',
-                }}
-              >
-                {book.titleUrdu || book.title}
-              </div>
-            </div>
-
-            {/* 3. Arabic Book Title Box */}
-            <div
-              style={{
-                padding: '12px 16px',
-                borderRadius: 14,
-                background: 'rgba(0, 0, 0, 0.28)',
-                border: '1px solid rgba(255, 255, 255, 0.22)',
-                direction: 'rtl',
-                textAlign: 'right',
-                backdropFilter: 'blur(6px)',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  color: 'var(--color-accent)',
-                  marginBottom: 4,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 5,
-                  justifyContent: 'flex-start',
-                }}
-              >
-                <span>🇸🇦 العنوان بالعربية (Arabic Title):</span>
-              </div>
-              <div
-                className="arabic-text"
-                style={{
-                  fontSize: '1.45rem',
-                  fontWeight: 700,
-                  color: 'var(--color-accent)',
-                  lineHeight: 1.35,
-                }}
-              >
-                {book.titleArabic || book.arabicTitle}
-              </div>
-            </div>
+            {book.titleEnglish || book.title}
           </div>
 
-          {/* Authentic Scholar & Book Provenance Panel */}
+          {/* 4. Scholarly Provenance & Metadata Row */}
           <div
             style={{
               display: 'flex',
               flexWrap: 'wrap',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 12,
-              padding: '10px 16px',
-              borderRadius: 12,
-              background: 'rgba(0, 0, 0, 0.3)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              fontSize: '0.86rem',
+              justifyContent: 'center',
+              gap: 8,
+              marginBottom: 16,
+              fontSize: '0.85rem',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <UserCheck size={16} style={{ color: 'var(--color-accent)' }} />
-              <span style={{ fontWeight: 700, fontFamily: 'var(--font-urdu)', direction: 'rtl', lineHeight: 1.6 }}>
-                تصنیف و تحقیق: {book.author}
-              </span>
-              <span style={{ opacity: 0.85, fontSize: '0.8rem' }}>
-                ({book.authorEnglish})
-              </span>
-            </div>
+            <span
+              className="clean-noble-pill gold"
+              style={{
+                fontFamily: 'var(--font-urdu)',
+                direction: 'rtl',
+              }}
+            >
+              <UserCheck size={14} style={{ color: 'var(--color-accent)' }} />
+              تصنیف: {book.author}
+            </span>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14, opacity: 0.9 }}>
-              {book.publishedEra && (
-                <span>📜 {book.publishedEra}</span>
-              )}
-              <span>⏱️ مطالعہ: {book.readTime}</span>
-              <span>📄 {book.totalItems} صفحات و اسباق</span>
-            </div>
+            {book.publishedEra && (
+              <span className="clean-noble-pill">
+                📜 {book.publishedEra}
+              </span>
+            )}
+
+            <span className="clean-noble-pill">
+              ⏱️ مطالعہ: {book.readTime}
+            </span>
+
+            <span className="clean-noble-pill">
+              📄 {book.totalItems} صفحات و اسباق
+            </span>
           </div>
 
-          {/* Book Summary / Description */}
-          <p
-            style={{
-              margin: '12px 0 0',
-              fontSize: '0.98rem',
-              color: 'rgba(255, 255, 255, 0.95)',
-              maxWidth: 820,
-              lineHeight: 1.85,
-              fontFamily: 'var(--font-urdu)',
-              direction: 'rtl',
-              textAlign: 'right',
-            }}
-          >
-            {book.description}
-          </p>
+          {/* 5. Book Summary / Description */}
+          {book.description && (
+            <p
+              style={{
+                margin: 0,
+                fontSize: '0.98rem',
+                color: 'var(--color-text-secondary)',
+                maxWidth: 760,
+                marginInline: 'auto',
+                lineHeight: 1.9,
+                fontFamily: 'var(--font-urdu)',
+                direction: 'rtl',
+                textAlign: 'center',
+              }}
+            >
+              {book.description}
+            </p>
+          )}
         </div>
       </section>
 

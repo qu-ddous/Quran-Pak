@@ -70,76 +70,31 @@ export default function ProgressPage() {
 
   return (
     <div className="quran-page-container" style={{ paddingBottom: 100 }}>
-      {/* ─── Panoramic Luxury Header Banner ─── */}
-      <div className="quran-hero-banner hero-bg-progress">
-        <div className="quran-hero-overlay" />
-        <div className="hero-glass-card">
-          <div
-            lang="ar"
-            style={{
-              fontSize: '1.45rem',
-              color: 'var(--color-gold-500)',
-              fontFamily: 'var(--font-arabic)',
-              fontWeight: 800,
-              marginBottom: 8,
-            }}
-          >
+      {/* ─── Clean Noble Page Header (Open, Dignified, No Cards) ─── */}
+      <section className="clean-noble-header">
+        <div className="clean-noble-container">
+          <div className="clean-noble-bismillah" lang="ar">
             مسيرة القراءة والختمة المباركة
           </div>
 
-          <h1 style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
-            fontSize: 'clamp(2rem, 4vw, 3rem)',
-            fontWeight: 800,
-            color: 'var(--color-brand)',
-            lineHeight: 1.15,
-            margin: '0 0 12px',
-          }}>
-            Reading Journey &amp; Analytics
+          <h1 className="clean-noble-title">
+            Reading Journey &amp; <span className="clean-noble-gold">Analytics</span>
           </h1>
 
-          <p style={{
-            fontSize: '1rem',
-            lineHeight: 1.6,
-            color: 'var(--color-text)',
-            opacity: 0.9,
-            marginBottom: 20,
-          }}>
-            Real-time, authentic spiritual analytics tracked strictly from your verified reading sessions. Gain insights into your Khatm progress, chapter coverage, and continuous habits.
+          <p className="clean-noble-subtitle">
+            Real-time spiritual analytics tracked directly from your verified reading sessions. Gain insights into your Khatm progress, chapter coverage, and habits.
           </p>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 14px',
-              borderRadius: 9999,
-              background: 'rgba(212, 175, 55, 0.18)',
-              border: '1.5px solid var(--color-border-gold)',
-              fontWeight: 800,
-              fontSize: '0.85rem',
-              color: 'var(--color-brand)',
-            }}>
-              <Award size={15} className="shiny-icon" /> {uniqueSurahs.length} of 114 Surahs Explored
+          <div className="clean-noble-badges">
+            <span className="clean-noble-pill gold">
+              <Award size={14} className="shiny-icon" /> {uniqueSurahs.length} of 114 Surahs Explored
             </span>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 14px',
-              borderRadius: 9999,
-              background: 'rgba(45, 106, 79, 0.16)',
-              border: '1.5px solid var(--color-primary-300)',
-              fontWeight: 800,
-              fontSize: '0.85rem',
-              color: 'var(--color-brand)',
-            }}>
-              <TrendingUp size={15} className="shiny-icon" /> {history.length} Reading Sessions
+            <span className="clean-noble-pill">
+              <TrendingUp size={14} className="shiny-icon" /> {history.length} Reading Sessions
             </span>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* ─── Top 4 Metric Cards ─── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 28 }}>

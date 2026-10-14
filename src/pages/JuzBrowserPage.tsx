@@ -41,99 +41,36 @@ export default function JuzBrowserPage() {
 
   return (
     <div className="quran-page-container" style={{ paddingBottom: 100 }}>
-      {/* ─── Panoramic Luxury Hero Banner ─── */}
-      <div className="quran-hero-banner hero-bg-juz">
-        <div className="quran-hero-overlay" />
-        <div className="hero-glass-card">
-          {/* Ornate Bismillah calligraphic badge */}
-          <div
-            lang="ar"
-            style={{
-              fontSize: '1.5rem',
-              color: 'var(--color-gold-500)',
-              fontFamily: 'var(--font-arabic)',
-              fontWeight: 800,
-              marginBottom: 8,
-              letterSpacing: '0.04em',
-              textShadow: '0 2px 8px rgba(0,0,0,0.15)',
-            }}
-          >
+      {/* ─── Clean Noble Page Header (Open, Dignified, No Cards) ─── */}
+      <section className="clean-noble-header">
+        <div className="clean-noble-container">
+          {/* Bismillah Calligraphy in verified Uthmanic font */}
+          <div className="clean-noble-bismillah" lang="ar">
             بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
           </div>
 
-          <h1 style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
-            fontSize: 'clamp(2rem, 4.2vw, 3.2rem)',
-            fontWeight: 800,
-            color: 'var(--color-brand)',
-            lineHeight: 1.15,
-            margin: '0 0 14px',
-          }}>
-            The 30 Holy Juz, <br />
-            <span style={{ color: 'var(--color-accent)' }}>Canonical Divisions</span>
+          <h1 className="clean-noble-title">
+            The 30 Holy Juz, <span className="clean-noble-gold">Canonical Divisions</span>
           </h1>
 
-          <p style={{
-            fontSize: '1.05rem',
-            lineHeight: 1.6,
-            color: 'var(--color-text)',
-            opacity: 0.9,
-            marginBottom: 20,
-          }}>
+          <p className="clean-noble-subtitle">
             Browse all 30 Juz (Paras) of the Noble Quran. Each portion allows you to systematically complete, memorize, and reflect upon divine revelation with verified start and end references.
           </p>
 
           {/* Statistics Pills */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '8px 16px',
-              borderRadius: 9999,
-              background: 'rgba(212, 175, 55, 0.18)',
-              border: '1.5px solid var(--color-border-gold)',
-              fontWeight: 800,
-              fontSize: '0.9rem',
-              color: 'var(--color-brand)',
-            }}>
-              <BookOpen size={16} className="shiny-icon" />
-              <span>30 Juz (Paras)</span>
-            </div>
-
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '8px 16px',
-              borderRadius: 9999,
-              background: 'rgba(45, 106, 79, 0.16)',
-              border: '1.5px solid var(--color-primary-300)',
-              fontWeight: 800,
-              fontSize: '0.9rem',
-              color: 'var(--color-brand)',
-            }}>
-              <Sparkles size={16} className="shiny-icon" />
-              <span>114 Complete Surahs</span>
-            </div>
-
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '8px 16px',
-              borderRadius: 9999,
-              background: 'rgba(212, 175, 55, 0.18)',
-              border: '1.5px solid var(--color-border-gold)',
-              fontWeight: 800,
-              fontSize: '0.9rem',
-              color: 'var(--color-brand)',
-            }}>
-              <span>6,236 Verses</span>
-            </div>
+          <div className="clean-noble-badges">
+            <span className="clean-noble-pill gold">
+              <BookOpen size={14} className="shiny-icon" /> 30 Juz (Paras)
+            </span>
+            <span className="clean-noble-pill">
+              <Sparkles size={14} className="shiny-icon" /> 114 Complete Surahs
+            </span>
+            <span className="clean-noble-pill">
+              6,236 Verses
+            </span>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* ─── Search & Quick Jump Bar ─── */}
       <div style={{ marginBottom: 32 }}>

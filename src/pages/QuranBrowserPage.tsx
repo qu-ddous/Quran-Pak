@@ -126,79 +126,31 @@ export default function QuranBrowserPage() {
 
   return (
     <div className="quran-page-container" style={{ paddingBottom: 100 }}>
-      {/* ─── 1. Panoramic Arched Hero Banner ─── */}
-      <section className="quran-hero-banner hero-bg-quran">
-        <div className="quran-hero-overlay" />
-
-        <div className="hero-glass-card">
-          {/* Bismillah Calligraphy */}
-          <p
-            className="arabic-text"
-            lang="ar"
-            style={{
-              fontSize: '1.9rem',
-              color: 'var(--color-accent)',
-              margin: '0 0 10px',
-              fontWeight: 700,
-              lineHeight: 1.2,
-              textShadow: '0 0 14px rgba(212, 175, 55, 0.4)',
-            }}
-          >
+      {/* ─── 1. Clean Noble Page Header (Open, Dignified, No Cards) ─── */}
+      <section className="clean-noble-header">
+        <div className="clean-noble-container">
+          {/* Bismillah Calligraphy in verified Uthmanic font */}
+          <div className="clean-noble-bismillah" lang="ar">
             بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
-          </p>
+          </div>
 
-          <h1 className="hero-headline" style={{ fontSize: 'clamp(2.2rem, 4vw, 3.2rem)', margin: '0 0 12px' }}>
-            The Noble Quran, <span className="hero-gold-text">All 114 Chapters</span>
+          <h1 className="clean-noble-title">
+            The Noble Quran, <span className="clean-noble-gold">All 114 Chapters</span>
           </h1>
 
-          <p style={{ fontSize: '1.02rem', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: '0 0 24px' }}>
+          <p className="clean-noble-subtitle">
             Explore the complete divine revelation in verified Uthmani script with multilingual translations, authentic verse recitations, and scholarly metadata.
           </p>
 
           {/* Quick Stats Badges */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 14px',
-              borderRadius: 9999,
-              background: 'rgba(212, 175, 55, 0.15)',
-              border: '1px solid var(--color-border-gold)',
-              fontSize: '0.82rem',
-              fontWeight: 700,
-              color: 'var(--color-brand)',
-            }}>
+          <div className="clean-noble-badges">
+            <span className="clean-noble-pill gold">
               <BookOpen size={14} className="shiny-icon" /> 114 Surahs
             </span>
-
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 14px',
-              borderRadius: 9999,
-              background: 'rgba(45, 106, 79, 0.12)',
-              border: '1px solid rgba(45, 106, 79, 0.35)',
-              fontSize: '0.82rem',
-              fontWeight: 700,
-              color: 'var(--color-brand)',
-            }}>
+            <span className="clean-noble-pill">
               <Sparkles size={14} className="shiny-icon" /> 6,236 Verses
             </span>
-
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 14px',
-              borderRadius: 9999,
-              background: 'rgba(212, 175, 55, 0.15)',
-              border: '1px solid var(--color-border-gold)',
-              fontSize: '0.82rem',
-              fontWeight: 700,
-              color: 'var(--color-brand)',
-            }}>
+            <span className="clean-noble-pill">
               <Compass size={14} className="shiny-icon" /> 30 Juz
             </span>
           </div>

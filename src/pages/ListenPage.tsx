@@ -86,74 +86,34 @@ export default function ListenPage() {
 
   return (
     <div className="quran-page-container" style={{ paddingBottom: 100 }}>
-      {/* ─── Panoramic Luxury Header Banner ─── */}
-      <div className="quran-hero-banner hero-bg-listen">
-        <div className="quran-hero-overlay" />
-        <div className="hero-glass-card">
-          <div
-            lang="ar"
-            style={{
-              fontSize: '1.45rem',
-              color: 'var(--color-gold-500)',
-              fontFamily: 'var(--font-arabic)',
-              fontWeight: 800,
-              marginBottom: 8,
-            }}
-          >
+      {/* ─── Clean Noble Page Header (Open, Dignified, No Cards) ─── */}
+      <section className="clean-noble-header">
+        <div className="clean-noble-container">
+          <div className="clean-noble-bismillah" lang="ar">
             استمع إلى القرآن الكريم
           </div>
 
-          <h1 style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
-            fontSize: 'clamp(2rem, 4vw, 3rem)',
-            fontWeight: 800,
-            color: 'var(--color-brand)',
-            lineHeight: 1.15,
-            margin: '0 0 12px',
-          }}>
-            Quran Audio Sanctuary
+          <h1 className="clean-noble-title">
+            Quran <span className="clean-noble-gold">Audio Sanctuary</span>
           </h1>
 
-          <p style={{
-            fontSize: '1rem',
-            lineHeight: 1.6,
-            marginBottom: 20,
-          }}>
+          <p className="clean-noble-subtitle">
             Experience continuous high-definition full-chapter recitations streamed via Islamic Network CDN, chanted by the world's most revered Qaris.
           </p>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 14px',
-              borderRadius: 9999,
-              background: 'rgba(212, 175, 55, 0.18)',
-              border: '1.5px solid var(--color-border-gold)',
-              fontWeight: 800,
-              fontSize: '0.85rem',
-              color: 'var(--color-brand)',
-            }}>
-              <Headphones size={15} className="shiny-icon" /> 128kbps Studio Quality
+          <div className="clean-noble-badges">
+            <span className="clean-noble-pill gold">
+              <Headphones size={14} className="shiny-icon" /> 128kbps Studio Quality
             </span>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 14px',
-              borderRadius: 9999,
-              background: 'rgba(45, 106, 79, 0.16)',
-              border: '1.5px solid var(--color-border-gold)',
-              fontWeight: 800,
-              fontSize: '0.85rem',
-              color: 'var(--color-brand)',
-            }}>
-              <Sparkles size={15} className="shiny-icon" /> Auto Chapter Advance
+            <span className="clean-noble-pill">
+              <Sparkles size={14} className="shiny-icon" /> Auto Chapter Advance
+            </span>
+            <span className="clean-noble-pill">
+              7 Renowned Qaris
             </span>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* ─── Two-Column Interactive Studio Layout ─── */}
       <div className="listen-layout-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 28, alignItems: 'start' }}>

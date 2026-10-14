@@ -59,49 +59,12 @@ export default function IslamicBooksPage() {
   return (
     <div className="quran-page-container" style={{ paddingBottom: 80 }}>
       {/* ─── Hero Section ────────────────────────────────────────────────────── */}
-      <section
-        style={{
-          marginTop: 20,
-          marginBottom: 32,
-          padding: '36px 30px',
-          borderRadius: 24,
-          background: 'linear-gradient(135deg, #092c21 0%, #165b44 55%, #0d382b 100%)',
-          color: '#ffffff',
-          position: 'relative',
-          overflow: 'hidden',
-          boxShadow: '0 10px 30px rgba(9, 44, 33, 0.25)',
-          border: '1.5px solid var(--color-border-gold)',
-        }}
-      >
-        {/* Decorative background glow */}
-        <div
-          style={{
-            position: 'absolute',
-            top: -60,
-            right: -40,
-            width: 260,
-            height: 260,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, transparent 70%)',
-            pointerEvents: 'none',
-          }}
-        />
-
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: 840 }}>
+      {/* ─── Clean Noble Page Header (Open, Dignified, No Cards) ─── */}
+      <section className="clean-noble-header">
+        <div className="clean-noble-container">
           <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '6px 14px',
-              borderRadius: 20,
-              background: 'rgba(255, 255, 255, 0.12)',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
-              fontSize: '0.82rem',
-              fontWeight: 700,
-              color: 'var(--color-accent)',
-              marginBottom: 16,
-            }}
+            className="clean-noble-pill gold"
+            style={{ marginBottom: 16 }}
           >
             <Sparkles size={14} />
             <span style={{ fontFamily: 'var(--font-urdu)', fontSize: '0.98rem' }}>مستند کتب، دعائیں، نمازِ حنفی، اور شش کلمے مع ترجمہ</span>
@@ -110,13 +73,14 @@ export default function IslamicBooksPage() {
           <h1
             style={{
               margin: '0 0 10px',
-              fontSize: 'clamp(2rem, 4vw, 2.75rem)',
+              fontSize: 'clamp(2.1rem, 4.5vw, 3.2rem)',
               fontWeight: 900,
               lineHeight: 1.4,
               letterSpacing: '-0.02em',
               fontFamily: 'var(--font-urdu)',
               direction: 'rtl',
-              textAlign: 'left',
+              textAlign: 'center',
+              color: 'var(--color-text)',
             }}
           >
             اسلامی کتب و دعاؤں کی لائبریری
@@ -124,13 +88,14 @@ export default function IslamicBooksPage() {
 
           <div
             className="arabic-text"
+            lang="ar"
             style={{
-              fontSize: '1.35rem',
+              fontSize: 'clamp(1.2rem, 2.5vw, 1.55rem)',
               color: 'var(--color-accent)',
               lineHeight: 1.6,
               marginBottom: 14,
               direction: 'rtl',
-              textAlign: 'left',
+              textAlign: 'center',
             }}
           >
             مَكْتَبَةُ الأَدْعِيَةِ وَالأَذْكَارِ وَالأَحْكَامِ الإِسْلَامِيَّةِ
@@ -138,14 +103,14 @@ export default function IslamicBooksPage() {
 
           <p
             style={{
-              margin: '0 0 24px',
-              fontSize: '1.12rem',
+              margin: '0 auto 24px',
+              fontSize: '1.05rem',
               lineHeight: 2.1,
-              color: 'rgba(255, 255, 255, 0.95)',
+              color: 'var(--color-text-secondary)',
               maxWidth: 760,
               fontFamily: 'var(--font-urdu)',
               direction: 'rtl',
-              textAlign: 'left',
+              textAlign: 'center',
             }}
           >
             کسی بھی چھوٹی یا بڑی دعا کو عربی، اردو ترجمہ اور انگریزی میں تلاش کریں اور پڑھیں۔
@@ -153,59 +118,56 @@ export default function IslamicBooksPage() {
             حصن المسلم کی روزمرہ دعائیں، اور ۴۰ قرآنی ربنا دعائیں باآسانی کارڈز اور کتابی صفحات میں مطالعہ فرمائیں۔
           </p>
 
-          {/* Action Bar inside Hero: Live Search */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
-            {/* Live Search Input */}
-            <div style={{ position: 'relative', flex: 1, minWidth: 280, maxWidth: 640 }}>
-              <Search
-                size={18}
+          {/* Action Bar: Clean Live Search */}
+          <div style={{ width: '100%', maxWidth: 640, margin: '0 auto', position: 'relative' }}>
+            <Search
+              size={18}
+              style={{
+                position: 'absolute',
+                left: 16,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'var(--color-text-muted)',
+                pointerEvents: 'none',
+              }}
+            />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="کسی بھی کتاب، دعا، نماز، کلمہ یا لفظ کو تلاش کریں (e.g. بخاری، قنوت، کھانا، سفر)..."
+              style={{
+                width: '100%',
+                padding: '13px 42px 13px 44px',
+                borderRadius: 16,
+                border: '1.5px solid var(--color-border)',
+                background: 'var(--color-surface)',
+                color: 'var(--color-text)',
+                fontSize: '0.96rem',
+                outline: 'none',
+                fontFamily: 'var(--font-urdu)',
+                boxShadow: '0 2px 10px rgba(0, 0, 0, 0.04)',
+              }}
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                aria-label="Clear search"
                 style={{
                   position: 'absolute',
-                  left: 14,
+                  right: 14,
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  pointerEvents: 'none',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--color-text-muted)',
+                  cursor: 'pointer',
+                  display: 'flex',
                 }}
-              />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="کسی بھی کتاب، دعا، نماز، کلمہ یا لفظ کو تلاش کریں (e.g. بخاری، قنوت، کھانا، سفر، استخارہ)..."
-                style={{
-                  width: '100%',
-                  padding: '12px 40px 12px 42px',
-                  borderRadius: 14,
-                  border: '1.5px solid rgba(255, 255, 255, 0.3)',
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  backdropFilter: 'blur(10px)',
-                  color: '#ffffff',
-                  fontSize: '0.96rem',
-                  outline: 'none',
-                  fontFamily: 'var(--font-urdu)',
-                }}
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  aria-label="Clear search"
-                  style={{
-                    position: 'absolute',
-                    right: 12,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#ffffff',
-                    cursor: 'pointer',
-                    display: 'flex',
-                  }}
-                >
-                  <X size={16} />
-                </button>
-              )}
-            </div>
+              >
+                <X size={16} />
+              </button>
+            )}
           </div>
         </div>
       </section>
